@@ -3,17 +3,17 @@
 #include "string.h"
 
 //Static functions
-error void double_size(forth_dictionary_t* fd);
+static error double_size(forth_dictionary_t* fd);
 static void sort_dic(forth_dictionary_t* fd);
 
 //This functions double the size of the dinamic array.
-error void double_size(forth_dictionary_t* fd){
+static error double_size(forth_dictionary_t* fd){
     entry_t* new = malloc(sizeof(entry_t) * fd->max * 2);
     if(new == NULL){
         return no_memory;
     }
     for(size_t i=0; i<fd->n_entries; i++){
-        memcpy(new[i], fd->entries[i], sizeof(entry_t));
+        new[i] = fd->entries[i];
     }
     free(fd->entries);
     fd->entries = new;
@@ -85,7 +85,7 @@ error fd_find(forth_dictionary_t* fd, entry_t* e, size_t* index, hash_t hash){
 //This function adds a new element to the dictionary.
 //The size is extended if needed and the dictionary is left sorted
 //If an element in the array got a similar hash, it is overwritten
-void fd_add_elem(forth_dictionary_t* fd, entry_t e){
+error fd_add_elem(forth_dictionary_t* fd, entry_t e){
     size_t index;
     if(fd_find(fd, NULL, &index, e.hash) == not_found){ //We need to add a new element
         if(fd->n_entries == fd->max){

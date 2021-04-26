@@ -1,11 +1,19 @@
 #ifndef USER_WORDS_H
 #define USER_WORDS_H
 
+#include "hash.h"
+#include "stdlib.h"
+
+//Types to change in the future
+typedef int special_t;
+typedef int runtime_callback_t;
+typedef int compile_callback_t;
+
 //Define what kind of content con be found in a word definition
 enum word_type {
     normal_word, //Words found in the dictionary
     special_words, //Other words such as 1, ." coucou" or flow control
-}
+};
 
 //This struct rpresunt each words called in a word definition
 typedef struct {
