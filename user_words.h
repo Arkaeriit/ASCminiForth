@@ -11,7 +11,7 @@ enum word_type {
 typedef struct {
     enum word_type type;
     union {
-        hash_t hash;       //To find the word in the dictionary
+        hash_t hash;        //To find the word in the dictionary
         special_t* special; //To do the needed special effect. To define
     } content;
 } word_node_t;

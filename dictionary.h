@@ -3,6 +3,7 @@
 #define DICTIONARY_H
 
 #include "user_words.h"
+#include "errors.h"
 #include "stdlib.h"
 
 //Describes the kind of data that can be put inthe dictionary
@@ -32,7 +33,8 @@ typedef struct {
 
 forth_dictionary_t* fd_init(void);
 void fd_clean(forth_dictionary_t* fd);
-void fd_add_elem(entry_t e);
+error fd_find(forth_dictionary_t* fd, entry_t* e, size_t* index, hash_t hash);
+error fd_add_elem(forth_dictionary_t* fd, entry_t e);
 
 #endif
 
