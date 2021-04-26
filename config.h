@@ -8,5 +8,10 @@ typedef int32_t word_t;
 #define CODE_STACK_SIZE 100
 #define DATA_STACK_SIZE 100
 
+#include "stdio.h"
+static void error(const char* msg){
+    fprintf(stderr, "%s", msg);
+}
+
 #endif
 

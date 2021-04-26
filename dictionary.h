@@ -1,9 +1,7 @@
-
+#include "ASCminiForth.h"
 #ifndef DICTIONARY_H
 #define DICTIONARY_H
 
-#include "user_words.h"
-#include "errors.h"
 #include "stdlib.h"
 
 //Describes the kind of data that can be put inthe dictionary
@@ -16,7 +14,7 @@ enum entry_type {
 //This structure represent the entries in the dictionary
 typedef struct {
     union {
-        runtime_callback_t C_func; //To define
+        C_callback_t C_func; //To define
         user_word_t F_word; //Content of wors defined in Forth
         compile_callback_t Compile_func; //To define or delete
     } func;

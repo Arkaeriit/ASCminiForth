@@ -1,12 +1,9 @@
+#include "ASCminiForth.h"
 #ifndef USER_WORDS_H
 #define USER_WORDS_H
 
-#include "hash.h"
-#include "stdlib.h"
-
 //Types to change in the future
 typedef int special_t;
-typedef int runtime_callback_t;
 typedef int compile_callback_t;
 
 //Define what kind of content con be found in a word definition

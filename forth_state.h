@@ -1,9 +1,8 @@
+#include "ASCminiForth.h"
 #ifndef FORTH_STATE_H
 #define FORTH_STATE_H
 
-#include "config.h"
 #include "stdlib.h"
-#include "dictionary.h"
 
 //This union is used to represent the value put on the code stack
 typedef union {
@@ -17,7 +16,7 @@ typedef union {
 //The code stack
 typedef struct {
     code_pointer_t* stack;
-    size_t stack_pointer;
+    size_t stack_pointer; //In both stacks, the poiter point to the first free element
 } code_stack_t;
 
 //The main stack
@@ -35,6 +34,9 @@ typedef struct {
 
 forth_state_t* ft_init(void);
 void ft_clean(forth_state_t* fs);
+
+word_t ft_pop_data(forth_state_t* fs);
+void ft_push_data(forth_state_t* fs, word_t w);
 
 
 #endif
