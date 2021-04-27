@@ -21,7 +21,7 @@ static void crc32(const void *data, size_t n_bytes, uint32_t* crc) {
 }
 
 //Returns the CRC32 of a C-string
-hash_t forth_hash(const char* data){
+hash_t amf_hash(const char* data){
     uint32_t ret;
     crc32(data, strlen(data), &ret);
     return ret;

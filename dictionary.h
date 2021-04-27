@@ -23,16 +23,16 @@ typedef struct {
 } entry_t;
 
 //This structure represent the dictionary. Should be used as a bynamic array. The values should be sorted 
-typedef struct {
+typedef struct forth_dictionary_s {
     entry_t* entries;
     size_t n_entries;
     size_t max;
 } forth_dictionary_t;
 
-forth_dictionary_t* fd_init(void);
-void fd_clean(forth_dictionary_t* fd);
-error fd_find(forth_dictionary_t* fd, entry_t* e, size_t* index, hash_t hash);
-error fd_add_elem(forth_dictionary_t* fd, entry_t e);
+forth_dictionary_t* amf_init_dic(void);
+void amf_clean_dic(forth_dictionary_t* fd);
+error amf_find(forth_dictionary_t* fd, entry_t* e, size_t* index, hash_t hash);
+error amf_add_elem(forth_dictionary_t* fd, entry_t e);
 
 #endif
 

@@ -9,7 +9,7 @@ typedef int32_t word_t;
 #define DATA_STACK_SIZE 100
 
 #include "stdio.h"
-static void error(const char* msg){
+static void __attribute__ ((unused)) error_msg(const char* msg){
     fprintf(stderr, "%s", msg);
 }
 

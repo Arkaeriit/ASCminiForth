@@ -37,7 +37,7 @@ static void sort_dic(forth_dictionary_t* fd) {
 //Global API
 
 //This functions initializes a dictionary of the minimum size.
-forth_dictionary_t* fd_init(void){
+forth_dictionary_t* amf_init_dic(void){
     forth_dictionary_t* ret = malloc(sizeof(forth_dictionary_t));
     ret->entries = malloc(sizeof(entry_t));
     ret->max = 1;
@@ -46,7 +46,7 @@ forth_dictionary_t* fd_init(void){
 }
 
 //This function frees the memory used by a dictionary
-void fd_clean(forth_dictionary_t* fd){
+void amf_clean_dic(forth_dictionary_t* fd){
     free(fd->entries);
     free(fd);
 }
@@ -55,7 +55,7 @@ void fd_clean(forth_dictionary_t* fd){
 //put it in e, put its index in index and return OK.
 //Otherwize, returns not_found;
 //If e or index are NULL, the values are not copied.
-error fd_find(forth_dictionary_t* fd, entry_t* e, size_t* index, hash_t hash){
+error amf_find(forth_dictionary_t* fd, entry_t* e, size_t* index, hash_t hash){
     size_t target = fd->n_entries / 2;
     while(fd->entries[target].hash != hash){
         if(fd->entries[target].hash < hash){
@@ -85,9 +85,9 @@ error fd_find(forth_dictionary_t* fd, entry_t* e, size_t* index, hash_t hash){
 //This function adds a new element to the dictionary.
 //The size is extended if needed and the dictionary is left sorted
 //If an element in the array got a similar hash, it is overwritten
-error fd_add_elem(forth_dictionary_t* fd, entry_t e){
+error amf_add_elem(forth_dictionary_t* fd, entry_t e){
     size_t index;
-    if(fd_find(fd, NULL, &index, e.hash) == not_found){ //We need to add a new element
+    if(amf_find(fd, NULL, &index, e.hash) == not_found){ //We need to add a new element
         if(fd->n_entries == fd->max){
             error rc = double_size(fd);
             if(rc != OK){

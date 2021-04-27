@@ -11,7 +11,7 @@
 
 typedef uint32_t hash_t;
 
-hash_t forth_hash(const char* data);
+hash_t amf_hash(const char* data);
 
 #endif
 

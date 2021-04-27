@@ -4,8 +4,9 @@
 
 typedef void (*C_callback_t)(forth_state_t*);
 
-void cf_call_cfunc(forth_state_t* fs, hash_t hash);
-void cf_register_cfunc(forth_state_t* fs, const char* name, C_callback func);
+void amf_call_cfunc(forth_state_t* fs, hash_t hash);
+void amf_register_cfunc(forth_state_t* fs, const char* name, C_callback_t func);
+void amf_register_default_C_func(forth_state_t* fs);
 
 #endif
 

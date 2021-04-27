@@ -29,14 +29,14 @@ typedef struct {
 typedef struct {
     data_stack_t* data;
     code_stack_t* code;
-    forth_dictionary_t* dic;
+    struct forth_dictionary_s* dic;
 } forth_state_t;
 
-forth_state_t* ft_init(void);
-void ft_clean(forth_state_t* fs);
+forth_state_t* amf_init_state(void);
+void amf_clean_state(forth_state_t* fs);
 
-word_t ft_pop_data(forth_state_t* fs);
-void ft_push_data(forth_state_t* fs, word_t w);
+word_t amf_pop_data(forth_state_t* fs);
+void amf_push_data(forth_state_t* fs, word_t w);
 
 
 #endif
