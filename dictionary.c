@@ -106,3 +106,36 @@ error amf_add_elem(forth_dictionary_t* fd, entry_t e){
     }
 }
 
+//This function call a known function from the dictionary, the effect will
+//vary depending on the type of the function. The function is id by its hash
+//If something is not found, print an error message
+error amf_call_func(forth_state_t* fs, hash_t hash) {
+    entry_t e;
+    error find_rc = amf_find(fs->dic, &e, NULL, hash);
+	if(find_rc != OK){
+		error_msg("Unable to find desired function.\n");
+		return find_rc;
+	}
+	switch(e.type){
+		case C_word:
+			e.func.C_func(fs);
+			break;
+		default:
+			//TODO
+			break;
+	}
+	return OK;
+}
+
+//Try to call a function by its name
+error amf_call_name(forth_state_t* fs, const char* name){
+	hash_t hash = amf_hash(name);
+	error rc = amf_call_func(fs, hash);
+	if(rc != OK){
+		error_msg("Can't call function ");
+		error_msg(name);
+		error_msg(".\n");
+	}
+	return rc;
+}
+

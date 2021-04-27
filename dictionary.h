@@ -34,5 +34,8 @@ void amf_clean_dic(forth_dictionary_t* fd);
 error amf_find(forth_dictionary_t* fd, entry_t* e, size_t* index, hash_t hash);
 error amf_add_elem(forth_dictionary_t* fd, entry_t e);
 
+error amf_call_name(forth_state_t* fs, const char* name);
+error amf_call_func(forth_state_t* fs, hash_t hash);
+
 #endif
 

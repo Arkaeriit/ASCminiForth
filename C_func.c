@@ -6,39 +6,39 @@
 //Call a known valid C_func from the dictionary
 void amf_call_cfunc(forth_state_t* fs, hash_t hash){
     entry_t e;
-    fd_find(fs->dic, &e, NULL, hash);
+    amf_find(fs->dic, &e, NULL, hash);
     e.func.C_func(fs);
 }
 
 //Register a new C function
-void amf_register_cfunc(forth_state_t* fs, const char* name, C_callback func){
+void amf_register_cfunc(forth_state_t* fs, const char* name, C_callback_t func){
     entry_t e;
     e.type = C_word;
-    e.hash = forth_hash(name);
+    e.hash = amf_hash(name);
     e.func.C_func = func;
-    fs_add_elem(fs->dic, e);
+    amf_add_elem(fs->dic, e);
 }
 
 //List of default C_func
 static void add(forth_state_t* fs){
-    word_t d1 = ft_pop_data(fs);
-    word_t d2 = ft_pop_data(fs);
-    ft_push_data(d1 + d2);
+    word_t d1 = amf_pop_data(fs);
+    word_t d2 = amf_pop_data(fs);
+    amf_push_data(fs, d1 + d2);
 }
 
 static void printNum(forth_state_t* fs){
-    word_t d1 = ft_pop_data(fs);
-    printf(WORD_PRINT " ",d1);
+    word_t d1 = amf_pop_data(fs);
+    printf("%" WORD_PRINT " ",d1);
 }
 
 static void push1(forth_state_t* fs){
-    ft_push_data(1);
+    amf_push_data(fs, 1);
 }
 
 //Register all the default C_func
 void amf_register_default_C_func(forth_state_t* fs){
-    cf_register_cfunc(fs, "+", add);
-    cf_register_cfunc(fs, ".", printNum);
-    cf_register_cfunc(fs, "1", push1);
+    amf_register_cfunc(fs, "+", add);
+    amf_register_cfunc(fs, ".", printNum);
+    amf_register_cfunc(fs, "1", push1);
 }
 
