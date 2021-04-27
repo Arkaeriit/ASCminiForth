@@ -5,6 +5,8 @@
 #include "stdlib.h"
 
 //This union is used to represent the value put on the code stack
+//Thos value can either be a word (optional data) or some indication
+//about what piece of code we should be running
 typedef union {
     struct {
         hash_t current_word;
@@ -31,6 +33,7 @@ typedef struct {
     code_stack_t* code;
     struct forth_dictionary_s* dic;
 	code_pointer_t pos;
+	struct user_word_s* current_word_copy;
 } forth_state_t;
 
 forth_state_t* amf_init_state(void);
@@ -38,7 +41,8 @@ void amf_clean_state(forth_state_t* fs);
 
 word_t amf_pop_data(forth_state_t* fs);
 void amf_push_data(forth_state_t* fs, word_t w);
-
+void amf_push_code(forth_state_t* fs, code_pointer_t p);
+code_pointer_t amf_pop_code(forth_state_t* fs);
 
 #endif
 

@@ -23,7 +23,7 @@ typedef struct {
 
 //This struct represent an user-define word. It is a list of all the
 //word_node that will be called when the word is called.
-typedef struct {
+typedef struct user_word_s {
     word_node_t* content;
     size_t size;
 } user_word_t;
