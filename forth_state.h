@@ -44,5 +44,7 @@ void amf_push_data(forth_state_t* fs, word_t w);
 void amf_push_code(forth_state_t* fs, code_pointer_t p);
 code_pointer_t amf_pop_code(forth_state_t* fs);
 
+void amf_run_step(forth_state_t* fs);
+
 #endif
 

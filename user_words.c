@@ -11,6 +11,7 @@ error amf_compile_user_word(forth_dictionary_t* fd, const char* name, size_t sub
 		if(0){
 			//TODO Check for special words
 		}else{
+			printf("Registering word %s at pos %i.\n", subwords[i], i);
 			def.content[i].type = normal_word;
 			def.content[i].content.hash = amf_hash(subwords[i]);
 		}
