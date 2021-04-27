@@ -30,6 +30,7 @@ typedef struct {
     data_stack_t* data;
     code_stack_t* code;
     struct forth_dictionary_s* dic;
+	code_pointer_t pos;
 } forth_state_t;
 
 forth_state_t* amf_init_state(void);

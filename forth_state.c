@@ -11,6 +11,8 @@ forth_state_t* amf_init_state(void) {
     ret->code->stack = malloc(sizeof(code_pointer_t) * CODE_STACK_SIZE);
     ret->dic = amf_init_dic();
     amf_register_default_C_func(ret);
+	ret->pos.code.current_word = 0;
+	ret->pos.code.pos_in_word = 0;
     return ret;
 }
 
@@ -35,5 +37,18 @@ word_t amf_pop_data(forth_state_t* fs){
 void amf_push_data(forth_state_t* fs, word_t w){
     fs->data->stack[fs->data->stack_pointer] = w;
     fs->data->stack_pointer++;
+}
+
+//Push a code_pointer element on the code stack
+void amf_push_code(forth_state_t* fs, code_pointer_t p){
+    fs->code->stack[fs->code->stack_pointer] = p;
+    fs->code->stack_pointer++;
+}
+
+//Pop a code_pointer element from the code stack
+code_pointer_t amf_pop_code(forth_state_t* fs){
+    code_pointer_t ret = fs->code->stack[fs->code->stack_pointer-1];
+    fs->code->stack_pointer--;
+    return ret;
 }
 

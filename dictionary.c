@@ -120,6 +120,8 @@ error amf_call_func(forth_state_t* fs, hash_t hash) {
 		case C_word:
 			e.func.C_func(fs);
 			break;
+		case FORTH_word:
+
 		default:
 			//TODO
 			break;
