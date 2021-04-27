@@ -42,7 +42,7 @@ forth_dictionary_t* amf_init_dic(void){
     ret->entries = malloc(sizeof(entry_t));
     ret->max = 1;
     ret->n_entries = 0;
-    return 0;
+    return ret;
 }
 
 //This function frees the memory used by a dictionary
@@ -59,7 +59,7 @@ error amf_find(forth_dictionary_t* fd, entry_t* e, size_t* index, hash_t hash){
     size_t target = fd->n_entries / 2;
     while(fd->entries[target].hash != hash){
         if(fd->entries[target].hash < hash){
-            if(target == fd->n_entries){
+            if(target == fd->n_entries - 1 || target == fd->n_entries){
                 return not_found;
             }
             if(fd->entries[target+1].hash > hash){

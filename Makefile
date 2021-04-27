@@ -2,7 +2,7 @@
 FLAGS := -Wall -g
 
 # Files lists
-C_SRC := hash.c dictionary.c forth_state.c C_func.c
+C_SRC := hash.c dictionary.c forth_state.c C_func.c test.c
 C_OBJS := $(C_SRC:%.c=%.o)
 TARGET := amForth
 
@@ -15,8 +15,8 @@ CC := gcc
 CP := cp -f
 RM := rm -rf
 
-#all : $(TARGET).bin
-all : $(C_OBJS)
+all : $(TARGET).bin
+#all : $(C_OBJS)
 
 %.o : %.c
 	$(CC) -c $< $(FLAGS) -o $@

@@ -1,29 +1,50 @@
-/* Simple public domain implementation of the standard CRC32 checksum.
- * Found on Björn Samuelsson's blog, http://home.thep.lu.se/~bjorn/crc/.
+/* Implementation of CRC32 found on https://rosettacode.org/wiki/CRC-32#C
  */
 
 #include "hash.h"
 #include "string.h"
 
-static uint32_t crc32_for_byte(uint32_t r) {
-  for(int j = 0; j < 8; ++j)
-    r = (r & 1? 0: (uint32_t)0xEDB88320L) ^ r >> 1;
-  return r ^ (uint32_t)0xFF000000L;
+static uint32_t rc_crc32(uint32_t crc, const char *buf, size_t len)
+{
+	static uint32_t table[256];
+	static int have_table = 0;
+	uint32_t rem;
+	uint8_t octet;
+	int i, j;
+	const char *p, *q;
+ 
+	/* This check is not thread safe; there is no mutex. */
+	if (have_table == 0) {
+		/* Calculate CRC table. */
+		for (i = 0; i < 256; i++) {
+			rem = i;  /* remainder from polynomial division */
+			for (j = 0; j < 8; j++) {
+				if (rem & 1) {
+					rem >>= 1;
+					rem ^= 0xedb88320;
+				} else
+					rem >>= 1;
+			}
+			table[i] = rem;
+		}
+		have_table = 1;
+	}
+ 
+	crc = ~crc;
+	q = buf + len;
+	for (p = buf; p < q; p++) {
+		octet = *p;  /* Cast to unsigned octet. */
+		crc = (crc >> 8) ^ table[(crc & 0xff) ^ octet];
+	}
+	return ~crc;
 }
-
-static void crc32(const void *data, size_t n_bytes, uint32_t* crc) {
-  static uint32_t table[0x100];
-  if(!*table)
-    for(size_t i = 0; i < 0x100; ++i)
-      table[i] = crc32_for_byte(i);
-  for(size_t i = 0; i < n_bytes; ++i)
-    *crc = table[(uint8_t)*crc ^ ((uint8_t*)data)[i]] ^ *crc >> 8;
-}
+ 
 
 //Returns the CRC32 of a C-string
+#include "inttypes.h"
 hash_t amf_hash(const char* data){
-    uint32_t ret;
-    crc32(data, strlen(data), &ret);
+    uint32_t ret = rc_crc32(0, data, strlen(data));
+	/*printf("Hash of %s (size=%zi) is %" PRIu32 ".\n",data, strlen(data), ret);*/
     return ret;
 }
 
