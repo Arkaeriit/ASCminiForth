@@ -35,10 +35,15 @@ static void push1(forth_state_t* fs){
     amf_push_data(fs, 1);
 }
 
+static void exit_word(forth_state_t* fs){
+	amf_exit(fs);
+}
+
 //Register all the default C_func
 void amf_register_default_C_func(forth_state_t* fs){
     amf_register_cfunc(fs, "+", add);
     amf_register_cfunc(fs, ".", printNum);
     amf_register_cfunc(fs, "1", push1);
+    amf_register_cfunc(fs, "exit", exit_word);
 }
 

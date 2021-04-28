@@ -3,7 +3,7 @@
 
 #include "inttypes.h"
 typedef int32_t word_t;
-#define WORD_PRINT PRId32
+#define WORD_PRINT PRIu32
 
 #define CODE_STACK_SIZE 100
 #define DATA_STACK_SIZE 100

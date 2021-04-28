@@ -52,14 +52,21 @@ code_pointer_t amf_pop_code(forth_state_t* fs){
     return ret;
 }
 
+//Return from a word_call
+void amf_exit(forth_state_t* fs){
+	code_pointer_t previous_pos = amf_pop_code(fs);
+	fs->pos = previous_pos;
+}
+
 //Run a single step of user Forth code, if needed
 void amf_run_step(forth_state_t* fs){
 	if(fs->pos.code.current_word == IDLE_CURRENT_WORD && //Nothing to do, we are not executing code
 			fs->pos.code.pos_in_word == IDLE_POS_IN_WORD) {
+		printf("Nothing to do, idleing.\n");
 		return;
 	}
 	if(fs->pos.code.pos_in_word >=  fs->current_word_copy->size){ //We return from the function as we reached the end of the word
-		amf_call_name(fs, "exit"); //Maybe do it in a cleaner manner
+		amf_exit(fs);
 		return;
 	}
 	//Otherwize, we run the part of the curent word we are pointing to
