@@ -14,9 +14,19 @@ typedef int32_t word_t;
 #define IDLE_POS_IN_WORD  ~0
 
 #include "stdio.h"
+#include "stdarg.h"
 static void __attribute__ ((unused)) error_msg(const char* msg){
-    fprintf(stderr, "%s", msg);
+    fprintf(stderr, "\033[31m%s\033[0m", msg);
 }
+static void __attribute__ ((unused)) debug_msg(const char* msg, ...){
+    fprintf(stderr, "\033[36m");
+    va_list arg;
+    va_start(arg, msg);
+    vfprintf(stderr, msg, arg);
+    va_end(arg); 
+    fprintf(stderr, "\033[0m");
+}
+
 
 #endif
 

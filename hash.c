@@ -44,7 +44,7 @@ static uint32_t rc_crc32(uint32_t crc, const char *buf, size_t len)
 #include "inttypes.h"
 hash_t amf_hash(const char* data){
     uint32_t ret = rc_crc32(0, data, strlen(data));
-	/*printf("Hash of %s (size=%zi) is %" PRIu32 ".\n",data, strlen(data), ret);*/
+	/*debug_msg("Hash of %s (size=%zi) is %" PRIu32 ".\n",data, strlen(data), ret);*/
     return ret;
 }
 
