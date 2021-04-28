@@ -10,7 +10,8 @@ int main(void){
 	amf_call_name(fs, "+");
 	amf_call_name(fs, ".");
 	printf("\n");
-	amf_compile_user_word(fs->dic, "test", 6, test_def);
+	
+    amf_compile_user_word(fs->dic, "test", 6, test_def);
 	amf_compile_user_word(fs->dic, "test2", 6, test2_def);
 	amf_call_name(fs, "test");
 	for(int i=0; i<10; i++){
@@ -18,10 +19,13 @@ int main(void){
 	}
 	printf("finished calling test\n");
 	amf_call_name(fs, "test2");
-	for(int i=0; i<40; i++){
-		amf_run_step(fs);
-	}
+    amf_run(fs);
 	printf("finished calling test2\n");
+
+    amf_compile_string(fs->dic, "test3", "une patate");
+    amf_compile_string(fs->dic, "test4", "une");
+    amf_compile_string(fs->dic, "test5", " une ");
+
 	amf_clean_state(fs);
 	return 0;
 }

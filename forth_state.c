@@ -67,15 +67,17 @@ void amf_exit(forth_state_t* fs){
 }
 
 //Run a single step of user Forth code, if needed
-void amf_run_step(forth_state_t* fs){
+//Return false if there is nothing to do
+//Return true if there is something to do
+bool amf_run_step(forth_state_t* fs){
 	if(fs->pos.code.current_word == IDLE_CURRENT_WORD && //Nothing to do, we are not executing code
 			fs->pos.code.pos_in_word == IDLE_POS_IN_WORD) {
 		debug_msg("Nothing to do, idleing.\n");
-		return;
+		return false;
 	}
 	if(fs->pos.code.pos_in_word >=  fs->current_word_copy->size){ //We return from the function as we reached the end of the word
 		amf_exit(fs);
-		return;
+		return true;
 	}
 	//Otherwize, we run the part of the curent word we are pointing to
 	word_node_t current_node = fs->current_word_copy->content[fs->pos.code.pos_in_word];
@@ -87,5 +89,11 @@ void amf_run_step(forth_state_t* fs){
 		debug_msg("Handling special word.\n");
 		//TODO: handle special words
 	}
+    return true;
+}
+
+//Run the interpreter until it finishes all calls
+void amf_run(forth_state_t* fs){
+    while(amf_run_step(fs));
 }
 
