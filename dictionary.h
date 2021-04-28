@@ -15,7 +15,7 @@ enum entry_type {
 typedef struct {
     union {
         C_callback_t C_func; //To define
-        user_word_t F_word; //Content of wors defined in Forth
+        user_word_t* F_word; //Content of wors defined in Forth
         compile_callback_t Compile_func; //To define or delete
     } func;
     enum entry_type type;

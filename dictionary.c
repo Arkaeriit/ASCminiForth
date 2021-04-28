@@ -47,6 +47,18 @@ forth_dictionary_t* amf_init_dic(void){
 
 //This function frees the memory used by a dictionary
 void amf_clean_dic(forth_dictionary_t* fd){
+	for(size_t i=0; i<fd->n_entries; i++){
+		entry_t e = fd->entries[i];
+		switch(e.type){
+			case FORTH_word: //Part of those words are dynamicaly allocated
+				free(e.func.F_word->content);
+				free(e.func.F_word);
+				break;
+			default:
+				//Noting allocated yet otherwize TODO: check is some switches can be changed to if(){} when the roject is more mature
+				break;
+		}
+	}
     free(fd->entries);
     free(fd);
 }
@@ -124,7 +136,7 @@ error amf_call_func(forth_state_t* fs, hash_t hash) {
 			amf_push_code(fs, fs->pos);
 			fs->pos.code.current_word = hash;
 			fs->pos.code.pos_in_word = 0;
-			fs->current_word_copy = &(e.func.F_word);
+			fs->current_word_copy = e.func.F_word;
 			break;
 		default:
 			//TODO
