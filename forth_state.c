@@ -54,6 +54,7 @@ code_pointer_t amf_pop_code(forth_state_t* fs){
 
 //Return from a word_call
 void amf_exit(forth_state_t* fs){
+	printf("Returning.\n");
 	code_pointer_t previous_pos = amf_pop_code(fs);
 	fs->pos = previous_pos;
 }

@@ -68,7 +68,9 @@ void amf_clean_dic(forth_dictionary_t* fd){
 //Otherwize, returns not_found;
 //If e or index are NULL, the values are not copied.
 error amf_find(forth_dictionary_t* fd, entry_t* e, size_t* index, hash_t hash){
-    size_t target = fd->n_entries / 2;
+	size_t lower_b = 0;
+	size_t upper_b = fd->n_entries;
+    size_t target = (lower_b + upper_b) / 2;
     while(fd->entries[target].hash != hash){
         if(fd->entries[target].hash < hash){
             if(target == fd->n_entries - 1 || target == fd->n_entries){
@@ -77,12 +79,14 @@ error amf_find(forth_dictionary_t* fd, entry_t* e, size_t* index, hash_t hash){
             if(fd->entries[target+1].hash > hash){
                 return not_found;
             }
-            target = (target + fd->n_entries) / 2;
+			lower_b = target;
+			target = (lower_b + upper_b) / 2;
         }else{
             if(target == 0){
                 return not_found;
             }
-            target = target / 2;
+			upper_b = target;
+			target = (lower_b + upper_b) / 2;
         }
     }
     if(e != NULL){
