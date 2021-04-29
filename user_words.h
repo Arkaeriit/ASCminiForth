@@ -29,7 +29,7 @@ typedef struct user_word_s {
 } user_word_t;
 
 error amf_compile_user_word(struct forth_dictionary_s* fd, const char* name, size_t subword_n, const char** subwords);
-error amf_compile_string(struct forth_dictionary_s* fs, const char* name, char* str);
+error amf_compile_string(struct forth_dictionary_s* fs, const char* name, const char* str);
 
 #endif
 

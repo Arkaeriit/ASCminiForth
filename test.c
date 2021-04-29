@@ -22,9 +22,10 @@ int main(void){
     amf_run(fs);
 	printf("finished calling test2\n");
 
-    amf_compile_string(fs->dic, "test3", "une patate");
-    amf_compile_string(fs->dic, "test4", "une");
-    amf_compile_string(fs->dic, "test5", " une ");
+    amf_compile_string(fs->dic, "test3", "test test 1 1 1 1 + + + .");
+    amf_call_name(fs, "test3");
+    amf_run(fs);
+	printf("finished calling test3\n");
 
 	amf_clean_state(fs);
 	return 0;
