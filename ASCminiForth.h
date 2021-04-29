@@ -14,6 +14,7 @@
 #include "C_func.h"
 #include "user_words.h"
 #include "dictionary.h"
+#include "amf_shell.h"
 
 #endif
 

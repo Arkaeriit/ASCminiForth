@@ -27,6 +27,7 @@ int main(void){
     amf_run(fs);
 	printf("finished calling test3\n");
 
+    amf_shell(fs);
 	amf_clean_state(fs);
 	return 0;
 }

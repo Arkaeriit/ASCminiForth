@@ -2,7 +2,6 @@
 #include "string.h"
 
 static int words_in_str(const char* str);
-static bool is_delimiter(char ch);
 static char** cut_string(const char* str);
 
 //This function compiles a new user words in the given dictionary
@@ -33,7 +32,7 @@ static const char* word_delimiters = " \t\n\r";
 //as a C word
 error amf_compile_string(forth_dictionary_t* fd, const char* name, const char* str){
    int nwords = words_in_str(str); 
-   debug_msg("There is %i words in the definition of %s.\n", nwords, name);
+   debug_msg("There is %i words in the definition of %s [%s].\n", nwords, name, str);
    char** subwords = cut_string(str);
    error rc = amf_compile_user_word(fd, name, nwords, subwords);
    for(int i=0; i<nwords; i++){
@@ -63,7 +62,7 @@ static int words_in_str(const char* str){
 }
 
 //Tell if a char is a member of the list of word delimiters
-static bool is_delimiter(char ch){
+bool is_delimiter(char ch){
     for(size_t i=0; i<strlen(word_delimiters); i++){
         if(word_delimiters[i] == ch){
             return true;

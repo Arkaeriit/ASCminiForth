@@ -47,6 +47,7 @@ code_pointer_t amf_pop_code(forth_state_t* fs);
 
 bool amf_run_step(forth_state_t* fs);
 void amf_run(forth_state_t* fs);
+void amf_exit(forth_state_t* fs);
 
 #endif
 
