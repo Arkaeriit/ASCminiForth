@@ -68,8 +68,9 @@ void amf_parse_char(parser_state_t* parse, char ch){
 
 void amf_shell(void){
     parser_state_t* parse = amf_init_parser();
-    while(true){
+    while(parse->fs->running){
         amf_parse_char(parse, getchar());
     }
+    amf_clean_parser(parse);
 }
 

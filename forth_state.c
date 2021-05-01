@@ -13,6 +13,7 @@ forth_state_t* amf_init_state(void) {
     amf_register_default_C_func(ret);
 	ret->pos.code.current_word = IDLE_CURRENT_WORD;
 	ret->pos.code.pos_in_word = IDLE_POS_IN_WORD;
+    ret->running = true;
     return ret;
 }
 
@@ -58,12 +59,17 @@ code_pointer_t amf_pop_code(forth_state_t* fs){
 
 //Return from a word_call
 void amf_exit(forth_state_t* fs){
-	debug_msg("Returning.\n");
-	code_pointer_t previous_pos = amf_pop_code(fs);
-	fs->pos = previous_pos;
-    entry_t e;
-    amf_find(fs->dic, &e, NULL, fs->pos.code.current_word);
-    fs->current_word_copy = e.func.F_word;
+    if(fs->code->stack_pointer > 0){ //In a custom word
+        debug_msg("Returning.\n");
+        code_pointer_t previous_pos = amf_pop_code(fs);
+        fs->pos = previous_pos;
+        entry_t e;
+        amf_find(fs->dic, &e, NULL, fs->pos.code.current_word);
+        fs->current_word_copy = e.func.F_word;
+    }else{ //In the shell/top level
+        debug_msg("Exiting.\n");
+        fs->running = false;
+    }
 }
 
 //Run a single step of user Forth code, if needed
