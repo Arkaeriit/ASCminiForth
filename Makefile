@@ -2,7 +2,7 @@
 FLAGS := -Wall -g
 
 # Files lists
-C_SRC := hash.c dictionary.c forth_state.c C_func.c test.c user_words.c amf_shell.c
+C_SRC := hash.c dictionary.c forth_state.c C_func.c test.c user_words.c parser.c
 C_OBJS := $(C_SRC:%.c=%.o)
 TARGET := amForth
 

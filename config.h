@@ -5,6 +5,7 @@
 typedef int32_t word_t;
 #define WORD_PRINT PRIu32
 
+//Depth of the two stacks
 #define CODE_STACK_SIZE 100
 #define DATA_STACK_SIZE 100
 
@@ -12,6 +13,10 @@ typedef int32_t word_t;
 //the interpreter is idling and not inside a function
 #define IDLE_CURRENT_WORD ~0
 #define IDLE_POS_IN_WORD  ~0
+
+//Parsser configuration
+#define PARSER_BUFFER_SIZE 100
+#define PARSER_CUSTOM_NAME_SIZE 25
 
 #include "stdio.h"
 #include "stdarg.h"
