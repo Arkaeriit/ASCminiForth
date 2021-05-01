@@ -3,6 +3,7 @@
 
 static int words_in_str(const char* str);
 static char** cut_string(const char* str);
+static bool str_to_num(const char* str, word_t* num);
 
 //This function compiles a new user words in the given dictionary
 //subword_n is the number of words in our definition
@@ -12,8 +13,11 @@ error amf_compile_user_word(forth_dictionary_t* fd, const char* name, size_t sub
 	def->size = subword_n;
 	def->content = malloc(sizeof(word_node_t) * subword_n);
 	for(size_t i=0; i<subword_n; i++){
-		if(0){
-			//TODO Check for special words
+        //Checking if the string is a number
+        word_t num;
+        if(str_to_num(subwords[i], &num)){
+			def->content[i].type = raw_number;
+			def->content[i].content.value = num;
 		}else{
 			debug_msg("Registering word %s at pos %i with hash %" WORD_PRINT ".\n", subwords[i], i, amf_hash(subwords[i]));
 			def->content[i].type = normal_word;
@@ -48,11 +52,11 @@ static int words_in_str(const char* str){
     bool pointing_to_word = false;
     for(size_t i=0; i<strlen(str); i++){
        if(pointing_to_word){
-          if(is_delimiter(str[i])){
+          if(amf_is_delimiter(str[i])){
              pointing_to_word = false;
           }
        }else{
-          if(!is_delimiter(str[i])){
+          if(!amf_is_delimiter(str[i])){
              pointing_to_word = true;
             ret++;
           }
@@ -62,7 +66,7 @@ static int words_in_str(const char* str){
 }
 
 //Tell if a char is a member of the list of word delimiters
-bool is_delimiter(char ch){
+bool amf_is_delimiter(char ch){
     for(size_t i=0; i<strlen(word_delimiters); i++){
         if(word_delimiters[i] == ch){
             return true;
@@ -80,7 +84,7 @@ static char** cut_string(const char* str){
     size_t word_start;
     for(size_t i=0; i<strlen(str); i++){
         if(pointing_to_word){
-            if(is_delimiter(str[i])){
+            if(amf_is_delimiter(str[i])){
                 pointing_to_word = false;
                 ret[word_included] = malloc(i - word_start + 1);
                 memcpy(ret[word_included], str + word_start, i - word_start);
@@ -88,7 +92,7 @@ static char** cut_string(const char* str){
                 word_included++;
             }
         }else{
-            if(!is_delimiter(str[i])){
+            if(!amf_is_delimiter(str[i])){
                 pointing_to_word = true;
                 word_start = i;
             }
@@ -101,5 +105,20 @@ static char** cut_string(const char* str){
         ret[word_included][i - word_start] = 0;
     }
     return ret;
+}
+
+//Convert a string to a number, return true if the string was a number
+//and false otherwize. Should be more minimal than scanf
+static bool str_to_num(const char* str, word_t* num){
+    *num = 0;
+    for(int i=0; i<strlen(str); i++){ //Strating by the MSD
+        *num *= 10; //The previous digit had more value than the current one so we multyply it
+        if('0' <= str[i] && str[i] <= '9'){
+            *num += str[i] - '0';
+        }else{
+            return false;
+        }
+    }
+    return true;
 }
 

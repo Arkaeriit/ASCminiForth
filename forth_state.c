@@ -88,12 +88,14 @@ bool amf_run_step(forth_state_t* fs){
 	//Otherwize, we run the part of the curent word we are pointing to
 	word_node_t current_node = fs->current_word_copy->content[fs->pos.code.pos_in_word];
 	fs->pos.code.pos_in_word++;
-	if(current_node.type == normal_word){
-		debug_msg("Calling hash %u from pos %zi.\n",current_node.content.hash, fs->pos.code.pos_in_word - 1);
-		amf_call_func(fs, current_node.content.hash);
-	}else{
-		debug_msg("Handling special word.\n");
-		//TODO: handle special words
+    switch(current_node.type){
+        case normal_word:
+            debug_msg("Calling hash %u from pos %zi.\n",current_node.content.hash, fs->pos.code.pos_in_word - 1);
+            amf_call_func(fs, current_node.content.hash);
+            break;
+        case raw_number:
+            amf_push_data(fs, current_node.content.value);
+            break;
 	}
     return true;
 }

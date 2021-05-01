@@ -37,7 +37,7 @@ void amf_parse_char(parser_state_t* parse, char ch){
         }else{
             //error
         }
-    }else if(is_delimiter(ch)){
+    }else if(amf_is_delimiter(ch)){
         if(parse->in_word){
             if(parse->writing_definition_s_name){
                 parse->buffer[parse->pnt] = 0;
