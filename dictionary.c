@@ -5,6 +5,7 @@
 //Static functions
 static error double_size(forth_dictionary_t* fd);
 static void sort_dic(forth_dictionary_t* fd);
+static void free_word(entry_t e);
 
 //This functions double the size of the dinamic array.
 static error double_size(forth_dictionary_t* fd){
@@ -34,6 +35,19 @@ static void sort_dic(forth_dictionary_t* fd) {
     }
 }
 
+//This function frees the memory used id a word
+static void free_word(entry_t e){
+    switch(e.type){
+        case FORTH_word: //Part of those words are dynamicaly allocated
+            free(e.func.F_word->content);
+            free(e.func.F_word);
+            break;
+        default:
+            //Noting allocated yet otherwize TODO: check is some switches can be changed to if(){} when the roject is more mature
+            break;
+    }
+}
+
 //Global API
 
 //This functions initializes a dictionary of the minimum size.
@@ -49,15 +63,7 @@ forth_dictionary_t* amf_init_dic(void){
 void amf_clean_dic(forth_dictionary_t* fd){
 	for(size_t i=0; i<fd->n_entries; i++){
 		entry_t e = fd->entries[i];
-		switch(e.type){
-			case FORTH_word: //Part of those words are dynamicaly allocated
-				free(e.func.F_word->content);
-				free(e.func.F_word);
-				break;
-			default:
-				//Noting allocated yet otherwize TODO: check is some switches can be changed to if(){} when the roject is more mature
-				break;
-		}
+        free_word(e);
 	}
     free(fd->entries);
     free(fd);
@@ -116,7 +122,7 @@ error amf_add_elem(forth_dictionary_t* fd, entry_t e){
         return OK;
     }else{ //We need to overwrite an element
         entry_t old = fd->entries[index];
-        //TODO: add type-specific cleaning code
+        free_word(old);
         fd->entries[index] = e;
         return OK;
     }
