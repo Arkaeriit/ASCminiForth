@@ -80,15 +80,45 @@ static void exit_word(forth_state_t* fs){
 	amf_exit(fs);
 }
 
+// if
+static void IF(forth_state_t* fs){
+    word_t d1 = amf_pop_data(fs);
+    if(!d1){ //If d1 is not true, we want to get to the next else or the next then
+        hash_t else_hash = amf_hash("else");        
+        hash_t then_hash = amf_hash("then");        
+        size_t i=fs->pos.code.pos_in_word+1;
+        while(fs->current_word_copy->content[i].content.hash != else_hash && fs->current_word_copy->content[i].content.hash != then_hash){
+           i++;
+        } 
+        fs->pos.code.pos_in_word = i + 1;
+    }
+}
+
+// else
+// If we meet that word, it means that we were in an if block, thus we need to jump to the next then
+static void ELSE(forth_state_t* fs){
+    hash_t then_hash = amf_hash("then");        
+    size_t i=fs->pos.code.pos_in_word+1;
+    while(fs->current_word_copy->content[i].content.hash != then_hash){
+       i++;
+    } 
+    fs->pos.code.pos_in_word = i + 1;
+}
+// then
+static void then(forth_state_t* fs){};
+
 //Register all the default C_func
 void amf_register_default_C_func(forth_state_t* fs){
     amf_register_cfunc(fs, "+", add);
     amf_register_cfunc(fs, ".", printNum);
     amf_register_cfunc(fs, "*", mult);
     amf_register_cfunc(fs, "*/", multDiv);
-    amf_register_cfunc(fs, "*/MOD", multDivMod);
+    amf_register_cfunc(fs, "*/mod", multDivMod);
     amf_register_cfunc(fs, "/", Div);
-    amf_register_cfunc(fs, "/MOD", divMod);
+    amf_register_cfunc(fs, "/mod", divMod);
     amf_register_cfunc(fs, "exit", exit_word);
+    amf_register_cfunc(fs, "if", IF);
+    amf_register_cfunc(fs, "else", ELSE);
+    amf_register_cfunc(fs, "then", then);
 }
 
