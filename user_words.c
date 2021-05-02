@@ -118,13 +118,20 @@ static char** cut_string(const char* str){
 //and false otherwize. Should be more minimal than scanf
 static bool str_to_num(const char* str, word_t* num){
     *num = 0;
-    for(int i=0; i<strlen(str); i++){ //Strating by the MSD
+    int start = 0;
+    if(str[0] == '-'){
+        start = 1;
+    }
+    for(int i=start; i<strlen(str); i++){ //Strating by the MSD
         *num *= 10; //The previous digit had more value than the current one so we multyply it
         if('0' <= str[i] && str[i] <= '9'){
             *num += str[i] - '0';
         }else{
             return false;
         }
+    }
+    if(start == 1){
+        *num *= -1;
     }
     return true;
 }

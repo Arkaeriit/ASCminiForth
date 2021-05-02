@@ -48,6 +48,11 @@ static void dup(forth_state_t* fs){
     amf_push_data(fs, w1);
 }
 
+// drop
+static void drop(forth_state_t* fs){
+    amf_pop_data(fs);
+}
+
 // Basic maths
 
 // +
@@ -55,12 +60,6 @@ static void add(forth_state_t* fs){
     word_t w1 = amf_pop_data(fs);
     word_t w2 = amf_pop_data(fs);
     amf_push_data(fs, w1 + w2);
-}
-
-// .
-static void printNum(forth_state_t* fs){
-    word_t w1 = amf_pop_data(fs);
-    printf("%" WORD_PRINT " ",w1);
 }
 
 // *
@@ -85,8 +84,8 @@ static void multDivMod(forth_state_t* fs){
     word_t w2 = amf_pop_data(fs);
     word_t d3 = amf_pop_data(fs);
     double_word_t tmp = d3 * w2;
-    amf_push_data(fs, tmp / w1);
     amf_push_data(fs, tmp % w1);
+    amf_push_data(fs, tmp / w1);
 }
 
 // /
@@ -100,8 +99,8 @@ static void Div(forth_state_t* fs){
 static void divMod(forth_state_t* fs){
     word_t w1 = amf_pop_data(fs);
     word_t w2 = amf_pop_data(fs);
-    amf_push_data(fs, w2 / w1);
     amf_push_data(fs, w2 % w1);
+    amf_push_data(fs, w2 / w1);
 }
 
 // Boolean logic
@@ -111,10 +110,14 @@ static void less0(forth_state_t* fs){
     amf_push_data(fs, amf_pop_data(fs) < 0);
 }
 
-
 // 0= 
 static void eq0(forth_state_t* fs){
     amf_push_data(fs, amf_pop_data(fs) == 0);
+}
+
+// = 
+static void eq(forth_state_t* fs){
+    amf_push_data(fs, amf_pop_data(fs) == amf_pop_data(fs));
 }
 
 // Flow control
@@ -149,6 +152,12 @@ static void then(forth_state_t* fs){};
 
 // Misc
 
+// .
+static void printNum(forth_state_t* fs){
+    word_t w1 = amf_pop_data(fs);
+    printf("%" WORD_PRINT " ",w1);
+}
+
 // exit
 static void exit_word(forth_state_t* fs){
 	amf_exit(fs);
@@ -160,24 +169,24 @@ void amf_register_default_C_func(forth_state_t* fs){
     amf_register_cfunc(fs, "swap", swap);
     amf_register_cfunc(fs, "rot", rot);
     amf_register_cfunc(fs, "dup", dup);
+    amf_register_cfunc(fs, "drop", drop);
     // Basic math
     amf_register_cfunc(fs, "+", add);
-    amf_register_cfunc(fs, ".", printNum);
     amf_register_cfunc(fs, "*", mult);
     amf_register_cfunc(fs, "*/", multDiv);
     amf_register_cfunc(fs, "*/mod", multDivMod);
     amf_register_cfunc(fs, "/", Div);
     amf_register_cfunc(fs, "/mod", divMod);
-    amf_register_cfunc(fs, "/mod", divMod);
-    amf_register_cfunc(fs, "/mod", divMod);
     // Boolean logic
     amf_register_cfunc(fs, "0<", less0);
     amf_register_cfunc(fs, "0=", eq0);
+    amf_register_cfunc(fs, "=", eq);
     // Flow control
     amf_register_cfunc(fs, "if", IF);
     amf_register_cfunc(fs, "else", ELSE);
     amf_register_cfunc(fs, "then", then);
     // Misc
+    amf_register_cfunc(fs, ".", printNum);
     amf_register_cfunc(fs, "exit", exit_word);
 }
 
