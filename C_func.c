@@ -20,21 +20,62 @@ void amf_register_cfunc(forth_state_t* fs, const char* name, C_callback_t func){
 }
 
 //List of default C_func
+
+// +
 static void add(forth_state_t* fs){
     word_t d1 = amf_pop_data(fs);
     word_t d2 = amf_pop_data(fs);
     amf_push_data(fs, d1 + d2);
 }
 
+// .
 static void printNum(forth_state_t* fs){
     word_t d1 = amf_pop_data(fs);
     printf("%" WORD_PRINT " ",d1);
 }
 
-static void push1(forth_state_t* fs){
-    amf_push_data(fs, 1);
+// *
+static void mult(forth_state_t* fs){
+    word_t d1 = amf_pop_data(fs);
+    word_t d2 = amf_pop_data(fs);
+    amf_push_data(fs, d1 * d2);
 }
 
+// */
+static void multDiv(forth_state_t* fs){
+    word_t d1 = amf_pop_data(fs);
+    word_t d2 = amf_pop_data(fs);
+    word_t d3 = amf_pop_data(fs);
+    double_word_t tmp = d3 * d2;
+    amf_push_data(fs, tmp / d1);
+}
+
+// */MOD
+static void multDivMod(forth_state_t* fs){
+    word_t d1 = amf_pop_data(fs);
+    word_t d2 = amf_pop_data(fs);
+    word_t d3 = amf_pop_data(fs);
+    double_word_t tmp = d3 * d2;
+    amf_push_data(fs, tmp / d1);
+    amf_push_data(fs, tmp % d1);
+}
+
+// /
+static void Div(forth_state_t* fs){
+    word_t d1 = amf_pop_data(fs);
+    word_t d2 = amf_pop_data(fs);
+    amf_push_data(fs, d2 / d1);
+}
+
+// /MOD
+static void divMod(forth_state_t* fs){
+    word_t d1 = amf_pop_data(fs);
+    word_t d2 = amf_pop_data(fs);
+    amf_push_data(fs, d2 / d1);
+    amf_push_data(fs, d2 % d1);
+}
+
+// exit
 static void exit_word(forth_state_t* fs){
 	amf_exit(fs);
 }
@@ -43,7 +84,11 @@ static void exit_word(forth_state_t* fs){
 void amf_register_default_C_func(forth_state_t* fs){
     amf_register_cfunc(fs, "+", add);
     amf_register_cfunc(fs, ".", printNum);
-    amf_register_cfunc(fs, "1", push1);
+    amf_register_cfunc(fs, "*", mult);
+    amf_register_cfunc(fs, "*/", multDiv);
+    amf_register_cfunc(fs, "*/MOD", multDivMod);
+    amf_register_cfunc(fs, "/", Div);
+    amf_register_cfunc(fs, "/MOD", divMod);
     amf_register_cfunc(fs, "exit", exit_word);
 }
 

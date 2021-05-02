@@ -3,6 +3,7 @@
 
 #include "inttypes.h"
 typedef int32_t word_t;
+typedef int64_t double_word_t;
 #define WORD_PRINT PRIu32
 
 //Depth of the two stacks
