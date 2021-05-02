@@ -9,6 +9,7 @@ parser_state_t* amf_init_parser(void){
     ret->pnt = 0;
     ret->in_word = false;
     ret->in_def = false;
+    ret->writing_definition_s_name = false;
     return ret;
 }
 
@@ -68,6 +69,7 @@ void amf_parse_char(parser_state_t* parse, char ch){
 }
 
 void amf_shell(void){
+    printf("Starting the ASCminiForth shell.\n");
     parser_state_t* parse = amf_init_parser();
     while(parse->fs->running){
         amf_parse_char(parse, getchar());

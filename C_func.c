@@ -104,6 +104,7 @@ static void ELSE(forth_state_t* fs){
     } 
     fs->pos.code.pos_in_word = i + 1;
 }
+
 // then
 static void then(forth_state_t* fs){};
 
