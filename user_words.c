@@ -13,22 +13,29 @@ error amf_compile_user_word(forth_dictionary_t* fd, const char* name, size_t sub
 	def->size = subword_n;
 	def->content = malloc(sizeof(word_node_t) * subword_n);
 	for(size_t i=0; i<subword_n; i++){
-        //Checking if the string is a number
-        word_t num;
-        if(str_to_num(subwords[i], &num)){
-			def->content[i].type = raw_number;
-			def->content[i].content.value = num;
-		}else{
-			debug_msg("Registering word %s at pos %i with hash %" WORD_PRINT ".\n", subwords[i], i, amf_hash(subwords[i]));
-			def->content[i].type = normal_word;
-			def->content[i].content.hash = amf_hash(subwords[i]);
-		}
+        def->content[i] = amf_compile_node(subwords[i]); 
 	}
 	entry_t e;
 	e.hash = amf_hash(name);
 	e.type = FORTH_word;
 	e.func.F_word = def;
 	return amf_add_elem(fd, e);
+}
+
+word_node_t amf_compile_node(const char* str){
+    word_node_t ret;
+    //Checking if the string is a number
+    word_t num;
+    if(str_to_num(str, &num)){
+        ret.type = raw_number;
+        ret.content.value = num;
+    //Else, its a call to an other word
+    }else{
+        debug_msg("Registering word %s with hash %" WORD_PRINT ".\n", str, amf_hash(str));
+        ret.type = normal_word;
+        ret.content.hash = amf_hash(str);
+    }
+    return ret;
 }
 
 static const char* word_delimiters = " \t\n\r";

@@ -52,7 +52,8 @@ void amf_parse_char(parser_state_t* parse, char ch){
                 parse->buffer[parse->pnt] = 0;
                 parse->in_word = false;
                 parse->pnt = 0;
-                amf_call_name(parse->fs, parse->buffer);
+                word_node_t node_to_exe = amf_compile_node(parse->buffer);
+                amf_executes_node(parse->fs, &node_to_exe);
                 amf_run(parse->fs);
             }
         }else if(parse->in_def && !parse->writing_definition_s_name){
