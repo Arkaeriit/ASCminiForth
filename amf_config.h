@@ -1,5 +1,5 @@
-#ifndef CONFIG_H
-#define CONFIG_H
+#ifndef AMF_CONFIG_H
+#define AMF_CONFIG_H
 
 #include "inttypes.h"
 typedef int32_t word_t;

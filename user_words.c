@@ -8,7 +8,7 @@ static bool str_to_num(const char* str, word_t* num);
 //This function compiles a new user words in the given dictionary
 //subword_n is the number of words in our definition
 //subwords is the list of the subwords
-error amf_compile_user_word(forth_dictionary_t* fd, const char* name, size_t subword_n, const char** subwords) {
+error amf_compile_user_word(forth_dictionary_t* fd, const char* name, size_t subword_n, char** subwords) {
 	user_word_t* def = malloc(sizeof(user_word_t));
 	def->size = subword_n;
 	def->content = malloc(sizeof(word_node_t) * subword_n);

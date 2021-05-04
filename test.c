@@ -1,7 +1,7 @@
 #include "ASCminiForth.h"
 
-const char* test_def[] = {"1", "1", "1", "+", "+", "."};
-const char* test2_def[] = {"test", "test", "1", ".", "exit", "test"};
+char* test_def[] = {"1", "1", "1", "+", "+", "."};
+char* test2_def[] = {"test", "test", "1", ".", "exit", "test"};
 
 int main(void){
 	forth_state_t* fs = amf_init_state();

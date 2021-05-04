@@ -7,7 +7,7 @@
 #ifndef ASC_MINI_FORTH_H
 #define ASC_MINI_FORTH_H
 
-#include "config.h"
+#include "amf_config.h"
 #include "hash.h"
 #include "errors.h"
 #include "forth_state.h"
