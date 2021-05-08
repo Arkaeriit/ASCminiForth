@@ -69,10 +69,10 @@ void amf_parse_char(parser_state_t* parse, char ch){
 }
 
 void amf_shell(void){
-    printf("Starting the ASCminiForth shell.\n");
+    amf_print_string("Starting the ASCminiForth shell.\n");
     parser_state_t* parse = amf_init_parser();
     while(parse->fs->running){
-        amf_parse_char(parse, getchar());
+        amf_parse_char(parse, amf_input());
     }
     amf_clean_parser(parse);
 }

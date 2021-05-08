@@ -155,7 +155,7 @@ static void then(forth_state_t* fs){};
 // .
 static void printNum(forth_state_t* fs){
     word_t w1 = amf_pop_data(fs);
-    printf("%" WORD_PRINT " ",w1);
+    amf_print_num(w1);
 }
 
 // exit

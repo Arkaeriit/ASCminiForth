@@ -2,8 +2,6 @@
 #ifndef DICTIONARY_H
 #define DICTIONARY_H
 
-#include "stdlib.h"
-
 //Describes the kind of data that can be put inthe dictionary
 enum entry_type {
     C_word,      //Words defined in C

@@ -2,7 +2,6 @@
 #ifndef FORTH_STATE_H
 #define FORTH_STATE_H
 
-#include "stdlib.h"
 #include "stdbool.h"
 
 //Define what kind of content con be found in a word definition

@@ -1,4 +1,5 @@
 #include "ASCminiForth.h"
+#include "stdio.h"
 
 char* test_def[] = {"1", "1", "1", "+", "+", "."};
 char* test2_def[] = {"test", "test", "1", ".", "exit", "test"};

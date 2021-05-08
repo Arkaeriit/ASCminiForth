@@ -15,10 +15,17 @@ typedef int64_t double_word_t;
 #define IDLE_CURRENT_WORD ~0
 #define IDLE_POS_IN_WORD  ~0
 
-//Parsser configuration
+//Parser configuration
 #define PARSER_BUFFER_SIZE 100
 #define PARSER_CUSTOM_NAME_SIZE 25
 
+//Log messages
+#define AMF_LOG 0
+
+//IO options
+#define IO_LONGUEST_LINE REGISTERABLE 700
+
+#if AMF_LOG
 #include "stdio.h"
 #include "stdarg.h"
 static void __attribute__ ((unused)) error_msg(const char* msg){
@@ -32,6 +39,10 @@ static void __attribute__ ((unused)) debug_msg(const char* msg, ...){
     va_end(arg); 
     fprintf(stderr, "\033[0m");
 }
+#else
+#define error_msg(X,...)
+#define debug_msg(X,...)
+#endif
 
 
 #endif
