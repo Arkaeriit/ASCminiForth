@@ -19,6 +19,9 @@ typedef int64_t double_word_t;
 #define PARSER_BUFFER_SIZE 100
 #define PARSER_CUSTOM_NAME_SIZE 25
 
+//Case-sensitivity
+#define AMF_CASE_INSENSITIVE
+
 //Log messages
 #define AMF_LOG 0
 

@@ -43,8 +43,20 @@ static uint32_t rc_crc32(uint32_t crc, const char *buf, size_t len)
 //Returns the CRC32 of a C-string
 #include "inttypes.h"
 hash_t amf_hash(const char* data){
+#ifdef AMF_CASE_INSENSITIVE
+    char cpy[strlen(data) + 1];
+    for(size_t i=0; i<strlen(data); i++){
+        if('a' <= data[i] && data[i] <= 'z'){
+            cpy[i] = data[i] - ('a' - 'A');
+        }else{
+            cpy[i] = data[i];
+        }
+    }
+    uint32_t ret = rc_crc32(0, cpy, strlen(data));
+#else
     uint32_t ret = rc_crc32(0, data, strlen(data));
-	/*debug_msg("Hash of %s (size=%zi) is %" PRIu32 ".\n",data, strlen(data), ret);*/
+#endif
+    /*debug_msg("Hash of %s (size=%zi) is %" PRIu32 ".\n",data, strlen(data), ret);*/
     return ret;
 }
 
