@@ -74,7 +74,7 @@ static void multDiv(forth_state_t* fs){
     word_t w1 = amf_pop_data(fs);
     word_t w2 = amf_pop_data(fs);
     word_t d3 = amf_pop_data(fs);
-    double_word_t tmp = d3 * w2;
+    word_t tmp = d3 * w2;
     amf_push_data(fs, tmp / w1);
 }
 
@@ -83,7 +83,7 @@ static void multDivMod(forth_state_t* fs){
     word_t w1 = amf_pop_data(fs);
     word_t w2 = amf_pop_data(fs);
     word_t d3 = amf_pop_data(fs);
-    double_word_t tmp = d3 * w2;
+    word_t tmp = d3 * w2;
     amf_push_data(fs, tmp % w1);
     amf_push_data(fs, tmp / w1);
 }
