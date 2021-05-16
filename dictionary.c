@@ -39,8 +39,7 @@ static void sort_dic(forth_dictionary_t* fd) {
 static void free_word(entry_t e){
     switch(e.type){
         case FORTH_word: //Part of those words are dynamicaly allocated
-            free(e.func.F_word->content);
-            free(e.func.F_word);
+            amf_clean_user_word(e.func.F_word);
             break;
         default:
             //Noting allocated yet otherwize TODO: check is some switches can be changed to if(){} when the roject is more mature

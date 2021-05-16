@@ -1,4 +1,5 @@
 #include "forth_state.h"
+#include "string.h"
 
 //Init the interpreter
 forth_state_t* amf_init_state(void) {
@@ -101,6 +102,15 @@ void amf_executes_node(forth_state_t* fs, struct word_node_s* node){
             break;
         case raw_number:
             amf_push_data(fs, node->content.value);
+            break;
+        case printed_string:
+            amf_print_string(node->content.string);
+            break;
+        case forth_string:
+            amf_push_data(fs, (word_t) node->content.string);
+            amf_push_data(fs, (word_t) strlen(node->content.string));
+            break;
+        default:
             break;
 	}
 }

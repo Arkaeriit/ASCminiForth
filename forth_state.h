@@ -8,6 +8,8 @@
 enum word_type {
     normal_word,   //Words found in the dictionary
     raw_number, //User-inputed word such as 3, 6, 8
+    printed_string, //String to print such as ." coucou"
+    forth_string, //Forth strings such as S" coucou"
 };
 
 //This struct rpresunt each words called in a word definition
@@ -16,6 +18,7 @@ typedef struct word_node_s {
     union {
         hash_t hash;        //To find the word in the dictionary
         word_t value;       //When used as a raw number
+        char* string; //When used as a printd string or a raw_string
     } content;
 } word_node_t;
 

@@ -16,6 +16,7 @@ error amf_compile_user_word(struct forth_dictionary_s* fd, const char* name, siz
 error amf_compile_string(struct forth_dictionary_s* fs, const char* name, const char* str);
 word_node_t amf_compile_node(const char* str);
 bool amf_is_delimiter(char ch);
+void amf_clean_user_word(user_word_t* w);
 
 #endif
 

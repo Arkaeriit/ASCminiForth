@@ -29,6 +29,11 @@ int main(void){
     amf_run(fs);
     amf_call_name(fs, "test5");
     amf_run(fs);
+
+    amf_compile_string(fs->dic, "test6", " .\" coucou\"");
+    amf_call_name(fs, "test6");
+    amf_run(fs);
+
 	amf_clean_state(fs);
 
     amf_shell();
