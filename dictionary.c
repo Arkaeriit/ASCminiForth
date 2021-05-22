@@ -60,10 +60,10 @@ forth_dictionary_t* amf_init_dic(void){
 
 //This function frees the memory used by a dictionary
 void amf_clean_dic(forth_dictionary_t* fd){
-	for(size_t i=0; i<fd->n_entries; i++){
-		entry_t e = fd->entries[i];
+    for(size_t i=0; i<fd->n_entries; i++){
+        entry_t e = fd->entries[i];
         free_word(e);
-	}
+    }
     free(fd->entries);
     free(fd);
 }
@@ -73,8 +73,8 @@ void amf_clean_dic(forth_dictionary_t* fd){
 //Otherwize, returns not_found;
 //If e or index are NULL, the values are not copied.
 error amf_find(forth_dictionary_t* fd, entry_t* e, size_t* index, hash_t hash){
-	size_t lower_b = 0;
-	size_t upper_b = fd->n_entries;
+    size_t lower_b = 0;
+    size_t upper_b = fd->n_entries;
     size_t target = (lower_b + upper_b) / 2;
     while(fd->entries[target].hash != hash){
         if(fd->entries[target].hash < hash){
@@ -84,14 +84,14 @@ error amf_find(forth_dictionary_t* fd, entry_t* e, size_t* index, hash_t hash){
             if(fd->entries[target+1].hash > hash){
                 return not_found;
             }
-			lower_b = target;
-			target = (lower_b + upper_b) / 2;
+            lower_b = target;
+            target = (lower_b + upper_b) / 2;
         }else{
             if(target == 0){
                 return not_found;
             }
-			upper_b = target;
-			target = (lower_b + upper_b) / 2;
+            upper_b = target;
+            target = (lower_b + upper_b) / 2;
         }
     }
     if(e != NULL){
@@ -133,36 +133,36 @@ error amf_add_elem(forth_dictionary_t* fd, entry_t e){
 error amf_call_func(forth_state_t* fs, hash_t hash) {
     entry_t e;
     error find_rc = amf_find(fs->dic, &e, NULL, hash);
-	if(find_rc != OK){
-		error_msg("Unable to find desired function.\n");
-		return find_rc;
-	}
-	switch(e.type){
-		case C_word:
-			e.func.C_func(fs);
-			break;
-		case FORTH_word:
-			amf_push_code(fs, fs->pos);
-			fs->pos.code.current_word = hash;
-			fs->pos.code.pos_in_word = 0;
-			fs->current_word_copy = e.func.F_word;
-			break;
-		default:
-			//TODO
-			break;
-	}
-	return OK;
+    if(find_rc != OK){
+        error_msg("Unable to find desired function.\n");
+        return find_rc;
+    }
+    switch(e.type){
+        case C_word:
+            e.func.C_func(fs);
+            break;
+        case FORTH_word:
+            amf_push_code(fs, fs->pos);
+            fs->pos.code.current_word = hash;
+            fs->pos.code.pos_in_word = 0;
+            fs->current_word_copy = e.func.F_word;
+            break;
+        default:
+            //TODO
+            break;
+    }
+    return OK;
 }
 
 //Try to call a function by its name
 error amf_call_name(forth_state_t* fs, const char* name){
-	hash_t hash = amf_hash(name);
-	error rc = amf_call_func(fs, hash);
-	if(rc != OK){
-		error_msg("Can't call function ");
-		error_msg(name);
-		error_msg(".\n");
-	}
-	return rc;
+    hash_t hash = amf_hash(name);
+    error rc = amf_call_func(fs, hash);
+    if(rc != OK){
+        error_msg("Can't call function ");
+        error_msg(name);
+        error_msg(".\n");
+    }
+    return rc;
 }
 

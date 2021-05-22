@@ -12,8 +12,8 @@ forth_state_t* amf_init_state(void) {
     ret->code->stack = malloc(sizeof(code_pointer_t) * CODE_STACK_SIZE);
     ret->dic = amf_init_dic();
     amf_register_default_C_func(ret);
-	ret->pos.code.current_word = IDLE_CURRENT_WORD;
-	ret->pos.code.pos_in_word = IDLE_POS_IN_WORD;
+    ret->pos.code.current_word = IDLE_CURRENT_WORD;
+    ret->pos.code.pos_in_word = IDLE_POS_IN_WORD;
     ret->running = true;
     return ret;
 }
@@ -77,19 +77,19 @@ void amf_exit(forth_state_t* fs){
 //Return false if there is nothing to do
 //Return true if there is something to do
 bool amf_run_step(forth_state_t* fs){
-	if(fs->pos.code.current_word == IDLE_CURRENT_WORD && //Nothing to do, we are not executing code
-			fs->pos.code.pos_in_word == IDLE_POS_IN_WORD) {
-		debug_msg("Nothing to do, idleing.\n");
-		return false;
-	}
-	if(fs->pos.code.pos_in_word >=  fs->current_word_copy->size){ //We return from the function as we reached the end of the word
-		amf_exit(fs);
-		return true;
-	}
-	//Otherwize, we run the part of the curent word we are pointing to
+    if(fs->pos.code.current_word == IDLE_CURRENT_WORD && //Nothing to do, we are not executing code
+            fs->pos.code.pos_in_word == IDLE_POS_IN_WORD) {
+        debug_msg("Nothing to do, idleing.\n");
+        return false;
+    }
+    if(fs->pos.code.pos_in_word >=  fs->current_word_copy->size){ //We return from the function as we reached the end of the word
+        amf_exit(fs);
+        return true;
+    }
+    //Otherwize, we run the part of the curent word we are pointing to
     debug_msg("Executing data at pos %li / %li.", fs->pos.code.pos_in_word, fs->current_word_copy->size);
-	word_node_t current_node = fs->current_word_copy->content[fs->pos.code.pos_in_word];
-	fs->pos.code.pos_in_word++;
+    word_node_t current_node = fs->current_word_copy->content[fs->pos.code.pos_in_word];
+    fs->pos.code.pos_in_word++;
     amf_executes_node(fs, &current_node);
     return true;
 }
@@ -113,7 +113,7 @@ void amf_executes_node(forth_state_t* fs, struct word_node_s* node){
             break;
         default:
             break;
-	}
+    }
 }
 
 //Run the interpreter until it finishes all calls

@@ -160,7 +160,7 @@ static void printNum(forth_state_t* fs){
 
 // exit
 static void exit_word(forth_state_t* fs){
-	amf_exit(fs);
+    amf_exit(fs);
 }
 
 // CR
