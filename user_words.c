@@ -50,8 +50,8 @@ static const char* word_delimiters = " \t\n\r";
 //as a C word
 error amf_compile_string(forth_dictionary_t* fd, const char* name, const char* str){
    size_t nwords;
-   debug_msg("There is %i words in the definition of %s [%s].\n", nwords, name, str);
    char** subwords = cut_string(str, &nwords);
+   debug_msg("There is %i words in the definition of %s [%s].\n", nwords, name, str);
    error rc = amf_compile_user_word(fd, name, nwords, subwords);
    for(int i=0; i<nwords; i++){
        free(subwords[i]);

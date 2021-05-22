@@ -15,7 +15,7 @@ typedef int64_t word_t;
 #define IDLE_POS_IN_WORD  ~0
 
 //Parser configuration
-#define PARSER_BUFFER_SIZE 100
+#define PARSER_BUFFER_SIZE 700
 #define PARSER_CUSTOM_NAME_SIZE 25
 
 //Case-sensitivity

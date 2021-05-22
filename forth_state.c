@@ -87,6 +87,7 @@ bool amf_run_step(forth_state_t* fs){
 		return true;
 	}
 	//Otherwize, we run the part of the curent word we are pointing to
+    debug_msg("Executing data at pos %li / %li.", fs->pos.code.pos_in_word, fs->current_word_copy->size);
 	word_node_t current_node = fs->current_word_copy->content[fs->pos.code.pos_in_word];
 	fs->pos.code.pos_in_word++;
     amf_executes_node(fs, &current_node);

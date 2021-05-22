@@ -163,6 +163,11 @@ static void exit_word(forth_state_t* fs){
 	amf_exit(fs);
 }
 
+// CR
+static void cr(forth_state_t* fs){
+    amf_output('\n');
+}
+
 //Register all the default C_func
 void amf_register_default_C_func(forth_state_t* fs){
     // Stack manipulation
@@ -188,5 +193,6 @@ void amf_register_default_C_func(forth_state_t* fs){
     // Misc
     amf_register_cfunc(fs, ".", printNum);
     amf_register_cfunc(fs, "exit", exit_word);
+    amf_register_cfunc(fs, "cr", cr);
 }
 
