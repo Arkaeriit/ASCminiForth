@@ -11,10 +11,12 @@ parser_state_t* amf_init_parser(void){
     ret->in_def = false;
     ret->writing_definition_s_name = false;
     ret->is_in_parenthesis = false;
+    amf_init_io();
     return ret;
 }
 
 void amf_clean_parser(parser_state_t* parse){
+    amf_clean_io();
     free(parse->custom_word_name);
     free(parse->buffer);
     amf_clean_state(parse->fs);
