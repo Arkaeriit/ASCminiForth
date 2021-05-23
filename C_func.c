@@ -135,11 +135,18 @@ static void IF(forth_state_t* fs){
     if(!w1){ //If w1 is not true, we want to get to the next else or the next then
         hash_t else_hash = amf_hash("else");        
         hash_t then_hash = amf_hash("then");        
+        hash_t if_hash = amf_hash("if");        
         size_t i=fs->pos.code.pos_in_word+1;
-        while(fs->current_word_copy->content[i].content.hash != else_hash && fs->current_word_copy->content[i].content.hash != then_hash){
-           i++;
+        int if_depth = 1;
+        while(if_depth){
+            if(fs->current_word_copy->content[i].content.hash != else_hash && fs->current_word_copy->content[i].content.hash != then_hash){
+                if_depth--;
+            }else if(fs->current_word_copy->content[i].content.hash != if_hash){
+               if_depth++;
+            }
+            i++;
         } 
-        fs->pos.code.pos_in_word = i + 1;
+        fs->pos.code.pos_in_word = i;
     }
 }
 
@@ -147,11 +154,18 @@ static void IF(forth_state_t* fs){
 // If we meet that word, it means that we were in an if block, thus we need to jump to the next then
 static void ELSE(forth_state_t* fs){
     hash_t then_hash = amf_hash("then");        
+    hash_t if_hash = amf_hash("if");        
     size_t i=fs->pos.code.pos_in_word+1;
-    while(fs->current_word_copy->content[i].content.hash != then_hash){ //Note: not finding mathing then cause a fault
+    int if_depth = 1;
+    while(if_depth){ //Note: not finding mathing then cause a fault
+       if(fs->current_word_copy->content[i].content.hash != then_hash){
+           if_depth--;
+       }else if(fs->current_word_copy->content[i].content.hash != if_hash){
+           if_depth++;
+       }
        i++;
     } 
-    fs->pos.code.pos_in_word = i + 1;
+    fs->pos.code.pos_in_word = i;
 }
 
 // then
