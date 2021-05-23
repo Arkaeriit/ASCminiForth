@@ -5,6 +5,10 @@
 typedef int64_t amf_int_t;
 #define AMF_INT_PRINT PRId64
 
+//Optional fonctionalites and words. Set to 1 to enable and to 0 to disble
+//Enable reaading source files
+#define AMF_USE_SOURCE_FILE 1
+
 //Depth of the two stacks
 #define CODE_STACK_SIZE 100
 #define DATA_STACK_SIZE 100
@@ -23,9 +27,6 @@ typedef int64_t amf_int_t;
 
 //Log messages
 #define AMF_LOG 0
-
-//IO options
-#define IO_LONGUEST_LINE REGISTERABLE 700
 
 #if AMF_LOG
 #include "stdio.h"

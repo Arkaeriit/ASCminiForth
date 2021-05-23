@@ -1,4 +1,5 @@
 #include "parser.h"
+#include "stdio.h"
 #include "string.h"
 
 parser_state_t* amf_init_parser(void){
@@ -85,4 +86,20 @@ void amf_shell(void){
     }
     amf_clean_parser(parse);
 }
+
+#if AMF_USE_SOURCE_FILE
+error amf_register_file(parser_state_t* p, const char* filemane){
+    FILE* f = fopen(filemane, "r");
+    if(f == NULL){
+        return invalid_file;
+    }
+    int ch = fgetc(f);
+    while(ch != EOF){
+        amf_parse_char(p, ch);
+        ch = fgetc(f);
+    }
+    fclose(f);
+    return OK;
+}
+#endif
 
