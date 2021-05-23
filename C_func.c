@@ -194,6 +194,50 @@ static void until(forth_state_t* fs){
     }
 }
 
+// Memory management
+
+// cells
+static void cells(forth_state_t* fs){
+    amf_push_data(fs, amf_pop_data(fs) * sizeof(amf_int_t));
+}
+
+// here
+//This word is here fore compatibility with other Forth dialect but as the memory management of this dialect is different, it doesn't make sence to have a here word
+static void here(forth_state_t* fs){}
+
+// allot
+static void allot(forth_state_t* fs){
+    amf_int_t size = amf_pop_data(fs);
+    amf_push_data(fs, (amf_int_t) malloc(size));
+}
+
+// @
+static void fetch(forth_state_t* fs){
+    amf_int_t* addr = (amf_int_t*) amf_pop_data(fs);
+    amf_push_data(fs, *addr);
+}
+
+// !
+static void store(forth_state_t* fs){
+    amf_int_t* addr = (amf_int_t*) amf_pop_data(fs);
+    amf_int_t data = amf_pop_data(fs);
+    *addr = data;
+}
+
+// c@
+static void cfetch(forth_state_t* fs){
+    char* addr = (char*) amf_pop_data(fs);
+    amf_push_data(fs, (amf_int_t) *addr);
+}
+
+// c!
+static void cstore(forth_state_t* fs){
+    char* addr = (char*) amf_pop_data(fs);
+    amf_int_t data = amf_pop_data(fs);
+    *addr = (char) data;
+}
+
+
 // Misc
 
 // .
@@ -237,6 +281,14 @@ void amf_register_default_C_func(forth_state_t* fs){
     amf_register_cfunc(fs, "then", then);
     amf_register_cfunc(fs, "begin", begin);
     amf_register_cfunc(fs, "until", until);
+    // Memory management
+    amf_register_cfunc(fs, "allot", allot);
+    amf_register_cfunc(fs, "cells", cells);
+    amf_register_cfunc(fs, "here", here);
+    amf_register_cfunc(fs, "@", fetch);
+    amf_register_cfunc(fs, "!", store);
+    amf_register_cfunc(fs, "c@", cfetch);
+    amf_register_cfunc(fs, "c!", cstore);
     // Misc
     amf_register_cfunc(fs, ".", printNum);
     amf_register_cfunc(fs, "exit", exit_word);

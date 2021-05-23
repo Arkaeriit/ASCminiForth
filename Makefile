@@ -35,3 +35,6 @@ clean :
 	$(RM) *.bin
 	$(RM) *.o
 
+test : $(TARGET).bin
+	./$(TARGET).bin benchmark.frt
+
