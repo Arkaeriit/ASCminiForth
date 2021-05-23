@@ -3,7 +3,7 @@
 
 #include "inttypes.h"
 typedef int64_t word_t;
-#define WORD_PRINT PRIu64
+#define WORD_PRINT PRId64
 
 //Depth of the two stacks
 #define CODE_STACK_SIZE 100

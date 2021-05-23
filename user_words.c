@@ -147,6 +147,9 @@ static bool str_to_num(const char* str, word_t* num){
     int start = 0;
     if(str[0] == '-'){
         start = 1;
+        if(strlen(str) == 1){
+            return false;
+        }
     }
     for(int i=start; i<strlen(str); i++){ //Strating by the MSD
         *num *= 10; //The previous digit had more value than the current one so we multyply it

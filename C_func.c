@@ -62,6 +62,13 @@ static void add(forth_state_t* fs){
     amf_push_data(fs, w1 + w2);
 }
 
+// -
+static void sub(forth_state_t* fs){
+    word_t w1 = amf_pop_data(fs);
+    word_t w2 = amf_pop_data(fs);
+    amf_push_data(fs, w2 - w1);
+}
+
 // *
 static void mult(forth_state_t* fs){
     word_t w1 = amf_pop_data(fs);
@@ -141,7 +148,7 @@ static void IF(forth_state_t* fs){
 static void ELSE(forth_state_t* fs){
     hash_t then_hash = amf_hash("then");        
     size_t i=fs->pos.code.pos_in_word+1;
-    while(fs->current_word_copy->content[i].content.hash != then_hash){
+    while(fs->current_word_copy->content[i].content.hash != then_hash){ //Note: not finding mathing then cause a fault
        i++;
     } 
     fs->pos.code.pos_in_word = i + 1;
@@ -149,6 +156,29 @@ static void ELSE(forth_state_t* fs){
 
 // then
 static void then(forth_state_t* fs){};
+
+// begin
+static void begin(forth_state_t* fs){};
+
+// until
+static void until(forth_state_t* fs){
+    if(!amf_pop_data(fs)){
+        //Jumping to the correspinging until
+        hash_t begin_hash = amf_hash("begin");
+        hash_t until_hash = amf_hash("until");
+        size_t i = fs->pos.code.pos_in_word-2;
+        int loop_depth = 1;
+        while(loop_depth){ //Note: if no mathing begin is found, there is a fault
+            if(fs->current_word_copy->content[i].content.hash == begin_hash){
+                loop_depth--;
+            }else if(fs->current_word_copy->content[i].content.hash == until_hash){
+                loop_depth++;
+            }
+            i--;
+        }
+        fs->pos.code.pos_in_word = i+1;
+    }
+}
 
 // Misc
 
@@ -177,6 +207,7 @@ void amf_register_default_C_func(forth_state_t* fs){
     amf_register_cfunc(fs, "drop", drop);
     // Basic math
     amf_register_cfunc(fs, "+", add);
+    amf_register_cfunc(fs, "-", sub);
     amf_register_cfunc(fs, "*", mult);
     amf_register_cfunc(fs, "*/", multDiv);
     amf_register_cfunc(fs, "*/mod", multDivMod);
@@ -190,6 +221,8 @@ void amf_register_default_C_func(forth_state_t* fs){
     amf_register_cfunc(fs, "if", IF);
     amf_register_cfunc(fs, "else", ELSE);
     amf_register_cfunc(fs, "then", then);
+    amf_register_cfunc(fs, "begin", begin);
+    amf_register_cfunc(fs, "until", until);
     // Misc
     amf_register_cfunc(fs, ".", printNum);
     amf_register_cfunc(fs, "exit", exit_word);
