@@ -24,7 +24,7 @@ void amf_output(char ch){
 }
 
 void amf_init_io(void){}
-void amd_clean_io(void){}
+void amf_clean_io(void){}
 
 //Function that should not change depending on the implementation
 #include "string.h"
