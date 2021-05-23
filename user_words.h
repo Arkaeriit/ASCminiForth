@@ -10,13 +10,13 @@ typedef int compile_callback_t;
 typedef struct user_word_s {
     word_node_t* content;
     size_t size;
-} user_word_t;
+} user_amf_int_t;
 
 error amf_compile_user_word(struct forth_dictionary_s* fd, const char* name, size_t subword_n, char** subwords);
 error amf_compile_string(struct forth_dictionary_s* fs, const char* name, const char* str);
 word_node_t amf_compile_node(const char* str);
 bool amf_is_delimiter(char ch);
-void amf_clean_user_word(user_word_t* w);
+void amf_clean_user_word(user_amf_int_t* w);
 
 #endif
 

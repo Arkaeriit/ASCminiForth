@@ -6,7 +6,7 @@ forth_state_t* amf_init_state(void) {
     forth_state_t* ret = malloc(sizeof(forth_state_t));
     ret->data = malloc(sizeof(data_stack_t));
     ret->data->stack_pointer = 0;
-    ret->data->stack = malloc(sizeof(word_t) * DATA_STACK_SIZE);
+    ret->data->stack = malloc(sizeof(amf_int_t) * DATA_STACK_SIZE);
     ret->code = malloc(sizeof(code_stack_t));
     ret->code->stack_pointer = 0;
     ret->code->stack = malloc(sizeof(code_pointer_t) * CODE_STACK_SIZE);
@@ -29,15 +29,15 @@ void amf_clean_state(forth_state_t* fs){
 }
 
 //Pops the last element from the data stack
-word_t amf_pop_data(forth_state_t* fs){
+amf_int_t amf_pop_data(forth_state_t* fs){
     debug_msg("pop data at index: %zi\n",fs->data->stack_pointer-1);
-    word_t ret = fs->data->stack[fs->data->stack_pointer-1];
+    amf_int_t ret = fs->data->stack[fs->data->stack_pointer-1];
     fs->data->stack_pointer--;
     return ret;
 }
 
 //Push a new element to the data stack
-void amf_push_data(forth_state_t* fs, word_t w){
+void amf_push_data(forth_state_t* fs, amf_int_t w){
     debug_msg("push data at index: %zi\n",fs->data->stack_pointer);
     fs->data->stack[fs->data->stack_pointer] = w;
     fs->data->stack_pointer++;
@@ -108,8 +108,8 @@ void amf_executes_node(forth_state_t* fs, struct word_node_s* node){
             amf_print_string(node->content.string);
             break;
         case forth_string:
-            amf_push_data(fs, (word_t) node->content.string);
-            amf_push_data(fs, (word_t) strlen(node->content.string));
+            amf_push_data(fs, (amf_int_t) node->content.string);
+            amf_push_data(fs, (amf_int_t) strlen(node->content.string));
             break;
         default:
             break;

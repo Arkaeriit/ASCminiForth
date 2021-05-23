@@ -3,13 +3,13 @@
 
 static int words_in_str(const char* str);
 static char** cut_string(const char* str, size_t* list_size);
-static bool str_to_num(const char* str, word_t* num);
+static bool str_to_num(const char* str, amf_int_t* num);
 
 //This function compiles a new user words in the given dictionary
 //subword_n is the number of words in our definition
 //subwords is the list of the subwords
 error amf_compile_user_word(forth_dictionary_t* fd, const char* name, size_t subword_n, char** subwords) {
-    user_word_t* def = malloc(sizeof(user_word_t));
+    user_amf_int_t* def = malloc(sizeof(user_amf_int_t));
     def->size = subword_n;
     def->content = malloc(sizeof(word_node_t) * subword_n);
     for(size_t i=0; i<subword_n; i++){
@@ -25,7 +25,7 @@ error amf_compile_user_word(forth_dictionary_t* fd, const char* name, size_t sub
 word_node_t amf_compile_node(const char* str){
     word_node_t ret;
     //Checking if the string is a number
-    word_t num;
+    amf_int_t num;
     if(str_to_num(str, &num)){
         ret.type = raw_number;
         ret.content.value = num;
@@ -38,7 +38,7 @@ word_node_t amf_compile_node(const char* str){
         ret.content.string = true_string;
     //Else, its a call to an other word
     }else{
-        debug_msg("Registering word %s with hash %" WORD_PRINT ".\n", str, amf_hash(str));
+        debug_msg("Registering word %s with hash %" AMF_INT_PRINT ".\n", str, amf_hash(str));
         ret.type = normal_word;
         ret.content.hash = amf_hash(str);
     }
@@ -142,7 +142,7 @@ static char** cut_string(const char* str, size_t* list_size){
 
 //Convert a string to a number, return true if the string was a number
 //and false otherwize. Should be more minimal than scanf
-static bool str_to_num(const char* str, word_t* num){
+static bool str_to_num(const char* str, amf_int_t* num){
     *num = 0;
     int start = 0;
     if(str[0] == '-'){
@@ -166,7 +166,7 @@ static bool str_to_num(const char* str, word_t* num){
 }
 
 //This functions frees the memory used in an user word
-void amf_clean_user_word(user_word_t* w){
+void amf_clean_user_word(user_amf_int_t* w){
     for(size_t i=0; i<w->size; i++){
         word_node_t n = w->content[i];
         switch(n.type){

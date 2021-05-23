@@ -37,9 +37,9 @@ void amf_print_string(const char* str){
 }
 
 //print a number I will, in the future, make it lighter than using sprintf
-void amf_print_num(word_t num){
+void amf_print_num(amf_int_t num){
     char buf[100];
-    sprintf(buf, "%" WORD_PRINT " ", num);
+    sprintf(buf, "%" AMF_INT_PRINT " ", num);
     amf_print_string(buf);
 }
 

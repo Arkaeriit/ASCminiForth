@@ -5,7 +5,7 @@
 #include "stdbool.h"
 
 //Define what kind of content con be found in a word definition
-enum word_type {
+enum amf_int_type {
     normal_word,   //Words found in the dictionary
     raw_number, //User-inputed word such as 3, 6, 8
     printed_string, //String to print such as ." coucou"
@@ -14,10 +14,10 @@ enum word_type {
 
 //This struct rpresunt each words called in a word definition
 typedef struct word_node_s {
-    enum word_type type;
+    enum amf_int_type type;
     union {
         hash_t hash;        //To find the word in the dictionary
-        word_t value;       //When used as a raw number
+        amf_int_t value;       //When used as a raw number
         char* string; //When used as a printd string or a raw_string
     } content;
 } word_node_t;
@@ -30,7 +30,7 @@ typedef union {
         hash_t current_word;
         size_t pos_in_word;
     } code;
-    word_t optional_data;
+    amf_int_t optional_data;
 } code_pointer_t;
 
 //The code stack
@@ -41,7 +41,7 @@ typedef struct {
 
 //The main stack
 typedef struct {
-    word_t* stack;
+    amf_int_t* stack;
     size_t stack_pointer;
 } data_stack_t;
 
@@ -63,8 +63,8 @@ typedef struct {
 forth_state_t* amf_init_state(void);
 void amf_clean_state(forth_state_t* fs);
 
-word_t amf_pop_data(forth_state_t* fs);
-void amf_push_data(forth_state_t* fs, word_t w);
+amf_int_t amf_pop_data(forth_state_t* fs);
+void amf_push_data(forth_state_t* fs, amf_int_t w);
 void amf_push_code(forth_state_t* fs, code_pointer_t p);
 code_pointer_t amf_pop_code(forth_state_t* fs);
 

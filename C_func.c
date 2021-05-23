@@ -25,17 +25,17 @@ void amf_register_cfunc(forth_state_t* fs, const char* name, C_callback_t func){
 
 // swap
 static void swap(forth_state_t* fs){
-    word_t w1 = amf_pop_data(fs);
-    word_t w2 = amf_pop_data(fs);
+    amf_int_t w1 = amf_pop_data(fs);
+    amf_int_t w2 = amf_pop_data(fs);
     amf_push_data(fs, w1);
     amf_push_data(fs, w2);
 }
 
 // rot
 static void rot(forth_state_t* fs){
-    word_t w1 = amf_pop_data(fs);
-    word_t w2 = amf_pop_data(fs);
-    word_t w3 = amf_pop_data(fs);
+    amf_int_t w1 = amf_pop_data(fs);
+    amf_int_t w2 = amf_pop_data(fs);
+    amf_int_t w3 = amf_pop_data(fs);
     amf_push_data(fs, w2);
     amf_push_data(fs, w1);
     amf_push_data(fs, w3);
@@ -43,7 +43,7 @@ static void rot(forth_state_t* fs){
 
 // dup
 static void dup(forth_state_t* fs){
-    word_t w1 = amf_pop_data(fs);
+    amf_int_t w1 = amf_pop_data(fs);
     amf_push_data(fs, w1);
     amf_push_data(fs, w1);
 }
@@ -57,55 +57,55 @@ static void drop(forth_state_t* fs){
 
 // +
 static void add(forth_state_t* fs){
-    word_t w1 = amf_pop_data(fs);
-    word_t w2 = amf_pop_data(fs);
+    amf_int_t w1 = amf_pop_data(fs);
+    amf_int_t w2 = amf_pop_data(fs);
     amf_push_data(fs, w1 + w2);
 }
 
 // -
 static void sub(forth_state_t* fs){
-    word_t w1 = amf_pop_data(fs);
-    word_t w2 = amf_pop_data(fs);
+    amf_int_t w1 = amf_pop_data(fs);
+    amf_int_t w2 = amf_pop_data(fs);
     amf_push_data(fs, w2 - w1);
 }
 
 // *
 static void mult(forth_state_t* fs){
-    word_t w1 = amf_pop_data(fs);
-    word_t w2 = amf_pop_data(fs);
+    amf_int_t w1 = amf_pop_data(fs);
+    amf_int_t w2 = amf_pop_data(fs);
     amf_push_data(fs, w1 * w2);
 }
 
 // */
 static void multDiv(forth_state_t* fs){
-    word_t w1 = amf_pop_data(fs);
-    word_t w2 = amf_pop_data(fs);
-    word_t d3 = amf_pop_data(fs);
-    word_t tmp = d3 * w2;
+    amf_int_t w1 = amf_pop_data(fs);
+    amf_int_t w2 = amf_pop_data(fs);
+    amf_int_t d3 = amf_pop_data(fs);
+    amf_int_t tmp = d3 * w2;
     amf_push_data(fs, tmp / w1);
 }
 
 // */MOD
 static void multDivMod(forth_state_t* fs){
-    word_t w1 = amf_pop_data(fs);
-    word_t w2 = amf_pop_data(fs);
-    word_t d3 = amf_pop_data(fs);
-    word_t tmp = d3 * w2;
+    amf_int_t w1 = amf_pop_data(fs);
+    amf_int_t w2 = amf_pop_data(fs);
+    amf_int_t d3 = amf_pop_data(fs);
+    amf_int_t tmp = d3 * w2;
     amf_push_data(fs, tmp % w1);
     amf_push_data(fs, tmp / w1);
 }
 
 // /
 static void Div(forth_state_t* fs){
-    word_t w1 = amf_pop_data(fs);
-    word_t w2 = amf_pop_data(fs);
+    amf_int_t w1 = amf_pop_data(fs);
+    amf_int_t w2 = amf_pop_data(fs);
     amf_push_data(fs, w2 / w1);
 }
 
 // /MOD
 static void divMod(forth_state_t* fs){
-    word_t w1 = amf_pop_data(fs);
-    word_t w2 = amf_pop_data(fs);
+    amf_int_t w1 = amf_pop_data(fs);
+    amf_int_t w2 = amf_pop_data(fs);
     amf_push_data(fs, w2 % w1);
     amf_push_data(fs, w2 / w1);
 }
@@ -131,7 +131,7 @@ static void eq(forth_state_t* fs){
 
 // if
 static void IF(forth_state_t* fs){
-    word_t w1 = amf_pop_data(fs);
+    amf_int_t w1 = amf_pop_data(fs);
     if(!w1){ //If w1 is not true, we want to get to the next else or the next then
         hash_t else_hash = amf_hash("else");        
         hash_t then_hash = amf_hash("then");        
@@ -198,7 +198,7 @@ static void until(forth_state_t* fs){
 
 // .
 static void printNum(forth_state_t* fs){
-    word_t w1 = amf_pop_data(fs);
+    amf_int_t w1 = amf_pop_data(fs);
     amf_print_num(w1);
 }
 

@@ -2,8 +2,8 @@
 #define AMF_CONFIG_H
 
 #include "inttypes.h"
-typedef int64_t word_t;
-#define WORD_PRINT PRId64
+typedef int64_t amf_int_t;
+#define AMF_INT_PRINT PRId64
 
 //Depth of the two stacks
 #define CODE_STACK_SIZE 100

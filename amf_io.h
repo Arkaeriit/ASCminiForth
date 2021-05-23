@@ -9,7 +9,7 @@ void amf_init_io(void);
 void amf_clean_io(void);
 
 void amf_print_string(const char* str);
-void amf_print_num(word_t num);
+void amf_print_num(amf_int_t num);
 
 #endif
 
