@@ -12,6 +12,7 @@ parser_state_t* amf_init_parser(void){
     ret->in_def = false;
     ret->writing_definition_s_name = false;
     ret->is_in_parenthesis = false;
+    ret->is_between_quotes = false;
     amf_init_io();
     return ret;
 }
@@ -25,20 +26,23 @@ void amf_clean_parser(parser_state_t* parse){
 }
 
 void amf_parse_char(parser_state_t* parse, char ch){
+    if(ch == '"'){
+        parse->is_between_quotes = !parse->is_between_quotes;
+    }
     if(ch == '('){
         parse->is_in_parenthesis = true;
     }else if(parse->is_in_parenthesis){
         if(ch == ')'){
             parse->is_in_parenthesis = false;
         }
-    }else if(ch == ':'){
+    }else if(ch == ':' && !parse->is_between_quotes){
         if(!parse->in_def){
             parse->in_def = true;
             parse->writing_definition_s_name = true;
         }else{
             //error
         }
-    }else if(ch == ';'){
+    }else if(ch == ';' && !parse->is_between_quotes){
         if(parse->in_def){
             parse->in_def = false;
             parse->buffer[parse->pnt] = 0;
@@ -48,7 +52,7 @@ void amf_parse_char(parser_state_t* parse, char ch){
         }else{
             //error
         }
-    }else if(amf_is_delimiter(ch)){
+    }else if(amf_is_delimiter(ch) && !parse->is_between_quotes){
         if(parse->in_word){
             if(parse->writing_definition_s_name){
                 parse->buffer[parse->pnt] = 0;

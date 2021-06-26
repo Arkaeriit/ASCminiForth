@@ -11,6 +11,7 @@ typedef struct {
     bool in_def;  //Are we writing a definition
     bool writing_definition_s_name; //Are we writing the first word of a definition (it's name)
     bool is_in_parenthesis; //are we in a ( xx ) comment
+    bool is_between_quotes; //Are we betweens " quotes "
 } parser_state_t;
 
 parser_state_t* amf_init_parser(void);
