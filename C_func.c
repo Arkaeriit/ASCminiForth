@@ -139,9 +139,10 @@ static void IF(forth_state_t* fs){
         size_t i=fs->pos.code.pos_in_word+1;
         int if_depth = 1;
         while(if_depth){
-            if(fs->current_word_copy->content[i].content.hash != else_hash && fs->current_word_copy->content[i].content.hash != then_hash){
+            word_node_t target_node = fs->current_word_copy->content[i];
+            if(target_node.content.hash == else_hash || target_node.content.hash == then_hash){
                 if_depth--;
-            }else if(fs->current_word_copy->content[i].content.hash != if_hash){
+            }else if(target_node.content.hash == if_hash){
                if_depth++;
             }
             i++;
@@ -158,12 +159,14 @@ static void ELSE(forth_state_t* fs){
     size_t i=fs->pos.code.pos_in_word+1;
     int if_depth = 1;
     while(if_depth){ //Note: not finding mathing then cause a fault
-       if(fs->current_word_copy->content[i].content.hash != then_hash){
+        /*printf("%li, %i\n",i, if_depth);*/
+        word_node_t target_node = fs->current_word_copy->content[i];
+        if(target_node.content.hash == then_hash && target_node.type == normal_word){
            if_depth--;
-       }else if(fs->current_word_copy->content[i].content.hash != if_hash){
+        }else if(target_node.content.hash == if_hash && target_node.type == normal_word){
            if_depth++;
-       }
-       i++;
+        }
+        i++;
     } 
     fs->pos.code.pos_in_word = i;
 }
