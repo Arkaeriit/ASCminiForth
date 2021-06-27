@@ -64,17 +64,24 @@ error amf_compile_string(forth_dictionary_t* fd, const char* name, const char* s
 static int words_in_str(const char* str){
     int ret= 0;
     bool pointing_to_word = false;
+    bool in_quotes = false;
     for(size_t i=0; i<strlen(str); i++){
-       if(pointing_to_word){
-          if(amf_is_delimiter(str[i])){
-             pointing_to_word = false;
-          }
-       }else{
-          if(!amf_is_delimiter(str[i])){
-             pointing_to_word = true;
-            ret++;
-          }
-       } 
+        if(str[i] == '"'){
+            in_quotes = !in_quotes;
+        }
+        if(in_quotes){
+            continue;
+        }
+        if(pointing_to_word){
+            if(amf_is_delimiter(str[i])){
+                pointing_to_word = false;
+            }
+        }else{
+            if(!amf_is_delimiter(str[i])){
+                pointing_to_word = true;
+                ret++;
+            }
+        } 
     }
     return ret;
 }
@@ -97,7 +104,14 @@ static char** cut_string(const char* str, size_t* list_size){
     size_t word_included = 0;
     bool pointing_to_word = false;
     size_t word_start;
+    bool in_quotes = false;
     for(size_t i=0; i<strlen(str); i++){
+        if(str[i] == '"'){
+            in_quotes = !in_quotes;
+        }
+        if(in_quotes){
+            continue;
+        }
         if(pointing_to_word){
             if(amf_is_delimiter(str[i])){
                 pointing_to_word = false;
@@ -108,24 +122,8 @@ static char** cut_string(const char* str, size_t* list_size){
             }
         }else{
             if(!amf_is_delimiter(str[i])){
-                if((str[i] == '.' || str[i] == '"') && str[i+1] == '"'){ //A string is given, its content might be spread among multiple delimitors
-                    size_t end_raw_string = i+2;
-                    while(end_raw_string < strlen(str) && str[end_raw_string] != '"'){
-                        end_raw_string++;
-                    }
-                    if(end_raw_string >= strlen(str)){
-                        //Error, closing quote not found
-                    }
-                    size_t raw_string_size = end_raw_string - i + 1; //Computing the size of the eaw_string, the overhead characters are taken into account
-                    ret[word_included] = malloc(raw_string_size + 1);
-                    memcpy(ret[word_included], str + i, raw_string_size);
-                    ret[word_included][raw_string_size] = 0;
-                    word_included++;
-                    i = end_raw_string + 1;
-                }else{ //A single word that will be compiled alone
-                    pointing_to_word = true;
-                    word_start = i;
-                }
+                pointing_to_word = true;
+                word_start = i;
             }
         } 
     }
