@@ -1,3 +1,5 @@
+( This file contain various test function used to validate )
+( the words from ASCminiForth that are complient to the Forth standard )
 
 : TEST.. ." Printing 0: " 0 . CR ;
 : is_true IF ." OK. " ELSE ." Failed! " THEN ;

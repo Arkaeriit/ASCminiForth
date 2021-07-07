@@ -1,5 +1,6 @@
 #include "C_func.h"
 #include "stdio.h"
+#include "string.h"
 
 //Functions used to manipulate C_fun
 
@@ -241,6 +242,21 @@ static void cstore(forth_state_t* fs){
 }
 
 
+// C strings
+
+// print
+static void put_str(forth_state_t* fs){
+    char* str = (char*) amf_pop_data(fs);
+    printf("%s", str);
+}
+
+// strlen
+static void str_len(forth_state_t* fs){
+    char* str = (char*) amf_pop_data(fs);
+    amf_push_data(fs, (amf_int_t) strlen(str));
+}
+
+
 // Misc
 
 // .
@@ -292,6 +308,9 @@ void amf_register_default_C_func(forth_state_t* fs){
     amf_register_cfunc(fs, "!", store);
     amf_register_cfunc(fs, "c@", cfetch);
     amf_register_cfunc(fs, "c!", cstore);
+    // C strings
+    amf_register_cfunc(fs, "print", put_str);
+    amf_register_cfunc(fs, "strlen", str_len);
     // Misc
     amf_register_cfunc(fs, ".", printNum);
     amf_register_cfunc(fs, "exit", exit_word);
