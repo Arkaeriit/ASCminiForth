@@ -15,8 +15,8 @@ typedef int64_t amf_int_t;
 
 //Dummy values to put in the state's code position to indicate that
 //the interpreter is idling and not inside a function
-#define IDLE_CURRENT_WORD ~0
-#define IDLE_POS_IN_WORD  ~0
+#define IDLE_CURRENT_WORD (hash_t) ~0
+#define IDLE_POS_IN_WORD  (size_t) ~0
 
 //Parser configuration
 #define PARSER_BUFFER_SIZE 700

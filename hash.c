@@ -43,7 +43,7 @@ static uint32_t rc_crc32(uint32_t crc, const char *buf, size_t len)
 //Returns the CRC32 of a C-string
 #include "inttypes.h"
 hash_t amf_hash(const char* data){
-#ifdef AMF_CASE_INSENSITIVE
+#if AMF_CASE_INSENSITIVE
     char cpy[strlen(data) + 1];
     for(size_t i=0; i<strlen(data); i++){
         if('a' <= data[i] && data[i] <= 'z'){

@@ -57,7 +57,7 @@ error amf_compile_string(forth_dictionary_t* fd, const char* name, const char* s
    char** subwords = cut_string(str, &nwords);
    debug_msg("There is %i words in the definition of %s [%s].\n", nwords, name, str);
    error rc = amf_compile_user_word(fd, name, nwords, subwords);
-   for(int i=0; i<nwords; i++){
+   for(size_t i=0; i<nwords; i++){
        free(subwords[i]);
    }
    free(subwords);
@@ -153,7 +153,7 @@ static bool str_to_num(const char* str, amf_int_t* num){
             return false;
         }
     }
-    for(int i=start; i<strlen(str); i++){ //Strating by the MSD
+    for(size_t i=start; i<strlen(str); i++){ //Strating by the MSD
         *num *= 10; //The previous digit had more value than the current one so we multyply it
         if('0' <= str[i] && str[i] <= '9'){
             *num += str[i] - '0';

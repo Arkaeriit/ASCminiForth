@@ -1,5 +1,5 @@
 # Flags
-FLAGS := -Wall -g
+CFLAGS ?= -Werror -Wall -Wextra -g
 
 # Files lists
 C_SRC := hash.c dictionary.c forth_state.c C_func.c main.c user_words.c parser.c amf_io.c
@@ -19,10 +19,10 @@ all : $(TARGET).bin
 #all : $(C_OBJS)
 
 %.o : %.c
-	$(CC) -c $< $(FLAGS) -o $@
+	$(CC) -c $< $(CFLAGS) -o $@
 
 $(TARGET).bin : $(C_OBJS)
-	$(CC) $(C_OBJS) $(FLAGS) -o $@
+	$(CC) $(C_OBJS) $(CFLAGS) -o $@
 
 install :
 	mkdir -p $(TARGET_DIR_BIN)

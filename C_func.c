@@ -2,6 +2,8 @@
 #include "stdio.h"
 #include "string.h"
 
+#define UNUSED(x) (void)(x)
+
 //Functions used to manipulate C_fun
 
 //Call a known valid C_func from the dictionary
@@ -177,10 +179,14 @@ static void ELSE(forth_state_t* fs){
 }
 
 // then
-static void then(forth_state_t* fs){};
+static void then(forth_state_t* fs){
+	UNUSED(fs);
+};
 
 // begin
-static void begin(forth_state_t* fs){};
+static void begin(forth_state_t* fs){
+	UNUSED(fs);
+};
 
 // until
 static void until(forth_state_t* fs){
@@ -211,7 +217,9 @@ static void cells(forth_state_t* fs){
 
 // here
 //This word is here fore compatibility with other Forth dialect but as the memory management of this dialect is different, it doesn't make sence to have a here word
-static void here(forth_state_t* fs){}
+static void here(forth_state_t* fs){
+	UNUSED(fs);
+}
 
 // allot
 static void allot(forth_state_t* fs){
@@ -276,6 +284,7 @@ static void exit_word(forth_state_t* fs){
 
 // CR
 static void cr(forth_state_t* fs){
+	UNUSED(fs);
     amf_output('\n');
 }
 
