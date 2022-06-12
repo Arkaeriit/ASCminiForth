@@ -18,6 +18,9 @@ typedef struct {
     } func;
     enum entry_type type;
     hash_t hash;
+#if AMF_LOG
+	char* name;
+#endif
 } entry_t;
 
 //This structure represent the dictionary. Should be used as a bynamic array. The values should be sorted 

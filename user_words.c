@@ -19,6 +19,10 @@ error amf_compile_user_word(forth_dictionary_t* fd, const char* name, size_t sub
     e.hash = amf_hash(name);
     e.type = FORTH_word;
     e.func.F_word = def;
+#if AMF_LOG
+	e.name = malloc(strlen(name) + 1);
+	strcpy(e.name, name);
+#endif
     return amf_add_elem(fd, e);
 }
 

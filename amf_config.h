@@ -23,10 +23,10 @@ typedef int64_t amf_int_t;
 #define PARSER_CUSTOM_NAME_SIZE 25
 
 //Case-sensitivity
-#define AMF_CASE_INSENSITIVE
+#define AMF_CASE_INSENSITIVE 1
 
 //Log messages
-#define AMF_LOG 0
+#define AMF_LOG 1
 
 #if AMF_LOG
 #include "stdio.h"
