@@ -2,8 +2,8 @@
 #define AMF_CONFIG_H
 
 #include "inttypes.h"
-typedef int64_t amf_int_t;
-#define AMF_INT_PRINT PRId64
+typedef intptr_t amf_int_t;
+#define AMF_INT_PRINT PRIdPTR
 
 //Optional fonctionalites and words. Set to 1 to enable and to 0 to disble
 //Enable reaading source files
