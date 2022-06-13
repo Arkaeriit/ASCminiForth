@@ -149,16 +149,10 @@ static char** cut_string(const char* str, size_t* list_size){
 static bool str_to_num(const char* str, amf_int_t* num, int base) {
 	char* end;
 	*num = strtoll(str, &end, base);
-	if (*num && ((size_t) (end - str)) == strlen(str)) {
+	if ((size_t) (end - str) == strlen(str)) {
 		return true;
 	}
-	for (size_t i=0; i<strlen(str); i++) {
-		if (str[i] != '0') {
-			return false;
-		}
-	}
-	return true;
-
+	return false;
 }
 
 //This functions frees the memory used in an user word
