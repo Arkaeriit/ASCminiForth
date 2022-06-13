@@ -12,7 +12,7 @@ void amf_register_cfunc(forth_state_t* fs, const char* name, C_callback_t func) 
     e.type = C_word;
     e.hash = amf_hash(name);
     e.func.C_func = func;
-#if AMF_LOG
+#if AMF_STORE_NAME
 	e.name = malloc(strlen(name) + 1);
 	strcpy(e.name, name);
 #endif

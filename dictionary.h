@@ -18,7 +18,7 @@ typedef struct {
     } func;
     enum entry_type type;
     hash_t hash;
-#if AMF_LOG
+#if AMF_STORE_NAME
 	char* name;
 #endif
 } entry_t;

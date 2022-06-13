@@ -37,7 +37,7 @@ static void sort_dic(forth_dictionary_t* fd) {
 
 //This function frees the memory used in a word
 static void free_word(entry_t e){
-#if AMF_LOG
+#if AMF_STORE_NAME
 	free(e.name);
 #endif
     switch(e.type){

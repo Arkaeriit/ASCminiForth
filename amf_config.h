@@ -26,7 +26,10 @@ typedef intptr_t amf_int_t;
 #define AMF_CASE_INSENSITIVE 1
 
 //Log messages
-#define AMF_LOG 1
+#define AMF_LOG 0
+
+//Store name alongside word
+#define AMF_STORE_NAME 1
 
 #if AMF_LOG
 #include "stdio.h"
