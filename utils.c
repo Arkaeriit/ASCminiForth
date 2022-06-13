@@ -16,7 +16,7 @@ char* amf_base_format(amf_int_t i, char* out, int base) {
 		if (mod <= 9) {
 			c = mod + '0';
 		} else {
-			c = mod + 'A';
+			c = mod + 'A' - 10;
 		}
 		*p = c;
 		p--;

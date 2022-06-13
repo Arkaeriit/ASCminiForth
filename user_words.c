@@ -3,17 +3,17 @@
 
 static int words_in_str(const char* str);
 static char** cut_string(const char* str, size_t* list_size);
-static bool str_to_num(const char* str, amf_int_t* num);
+static bool str_to_num(const char* str, amf_int_t* num, int base);
 
 //This function compiles a new user words in the given dictionary
 //subword_n is the number of words in our definition
 //subwords is the list of the subwords
-error amf_compile_user_word(forth_dictionary_t* fd, const char* name, size_t subword_n, char** subwords) {
+error amf_compile_user_word(forth_dictionary_t* fd, const char* name, size_t subword_n, char** subwords, int base) {
     user_amf_int_t* def = malloc(sizeof(user_amf_int_t));
     def->size = subword_n;
     def->content = malloc(sizeof(word_node_t) * subword_n);
     for(size_t i=0; i<subword_n; i++){
-        def->content[i] = amf_compile_node(subwords[i]); 
+        def->content[i] = amf_compile_node(subwords[i], base); 
     }
     entry_t e;
     e.hash = amf_hash(name);
@@ -26,11 +26,11 @@ error amf_compile_user_word(forth_dictionary_t* fd, const char* name, size_t sub
     return amf_add_elem(fd, e);
 }
 
-word_node_t amf_compile_node(const char* str){
+word_node_t amf_compile_node(const char* str, int base){
     word_node_t ret;
     //Checking if the string is a number
     amf_int_t num;
-    if(str_to_num(str, &num)){
+    if(str_to_num(str, &num, base)){
         ret.type = raw_number;
         ret.content.value = num;
     //Checking if it is a raw string
@@ -52,11 +52,11 @@ word_node_t amf_compile_node(const char* str){
 static const char* word_delimiters = " \t\n\r";
 //This functions takes a string such as "1 1 + ." and compiles it
 //as a C word
-error amf_compile_string(forth_dictionary_t* fd, const char* name, const char* str){
+error amf_compile_string(forth_dictionary_t* fd, const char* name, const char* str, int base){
    size_t nwords;
    char** subwords = cut_string(str, &nwords);
    debug_msg("There is %i words in the definition of %s [%s].\n", nwords, name, str);
-   error rc = amf_compile_user_word(fd, name, nwords, subwords);
+   error rc = amf_compile_user_word(fd, name, nwords, subwords, base);
    for(size_t i=0; i<nwords; i++){
        free(subwords[i]);
    }
@@ -142,29 +142,23 @@ static char** cut_string(const char* str, size_t* list_size){
     return ret;
 }
 
-//Convert a string to a number, return true if the string was a number
-//and false otherwize. Should be more minimal than scanf
-static bool str_to_num(const char* str, amf_int_t* num){
-    *num = 0;
-    int start = 0;
-    if(str[0] == '-'){
-        start = 1;
-        if(strlen(str) == 1){
-            return false;
-        }
-    }
-    for(size_t i=start; i<strlen(str); i++){ //Strating by the MSD
-        *num *= 10; //The previous digit had more value than the current one so we multyply it
-        if('0' <= str[i] && str[i] <= '9'){
-            *num += str[i] - '0';
-        }else{
-            return false;
-        }
-    }
-    if(start == 1){
-        *num *= -1;
-    }
-    return true;
+// Convert a string to a number, return true if the string was a number and
+// false otherwise. stroll cannot be used alone as we need to differentiate
+// valid 0 from errors.
+#include <stdio.h>
+static bool str_to_num(const char* str, amf_int_t* num, int base) {
+	char* end;
+	*num = strtoll(str, &end, base);
+	if (*num && ((size_t) (end - str)) == strlen(str)) {
+		return true;
+	}
+	for (size_t i=0; i<strlen(str); i++) {
+		if (str[i] != '0') {
+			return false;
+		}
+	}
+	return true;
+
 }
 
 //This functions frees the memory used in an user word

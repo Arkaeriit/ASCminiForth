@@ -61,7 +61,7 @@ void amf_parse_char(parser_state_t * parse, char ch) {
             parse->buffer[parse->pnt] = 0;
             parse->in_word = false;
             parse->pnt = 0;
-            amf_compile_string(parse->fs->dic, parse->custom_word_name, parse->buffer);
+            amf_compile_string(parse->fs->dic, parse->custom_word_name, parse->buffer, parse->fs->base);
         } else {
             //error
         }
@@ -83,7 +83,7 @@ void amf_parse_char(parser_state_t * parse, char ch) {
                 parse->buffer[parse->pnt] = 0;
                 parse->in_word = false;
                 parse->pnt = 0;
-                word_node_t node_to_exe = amf_compile_node(parse->buffer);
+                word_node_t node_to_exe = amf_compile_node(parse->buffer, parse->fs->base);
                 amf_executes_node(parse->fs, &node_to_exe);
                 amf_run(parse->fs);
             }
