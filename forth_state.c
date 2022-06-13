@@ -14,6 +14,7 @@ forth_state_t* amf_init_state(void) {
     amf_register_default_C_func(ret);
     ret->pos.code.current_word = IDLE_CURRENT_WORD;
     ret->pos.code.pos_in_word = IDLE_POS_IN_WORD;
+	ret->base = 10;
     ret->running = true;
     return ret;
 }

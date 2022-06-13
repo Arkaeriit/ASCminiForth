@@ -31,6 +31,9 @@ typedef intptr_t amf_int_t;
 //Store name alongside word
 #define AMF_STORE_NAME 1
 
+// Max number of digits in a number
+#define AMF_MAX_NUMBER_DIGIT 64
+
 #if AMF_LOG
 #include "stdio.h"
 #include "stdarg.h"

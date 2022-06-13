@@ -1,6 +1,7 @@
 #include "C_func.h"
 #include "stdio.h"
 #include "string.h"
+#include "utils.h"
 
 #define UNUSED(x) (void)(x)
 
@@ -272,7 +273,9 @@ static void str_len(forth_state_t* fs) {
 // .
 static void printNum(forth_state_t* fs) {
     amf_int_t w1 = amf_pop_data(fs);
-    amf_print_num(w1);
+	char buff[AMF_MAX_NUMBER_DIGIT];
+	char* str = amf_base_format(w1, buff, fs->base);
+	amf_print_string(str);
 }
 
 // exit
@@ -284,6 +287,12 @@ static void exit_word(forth_state_t* fs) {
 static void cr(forth_state_t* fs) {
     UNUSED(fs);
     amf_output('\n');
+}
+
+// base
+static void base(forth_state_t* fs) {
+	amf_int_t* base_pnt = &fs->base;
+	amf_push_data(fs, (amf_int_t) base_pnt);
 }
 
 struct c_func_s {
@@ -331,6 +340,7 @@ struct c_func_s all_default_c_func[] = {
     {".", printNum},
     {"exit", exit_word},
     {"cr", cr},
+    {"base", base},
 };
 
 //Register all the default C_func

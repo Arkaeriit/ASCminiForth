@@ -47,16 +47,18 @@ typedef struct {
 
 //The interpreter's state
 typedef struct {
-    //The two stack used by the interpreter
+    // The two stack used by the interpreter
     data_stack_t* data;
     code_stack_t* code;
-    //The dictionary
+    // The dictionary
     struct forth_dictionary_s* dic;
-    //A copy of the word being processed, to ensure fast access
+    // A copy of the word being processed, to ensure fast access
     struct user_word_s* current_word_copy;
-    //The current word being processed, its hash and the position in it
+    // The current word being processed, its hash and the position in it
     code_pointer_t pos;
-    //True by default, set to false when running exit when the code stack is empty
+	// The base	internal variable used by words such as . and when inputing numbers
+	amf_int_t base;
+    // True by default, set to false when running exit when the code stack is empty
     bool running;
 } forth_state_t;
 
