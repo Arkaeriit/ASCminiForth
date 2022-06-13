@@ -26,3 +26,6 @@ For the sake of compatibility with other Forth, the word `HERE` is included but 
 
 To make the language easier, only one type of number is supported. There is no number using two cells. Furthermore, as the cell should be able to contain raw pointers, it should be large enough. The default type for the cell defined in `amf_config.h` is `intptr_t`.
 
+### Case
+
+By default, ASCminiForth is case-insensitive. You can enable case-sensitivity in `amf_config.h`. If the case-sensitivity is enabled, the default Forth words can be both upper or lower case.

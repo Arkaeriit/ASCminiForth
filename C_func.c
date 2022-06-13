@@ -13,8 +13,8 @@ void amf_register_cfunc(forth_state_t* fs, const char* name, C_callback_t func) 
     e.hash = amf_hash(name);
     e.func.C_func = func;
 #if AMF_STORE_NAME
-	e.name = malloc(strlen(name) + 1);
-	strcpy(e.name, name);
+    e.name = malloc(strlen(name) + 1);
+    strcpy(e.name, name);
 #endif
     amf_add_elem(fs->dic, e);
 }
@@ -173,12 +173,12 @@ static void ELSE(forth_state_t* fs) {
 
 // then
 static void then(forth_state_t* fs) {
-	UNUSED(fs);
+    UNUSED(fs);
 };
 
 // begin
 static void begin(forth_state_t* fs) {
-	UNUSED(fs);
+    UNUSED(fs);
 };
 
 // until
@@ -211,12 +211,12 @@ static void cells(forth_state_t* fs) {
 // here
 //This word is here fore compatibility with other Forth dialect but as the memory management of this dialect is different, it doesn't make sence to have a here word
 static void here(forth_state_t* fs) {
-	UNUSED(fs);
+    UNUSED(fs);
 }
 
 // free
 static void FREE(forth_state_t* fs) {
-	free((void*) amf_pop_data(fs));
+    free((void*) amf_pop_data(fs));
 }
 
 // allot
@@ -282,50 +282,73 @@ static void exit_word(forth_state_t* fs) {
 
 // CR
 static void cr(forth_state_t* fs) {
-	UNUSED(fs);
+    UNUSED(fs);
     amf_output('\n');
 }
 
+struct c_func_s {
+    const char* name;
+    void (*func)(forth_state_t*);
+};
+
+struct c_func_s all_default_c_func[] = {
+    // Stack manipulation
+    {"swap", swap},
+    {"rot", rot},
+    {"dup", dup},
+    {"drop", drop},
+    // Basic math
+    {"+", add},
+    {"-", sub},
+    {"*", mult},
+    {"*/", multDiv},
+    {"*/mod", multDivMod},
+    {"/", Div},
+    {"/mod", divMod},
+    // Boolean logic
+    {"0<", less0},
+    {"0=", eq0},
+    {"=", eq},
+    // Flow control
+    {"if", IF},
+    {"else", ELSE},
+    {"then", then},
+    {"begin", begin},
+    {"until", until},
+    // Memory management
+    {"allot", allot},
+    {"cells", cells},
+    {"here", here},
+    {"free", FREE},
+    {"@", fetch},
+    {"!", store},
+    {"c@", cfetch},
+    {"c!", cstore},
+    // C strings
+    {"print", put_str},
+    {"strlen", str_len},
+    // Misc
+    {".", printNum},
+    {"exit", exit_word},
+    {"cr", cr},
+};
+
 //Register all the default C_func
 void amf_register_default_C_func(forth_state_t* fs) {
-    // Stack manipulation
-    amf_register_cfunc(fs, "swap", swap);
-    amf_register_cfunc(fs, "rot", rot);
-    amf_register_cfunc(fs, "dup", dup);
-    amf_register_cfunc(fs, "drop", drop);
-    // Basic math
-    amf_register_cfunc(fs, "+", add);
-    amf_register_cfunc(fs, "-", sub);
-    amf_register_cfunc(fs, "*", mult);
-    amf_register_cfunc(fs, "*/", multDiv);
-    amf_register_cfunc(fs, "*/mod", multDivMod);
-    amf_register_cfunc(fs, "/", Div);
-    amf_register_cfunc(fs, "/mod", divMod);
-    // Boolean logic
-    amf_register_cfunc(fs, "0<", less0);
-    amf_register_cfunc(fs, "0=", eq0);
-    amf_register_cfunc(fs, "=", eq);
-    // Flow control
-    amf_register_cfunc(fs, "if", IF);
-    amf_register_cfunc(fs, "else", ELSE);
-    amf_register_cfunc(fs, "then", then);
-    amf_register_cfunc(fs, "begin", begin);
-    amf_register_cfunc(fs, "until", until);
-    // Memory management
-    amf_register_cfunc(fs, "allot", allot);
-    amf_register_cfunc(fs, "cells", cells);
-    amf_register_cfunc(fs, "here", here);
-    amf_register_cfunc(fs, "free", FREE);
-    amf_register_cfunc(fs, "@", fetch);
-    amf_register_cfunc(fs, "!", store);
-    amf_register_cfunc(fs, "c@", cfetch);
-    amf_register_cfunc(fs, "c!", cstore);
-    // C strings
-    amf_register_cfunc(fs, "print", put_str);
-    amf_register_cfunc(fs, "strlen", str_len);
-    // Misc
-    amf_register_cfunc(fs, ".", printNum);
-    amf_register_cfunc(fs, "exit", exit_word);
-    amf_register_cfunc(fs, "cr", cr);
+    for (size_t i=0; i<sizeof(all_default_c_func)/sizeof(struct c_func_s); i++) {
+        const char* name = all_default_c_func[i].name;
+        amf_register_cfunc(fs, name, all_default_c_func[i].func);
+#if AMF_CASE_INSENSITIVE == 0 // Register upper case version of the name as well.
+        char name_upper[strlen(name) + 1];
+        for (size_t j=0; j<=strlen(name); j++) {
+            if('a' <= name[j] && name[j] <= 'z'){
+                name_upper[j] = name[j] - ('a' - 'A');
+            }else{
+                name_upper[j] = name[j];
+            }
+        }
+        amf_register_cfunc(fs, name_upper, all_default_c_func[i].func);
+#endif
+    }
 }
 
