@@ -6,13 +6,6 @@
 
 //Functions used to manipulate C_fun
 
-//Call a known valid C_func from the dictionary
-void amf_call_cfunc(forth_state_t* fs, hash_t hash){
-    entry_t e;
-    amf_find(fs->dic, &e, NULL, hash);
-    e.func.C_func(fs);
-}
-
 //Register a new C function
 void amf_register_cfunc(forth_state_t* fs, const char* name, C_callback_t func){
     entry_t e;
