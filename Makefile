@@ -3,9 +3,12 @@ CFLAGS ?= -Werror -Wall -Wextra -g
 
 # Files lists
 C_SRC := hash.c dictionary.c forth_state.c C_func.c main.c user_words.c parser.c amf_io.c utils.c
+FRT_SRC := forth_func.frt
 C_HEADER := amf_config.h amf_io.h ASCminiForth.h C_func.h dictionary.h errors.h forth_state.h hash.h parser.h user_words.h utils.h
-C_OBJS := $(C_SRC:%.c=%.o)
 TARGET := amForth
+C_AUTO_SRC := $(FRT_SRC:%.frt=%.c)
+C_SRC += $(C_AUTO_SRC)
+C_OBJS := $(C_SRC:%.c=%.o)
 
 # Install targets
 TARGET_DIR_BIN := /usr/local/bin
@@ -22,6 +25,12 @@ all : $(TARGET).bin
 %.o : %.c $(C_HEADER)
 	$(CC) -c $< $(CFLAGS) -o $@
 
+%.c : %.frt
+	name=$$(echo $< | sed s:.frt*::); \
+		 echo "const char* $$name = " > $@
+	cat $< | sed 's:\\ .*::;  s:":\\":g; s:^:":; s:$$:\\n":'  >> $@
+	echo ';' >> $@
+
 $(TARGET).bin : $(C_OBJS)
 	$(CC) $(C_OBJS) $(CFLAGS) -o $@
 
@@ -34,7 +43,8 @@ uninstall :
 
 clean : 
 	$(RM) *.bin
-	$(RM) *.o
+	$(RM) $(C_OBJS)
+	$(RM) $(C_AUTO_SRC)
 
 test : $(TARGET).bin
 	./$(TARGET).bin benchmark.frt

@@ -28,6 +28,9 @@ typedef intptr_t amf_int_t;
 // Log messages
 #define AMF_LOG 0
 
+// Use words defined in Forth
+#define AMF_REGISTER_FORTH_FUNC 1
+
 // Store name alongside word
 #define AMF_STORE_NAME 1
 
