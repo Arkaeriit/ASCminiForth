@@ -5,9 +5,9 @@
 
 #define UNUSED(x) (void)(x)
 
-//Functions used to manipulate C_fun
+// Functions used to manipulate C_fun
 
-//Register a new C function
+// Register a new C function
 void amf_register_cfunc(forth_state_t* fs, const char* name, C_callback_t func) {
     entry_t e;
     e.type = C_word;
@@ -20,7 +20,7 @@ void amf_register_cfunc(forth_state_t* fs, const char* name, C_callback_t func) 
     amf_add_elem(fs->dic, e);
 }
 
-//List of default C_func
+// List of default C_func
 
 // Stack manipulation
 
@@ -133,21 +133,21 @@ static void eq(forth_state_t* fs) {
 // if
 static void IF(forth_state_t* fs) {
     amf_int_t w1 = amf_pop_data(fs);
-    if(!w1) { //If w1 is not true, we want to get to the next else or the next then
-        hash_t else_hash = amf_hash("else");        
-        hash_t then_hash = amf_hash("then");        
-        hash_t if_hash = amf_hash("if");        
-        size_t i=fs->pos.code.pos_in_word+1;
+    if (!w1) {  // If w1 is not true, we want to get to the next else or the next then
+        hash_t else_hash = amf_hash("else");
+        hash_t then_hash = amf_hash("then");
+        hash_t if_hash = amf_hash("if");
+        size_t i = fs->pos.code.pos_in_word + 1;
         int if_depth = 1;
-        while(if_depth) {
+        while (if_depth) {
             word_node_t target_node = fs->current_word_copy->content[i];
-            if(target_node.content.hash == else_hash || target_node.content.hash == then_hash) {
+            if (target_node.content.hash == else_hash || target_node.content.hash == then_hash) {
                 if_depth--;
-            }else if(target_node.content.hash == if_hash) {
-               if_depth++;
+            } else if (target_node.content.hash == if_hash) {
+                if_depth++;
             }
             i++;
-        } 
+        }
         fs->pos.code.pos_in_word = i;
     }
 }
@@ -155,20 +155,20 @@ static void IF(forth_state_t* fs) {
 // else
 // If we meet that word, it means that we were in an if block, thus we need to jump to the next then
 static void ELSE(forth_state_t* fs) {
-    hash_t then_hash = amf_hash("then");        
-    hash_t if_hash = amf_hash("if");        
-    size_t i=fs->pos.code.pos_in_word+1;
+    hash_t then_hash = amf_hash("then");
+    hash_t if_hash = amf_hash("if");
+    size_t i = fs->pos.code.pos_in_word + 1;
     int if_depth = 1;
-    while(if_depth) { //Note: not finding mathing then cause a fault
-        /*printf("%li, %i\n",i, if_depth);*/
+    while (if_depth) {  // Note: not finding mathing then cause a fault
+        /*printf("%li, %i\n",i, if_depth); */
         word_node_t target_node = fs->current_word_copy->content[i];
-        if(target_node.content.hash == then_hash && target_node.type == normal_word) {
-           if_depth--;
-        }else if(target_node.content.hash == if_hash && target_node.type == normal_word) {
-           if_depth++;
+        if (target_node.content.hash == then_hash && target_node.type == normal_word) {
+            if_depth--;
+        } else if (target_node.content.hash == if_hash && target_node.type == normal_word) {
+            if_depth++;
         }
         i++;
-    } 
+    }
     fs->pos.code.pos_in_word = i;
 }
 
@@ -184,21 +184,21 @@ static void begin(forth_state_t* fs) {
 
 // until
 static void until(forth_state_t* fs) {
-    if(!amf_pop_data(fs)) {
-        //Jumping to the correspinging until
+    if (!amf_pop_data(fs)) {
+        // Jumping to the correspinging until
         hash_t begin_hash = amf_hash("begin");
         hash_t until_hash = amf_hash("until");
-        size_t i = fs->pos.code.pos_in_word-2;
+        size_t i = fs->pos.code.pos_in_word - 2;
         int loop_depth = 1;
-        while(loop_depth) { //Note: if no mathing begin is found, there is a fault
-            if(fs->current_word_copy->content[i].content.hash == begin_hash) {
+        while (loop_depth) {    // Note: if no mathing begin is found, there is a fault
+            if (fs->current_word_copy->content[i].content.hash == begin_hash) {
                 loop_depth--;
-            }else if(fs->current_word_copy->content[i].content.hash == until_hash) {
+            } else if (fs->current_word_copy->content[i].content.hash == until_hash) {
                 loop_depth++;
             }
             i--;
         }
-        fs->pos.code.pos_in_word = i+1;
+        fs->pos.code.pos_in_word = i + 1;
     }
 }
 
@@ -210,14 +210,14 @@ static void cells(forth_state_t* fs) {
 }
 
 // here
-//This word is here fore compatibility with other Forth dialect but as the memory management of this dialect is different, it doesn't make sence to have a here word
+// This word is here fore compatibility with other Forth dialect but as the memory management of this dialect is different, it doesn't make sence to have a here word
 static void here(forth_state_t* fs) {
     UNUSED(fs);
 }
 
 // free
 static void FREE(forth_state_t* fs) {
-    free((void*) amf_pop_data(fs));
+    free((void *) amf_pop_data(fs));
 }
 
 // allot
@@ -228,26 +228,26 @@ static void allot(forth_state_t* fs) {
 
 // @
 static void fetch(forth_state_t* fs) {
-    amf_int_t* addr = (amf_int_t*) amf_pop_data(fs);
+    amf_int_t* addr = (amf_int_t *) amf_pop_data(fs);
     amf_push_data(fs, *addr);
 }
 
 // !
 static void store(forth_state_t* fs) {
-    amf_int_t* addr = (amf_int_t*) amf_pop_data(fs);
+    amf_int_t* addr = (amf_int_t *) amf_pop_data(fs);
     amf_int_t data = amf_pop_data(fs);
     *addr = data;
 }
 
 // c@
 static void cfetch(forth_state_t* fs) {
-    char* addr = (char*) amf_pop_data(fs);
-    amf_push_data(fs, (amf_int_t) *addr);
+    char* addr = (char *) amf_pop_data(fs);
+    amf_push_data(fs, (amf_int_t) * addr);
 }
 
 // c!
 static void cstore(forth_state_t* fs) {
-    char* addr = (char*) amf_pop_data(fs);
+    char* addr = (char *) amf_pop_data(fs);
     amf_int_t data = amf_pop_data(fs);
     *addr = (char) data;
 }
@@ -257,13 +257,13 @@ static void cstore(forth_state_t* fs) {
 
 // print
 static void put_str(forth_state_t* fs) {
-    char* str = (char*) amf_pop_data(fs);
+    char* str = (char *) amf_pop_data(fs);
     printf("%s", str);
 }
 
 // strlen
 static void str_len(forth_state_t* fs) {
-    char* str = (char*) amf_pop_data(fs);
+    char* str = (char *) amf_pop_data(fs);
     amf_push_data(fs, (amf_int_t) strlen(str));
 }
 
@@ -273,9 +273,9 @@ static void str_len(forth_state_t* fs) {
 // .
 static void printNum(forth_state_t* fs) {
     amf_int_t w1 = amf_pop_data(fs);
-	char buff[AMF_MAX_NUMBER_DIGIT];
-	char* str = amf_base_format(w1, buff, fs->base);
-	amf_print_string(str);
+    char buff[AMF_MAX_NUMBER_DIGIT];
+    char* str = amf_base_format(w1, buff, fs->base);
+    amf_print_string(str);
 }
 
 // exit
@@ -291,8 +291,8 @@ static void cr(forth_state_t* fs) {
 
 // base
 static void base(forth_state_t* fs) {
-	amf_int_t* base_pnt = &fs->base;
-	amf_push_data(fs, (amf_int_t) base_pnt);
+    amf_int_t* base_pnt = &fs->base;
+    amf_push_data(fs, (amf_int_t) base_pnt);
 }
 
 struct c_func_s {
@@ -343,17 +343,17 @@ struct c_func_s all_default_c_func[] = {
     {"base", base},
 };
 
-//Register all the default C_func
+// Register all the default C_func
 void amf_register_default_C_func(forth_state_t* fs) {
-    for (size_t i=0; i<sizeof(all_default_c_func)/sizeof(struct c_func_s); i++) {
+    for (size_t i = 0; i < sizeof(all_default_c_func) / sizeof(struct c_func_s); i++) {
         const char* name = all_default_c_func[i].name;
         amf_register_cfunc(fs, name, all_default_c_func[i].func);
-#if AMF_CASE_INSENSITIVE == 0 // Register upper case version of the name as well.
+#if AMF_CASE_INSENSITIVE == 0   // Register upper case version of the name as well.
         char name_upper[strlen(name) + 1];
-        for (size_t j=0; j<=strlen(name); j++) {
-            if('a' <= name[j] && name[j] <= 'z'){
+        for (size_t j = 0; j <= strlen(name); j++) {
+            if ('a' <= name[j] && name[j] <= 'z') {
                 name_upper[j] = name[j] - ('a' - 'A');
-            }else{
+            } else {
                 name_upper[j] = name[j];
             }
         }

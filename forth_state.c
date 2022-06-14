@@ -1,7 +1,7 @@
 #include "forth_state.h"
 #include "string.h"
 
-//Init the interpreter
+// Init the interpreter
 forth_state_t* amf_init_state(void) {
     forth_state_t* ret = malloc(sizeof(forth_state_t));
     ret->data = malloc(sizeof(data_stack_t));
@@ -14,13 +14,13 @@ forth_state_t* amf_init_state(void) {
     amf_register_default_C_func(ret);
     ret->pos.code.current_word = IDLE_CURRENT_WORD;
     ret->pos.code.pos_in_word = IDLE_POS_IN_WORD;
-	ret->base = 10;
+    ret->base = 10;
     ret->running = true;
     return ret;
 }
 
-//Clean the code used by the dictionary
-void amf_clean_state(forth_state_t* fs){
+// Clean the code used by the dictionary
+void amf_clean_state(forth_state_t* fs) {
     amf_clean_dic(fs->dic);
     free(fs->code->stack);
     free(fs->code);
@@ -29,65 +29,65 @@ void amf_clean_state(forth_state_t* fs){
     free(fs);
 }
 
-//Pops the last element from the data stack
-amf_int_t amf_pop_data(forth_state_t* fs){
-    debug_msg("pop data at index: %zi\n",fs->data->stack_pointer-1);
-    amf_int_t ret = fs->data->stack[fs->data->stack_pointer-1];
+// Pops the last element from the data stack
+amf_int_t amf_pop_data(forth_state_t* fs) {
+    debug_msg("pop data at index: %zi\n", fs->data->stack_pointer - 1);
+    amf_int_t ret = fs->data->stack[fs->data->stack_pointer - 1];
     fs->data->stack_pointer--;
     return ret;
 }
 
-//Push a new element to the data stack
-void amf_push_data(forth_state_t* fs, amf_int_t w){
-    debug_msg("push data at index: %zi\n",fs->data->stack_pointer);
+// Push a new element to the data stack
+void amf_push_data(forth_state_t* fs, amf_int_t w) {
+    debug_msg("push data at index: %zi\n", fs->data->stack_pointer);
     fs->data->stack[fs->data->stack_pointer] = w;
     fs->data->stack_pointer++;
 }
 
-//Push a code_pointer element on the code stack
-void amf_push_code(forth_state_t* fs, code_pointer_t p){
-    debug_msg("push code at index: %zi\n",fs->code->stack_pointer);
+// Push a code_pointer element on the code stack
+void amf_push_code(forth_state_t* fs, code_pointer_t p) {
+    debug_msg("push code at index: %zi\n", fs->code->stack_pointer);
     fs->code->stack[fs->code->stack_pointer] = p;
     fs->code->stack_pointer++;
 }
 
-//Pop a code_pointer element from the code stack
-code_pointer_t amf_pop_code(forth_state_t* fs){
-    debug_msg("pop code at index: %zi\n",fs->code->stack_pointer-1);
-    code_pointer_t ret = fs->code->stack[fs->code->stack_pointer-1];
+// Pop a code_pointer element from the code stack
+code_pointer_t amf_pop_code(forth_state_t* fs) {
+    debug_msg("pop code at index: %zi\n", fs->code->stack_pointer - 1);
+    code_pointer_t ret = fs->code->stack[fs->code->stack_pointer - 1];
     fs->code->stack_pointer--;
     return ret;
 }
 
-//Return from a word_call
-void amf_exit(forth_state_t* fs){
-    if(fs->code->stack_pointer > 0){ //In a custom word
+// Return from a word_call
+void amf_exit(forth_state_t* fs) {
+    if (fs->code->stack_pointer > 0) {  // In a custom word
         debug_msg("Returning.\n");
         code_pointer_t previous_pos = amf_pop_code(fs);
         fs->pos = previous_pos;
         entry_t e;
         amf_find(fs->dic, &e, NULL, fs->pos.code.current_word);
         fs->current_word_copy = e.func.F_word;
-    }else{ //In the shell/top level
+    } else {    // In the shell/top level
         debug_msg("Exiting.\n");
         fs->running = false;
     }
 }
 
-//Run a single step of user Forth code, if needed
-//Return false if there is nothing to do
-//Return true if there is something to do
-bool amf_run_step(forth_state_t* fs){
-    if(fs->pos.code.current_word == IDLE_CURRENT_WORD && //Nothing to do, we are not executing code
-            fs->pos.code.pos_in_word == IDLE_POS_IN_WORD) {
+// Run a single step of user Forth code, if needed
+// Return false if there is nothing to do
+// Return true if there is something to do
+bool amf_run_step(forth_state_t* fs) {
+    if (fs->pos.code.current_word == IDLE_CURRENT_WORD &&   // Nothing to do, we are not executing code
+        fs->pos.code.pos_in_word == IDLE_POS_IN_WORD) {
         debug_msg("Nothing to do, idleing.\n");
         return false;
     }
-    if(fs->pos.code.pos_in_word >=  fs->current_word_copy->size){ //We return from the function as we reached the end of the word
+    if (fs->pos.code.pos_in_word >= fs->current_word_copy->size) {  // We return from the function as we reached the end of the word
         amf_exit(fs);
         return true;
     }
-    //Otherwize, we run the part of the curent word we are pointing to
+    // Otherwize, we run the part of the curent word we are pointing to
     debug_msg("Executing data at pos %li / %li.", fs->pos.code.pos_in_word, fs->current_word_copy->size);
     word_node_t current_node = fs->current_word_copy->content[fs->pos.code.pos_in_word];
     fs->pos.code.pos_in_word++;
@@ -95,11 +95,11 @@ bool amf_run_step(forth_state_t* fs){
     return true;
 }
 
-//Executes the content of a word_node
-void amf_executes_node(forth_state_t* fs, struct word_node_s* node){
-    switch(node->type){
+// Executes the content of a word_node
+void amf_executes_node(forth_state_t* fs, struct word_node_s* node) {
+    switch (node->type) {
         case normal_word:
-            debug_msg("Calling hash %u from pos %zi.\n",node->content.hash, fs->pos.code.pos_in_word - 1);
+            debug_msg("Calling hash %u from pos %zi.\n", node->content.hash, fs->pos.code.pos_in_word - 1);
             amf_call_func(fs, node->content.hash);
             break;
         case raw_number:
@@ -116,8 +116,8 @@ void amf_executes_node(forth_state_t* fs, struct word_node_s* node){
     }
 }
 
-//Run the interpreter until it finishes all calls
-void amf_run(forth_state_t* fs){
-    while(amf_run_step(fs));
+// Run the interpreter until it finishes all calls
+void amf_run(forth_state_t* fs) {
+    while (amf_run_step(fs));
 }
 
