@@ -111,6 +111,13 @@ static void divMod(forth_state_t* fs) {
     amf_push_data(fs, w2 / w1);
 }
 
+// abs
+static void abs_word(forth_state_t* fs) {
+    amf_int_t w = amf_pop_data(fs);
+    w = w < 0 ? -w : w;
+    amf_push_data(fs, w);
+}
+
 // Boolean logic
 
 // 0<
@@ -319,6 +326,7 @@ struct c_func_s all_default_c_func[] = {
     {"*/mod", multDivMod},
     {"/", Div},
     {"/mod", divMod},
+    {"abs", abs_word},
     // Boolean logic
     {"0<", less0},
     {"0=", eq0},
