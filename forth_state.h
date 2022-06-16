@@ -28,7 +28,7 @@ typedef struct word_node_s {
 typedef union {
     struct {
         hash_t current_word;
-        size_t pos_in_word;
+        size_t pos_in_word; // Maybe change this type so that both members of the union are of the same size/
     } code;
     amf_int_t optional_data;
 } code_pointer_t;

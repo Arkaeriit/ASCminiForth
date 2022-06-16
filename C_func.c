@@ -54,6 +54,19 @@ static void drop(forth_state_t* fs) {
     amf_pop_data(fs);
 }
 
+// r>
+static void r_from(forth_state_t* fs) {
+    code_pointer_t data = amf_pop_code(fs);
+    amf_push_data(fs, data.optional_data);
+}
+
+// >r
+static void to_r(forth_state_t* fs) {
+    amf_int_t w = amf_pop_data(fs);
+    code_pointer_t to_push = {.optional_data = w};
+    amf_push_code(fs, to_push);
+}
+
 // Basic maths
 
 // +
@@ -133,6 +146,13 @@ static void eq0(forth_state_t* fs) {
 // = 
 static void eq(forth_state_t* fs) {
     amf_push_data(fs, amf_pop_data(fs) == amf_pop_data(fs));
+}
+
+// and
+static void and(forth_state_t* fs) {
+    amf_int_t w1 = amf_pop_data(fs);
+    amf_int_t w2 = amf_pop_data(fs);
+    amf_push_data(fs, w1 & w2);
 }
 
 // Flow control
@@ -323,6 +343,8 @@ struct c_func_s all_default_c_func[] = {
     {"rot", rot},
     {"dup", dup},
     {"drop", drop},
+    {">r", to_r},
+    {"r>", r_from},
     // Basic math
     {"+", add},
     {"-", sub},
@@ -336,6 +358,7 @@ struct c_func_s all_default_c_func[] = {
     {"0<", less0},
     {"0=", eq0},
     {"=", eq},
+    {"and", and},
     // Flow control
     {"if", IF},
     {"else", ELSE},
