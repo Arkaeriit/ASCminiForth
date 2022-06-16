@@ -110,6 +110,7 @@ void amf_executes_node(forth_state_t* fs, struct word_node_s* node) {
             break;
         case forth_string:
             amf_push_data(fs, (amf_int_t) node->content.string);
+            amf_push_data(fs, (amf_int_t) strlen(node->content.string));
             break;
         default:
             break;

@@ -34,7 +34,7 @@ word_node_t amf_compile_node(const char* str, int base) {
         ret.type = raw_number;
         ret.content.value = num;
         // Checking if it is a raw string
-    } else if ((str[0] == '.' || str[0] == 'S') && str[1] == '"') {
+    } else if ((str[0] == '.' || str[0] == 'S' || str[0] == 's') && str[1] == '"') {
         ret.type = (str[0] == '.' ? printed_string : forth_string);
         char* true_string = malloc(strlen(str) - 3);
         memcpy(true_string, str + 3, strlen(str) - 4);

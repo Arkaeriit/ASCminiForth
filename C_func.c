@@ -305,6 +305,13 @@ static void printNum(forth_state_t* fs) {
     amf_print_string(str);
 }
 
+// emit
+static void emit(forth_state_t* fs) {
+    amf_int_t w = amf_pop_data(fs);
+    amf_output(w);
+}
+
+// key
 static void key(forth_state_t* fs) {
     amf_int_t w = amf_input();
     amf_push_data(fs, w);
@@ -379,6 +386,7 @@ struct c_func_s all_default_c_func[] = {
     {"strlen", str_len},
     // Misc
     {".", printNum},
+    {"emit", emit},
     {"key", key},
     {"exit", exit_word},
     {"abort", abort_word},
