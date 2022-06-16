@@ -131,6 +131,13 @@ static void abs_word(forth_state_t* fs) {
     amf_push_data(fs, w);
 }
 
+// <
+static void less_than(forth_state_t* fs) {
+    amf_int_t w1 = amf_pop_data(fs);
+    amf_int_t w2 = amf_pop_data(fs);
+    amf_push_data(fs, w2 < w1);
+}
+
 // Boolean logic
 
 // 0<
@@ -153,6 +160,13 @@ static void and(forth_state_t* fs) {
     amf_int_t w1 = amf_pop_data(fs);
     amf_int_t w2 = amf_pop_data(fs);
     amf_push_data(fs, w1 & w2);
+}
+
+// or
+static void or(forth_state_t* fs) {
+    amf_int_t w1 = amf_pop_data(fs);
+    amf_int_t w2 = amf_pop_data(fs);
+    amf_push_data(fs, w1 | w2);
 }
 
 // Flow control
@@ -361,11 +375,13 @@ struct c_func_s all_default_c_func[] = {
     {"/", Div},
     {"/mod", divMod},
     {"abs", abs_word},
+    {"<", less_than},
     // Boolean logic
     {"0<", less0},
     {"0=", eq0},
     {"=", eq},
     {"and", and},
+    {"or", or},
     // Flow control
     {"if", IF},
     {"else", ELSE},

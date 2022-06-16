@@ -15,7 +15,8 @@
 : TEST.0= ." Testing 0= " -0 0= is_true CR ;
 : TEST.0< ." Testing 0< " -1 0< is_true CR ;
 : TEST.= ." Testing = " 987 987 = is_true CR ;
-: TEST.AND ." Testing AND " 2 1 AND 0= 1 1 AND 1 = 0 1 AND 0= AND AND is_true CR ;
+: TEST.AND ." Testing and " 2 1 AND 0= 1 1 AND 1 = 0 1 AND 0= AND AND is_true CR ;
+: TEST.OR ." Testing or " 2 1 OR 3 = 1 1 OR 1 = 0 1 OR 1 = AND AND is_true CR ;
 
 ( STACK MANIPULATION )
 : TEST.DROP ." Testing drop " 0 1 DROP is_0 CR ;
@@ -32,6 +33,7 @@
 : TEST.*/MOD ." Testing */mod " 6 3 10 */MOD 1 = is_true 8 = is_true CR ;
 : TEST./ ." Testing / " 9 3 / 3 = is_true CR ;
 : TEST./MOD ." Testing /mod " 9 3 /MOD 3 = is_true is_0 CR ;
+: TEST.< ." Testing < " 4 1 < is_0 1 4 < is_true 4 4 < is_0 CR ;
 
 ( MEMORY MANAGEMENT )
 : TEST.MEM ." Testing memory management " HERE 1 CELLS ALLOT DUP 5456 SWAP ! @ 5456 = is_true CR ;
@@ -47,7 +49,7 @@ A BASE !
 ( IO )
 : TEST.EMIT ." Testing emit and S " S" OK." DROP DUP C@ EMIT 1+ DUP C@ EMIT 1+ C@ EMIT CR ;
 
-: BENCHMARK 11 22 33 TEST.. TEST.IF TEST.BEGIN.LOOP TEST.NESTED.IF TEST.NESTED.LOOP TEST.0= TEST.0< TEST.= TEST.AND TEST.DROP TEST.SWAP TEST.ROT TEST.DUP TEST.2D TEST.R TEST.+ TEST.* TEST.*/ TEST.*/MOD TEST./ TEST./MOD TEST.MEM TEST.CMEM TEST.BASE_RECORD TEST.BASE_PRINT TEST.EMIT
+: BENCHMARK 11 22 33 TEST.. TEST.IF TEST.BEGIN.LOOP TEST.NESTED.IF TEST.NESTED.LOOP TEST.0= TEST.0< TEST.= TEST.AND TEST.OR TEST.DROP TEST.SWAP TEST.ROT TEST.DUP TEST.2D TEST.R TEST.+ TEST.* TEST.*/ TEST.*/MOD TEST./ TEST./MOD TEST.< TEST.MEM TEST.CMEM TEST.BASE_RECORD TEST.BASE_PRINT TEST.EMIT
 ." Printing 33: " . CR ;
 
 BENCHMARK 
