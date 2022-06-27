@@ -31,6 +31,7 @@ typedef struct forth_dictionary_s {
 } forth_dictionary_t;
 
 forth_dictionary_t* amf_init_dic(void);
+void amf_display_dictionary(forth_dictionary_t* dic);
 void amf_clean_dic(forth_dictionary_t* fd);
 error amf_find(forth_dictionary_t* fd, entry_t* e, size_t* index, hash_t hash);
 error amf_add_elem(forth_dictionary_t* fd, entry_t e);

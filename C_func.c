@@ -169,6 +169,13 @@ static void or(forth_state_t* fs) {
     amf_push_data(fs, w1 | w2);
 }
 
+// xor
+static void xor(forth_state_t* fs) {
+    amf_int_t w1 = amf_pop_data(fs);
+    amf_int_t w2 = amf_pop_data(fs);
+    amf_push_data(fs, w1 ^ w2);
+}
+
 // Flow control
 
 // if
@@ -382,6 +389,7 @@ struct c_func_s all_default_c_func[] = {
     {"=", eq},
     {"and", and},
     {"or", or},
+    {"xor", xor},
     // Flow control
     {"if", IF},
     {"else", ELSE},
