@@ -67,6 +67,26 @@ static void to_r(forth_state_t* fs) {
     amf_push_code(fs, to_push);
 }
 
+// roll
+static void roll(forth_state_t* fs) {
+    amf_int_t pos = amf_pop_data(fs);
+    for (amf_int_t i=0; i<pos; i++) {
+        to_r(fs);
+    }
+    amf_int_t to_top = amf_pop_data(fs);
+    for (amf_int_t i=0; i<pos; i++) {
+        r_from(fs);
+    }
+    amf_push_data(fs, to_top);
+}
+
+// pick
+static void pick(forth_state_t* fs) {
+    amf_int_t pos = amf_pop_data(fs);
+    amf_push_data(fs,
+            fs->data->stack[fs->data->stack_pointer - pos - 1]);
+}
+
 // Basic maths
 
 // +
@@ -373,6 +393,8 @@ struct c_func_s all_default_c_func[] = {
     {"drop", drop},
     {">r", to_r},
     {"r>", r_from},
+    {"roll", roll},
+    {"pick", pick},
     // Basic math
     {"+", add},
     {"-", sub},

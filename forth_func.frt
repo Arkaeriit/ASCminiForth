@@ -6,3 +6,15 @@
 : 0<> 0 <> ;
 : > 2dup < 0= rot rot <> and ;
 : 0> 0 > ;
+: bl S"  " drop C@ ;
+: c 1 allot ;
+: cell+ 1 cells + ;
+: char+ 1+ ;
+: chars ;
+: max 2dup < if swap then drop ;
+: min 2dup max negate + + ;
+: negate -1 * ;
+: nip swap drop ;
+: over 2dup drop ;
+: tuck dup rot swap ;
+
