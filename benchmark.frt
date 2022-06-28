@@ -17,6 +17,7 @@
 : TEST.= ." Testing = " 987 987 = is_true CR ;
 : TEST.AND ." Testing and " 2 1 AND 0= 1 1 AND 1 = 0 1 AND 0= AND AND is_true CR ;
 : TEST.OR ." Testing or " 2 1 OR 3 = 1 1 OR 1 = 0 1 OR 1 = AND AND is_true CR ;
+: TEST.XOR ." Testing xor " 2 1 XOR 3 = 1 1 XOR 0 = 0 1 XOR 1 = AND AND is_true CR ;
 
 ( STACK MANIPULATION )
 : TEST.DROP ." Testing drop " 0 1 DROP is_0 CR ;
@@ -25,6 +26,11 @@
 : TEST.DUP ." Testing dup " 1 0 DUP DROP is_0 DROP CR ;
 : TEST.2D ." Testing 2dup and 2drop " 1 0 2DUP 2DROP is_0 DROP CR ;
 : TEST.R ." Testing >r and r> " 12 16 >R 12 = 16 R> = AND is_true CR ;
+: TEST.NIP ." Testing nip " 1 2 3 NIP + 4 = is_true CR ;
+: TEST.OVER ." Testing over " 1 2 3 OVER + + + 8 = is_true CR ;
+: TEST.TUCK
+\ ." Testing tuck " 1 2 3 TUCK 3 = >R 2 = >R 3 = >R 1 = R> R> R> AND AND AND is_true CR
+;
 
 ( BASIC MATH )
 : TEST.+ ." Testing + " -5 5 + is_0 CR ;
@@ -34,6 +40,10 @@
 : TEST./ ." Testing / " 9 3 / 3 = is_true CR ;
 : TEST./MOD ." Testing /mod " 9 3 /MOD 3 = is_true is_0 CR ;
 : TEST.< ." Testing < " 4 1 < is_0 1 4 < is_true 4 4 < is_0 CR ;
+: TEST.> ." Testing > " 4 1 > is_true 1 4 > is_0 4 4 < is_0 CR ;
+: TEST.MAX ." Testing max " 4 5 MAX 5 = 88 66 MAX 88 = AND is_true CR ;
+: TEST.MIN ." Testing min " 4 5 MIN 4 = 88 66 MIN 66 = AND is_true CR ;
+: TEST.NEGATE ." Testing negate " 0 NEGATE 0 = 5 NEGATE -5 = -88 NEGATE 88 = AND AND is_true CR ;
 
 ( MEMORY MANAGEMENT )
 : TEST.MEM ." Testing memory management " HERE 1 CELLS ALLOT DUP 5456 SWAP ! @ 5456 = is_true CR ;
@@ -48,8 +58,16 @@ A BASE !
 
 ( IO )
 : TEST.EMIT ." Testing emit and S " S" OK." DROP DUP C@ EMIT 1+ DUP C@ EMIT 1+ C@ EMIT CR ;
+: TEST.BL ." Testing bl " S"  " DROP C@ BL = is_true CR ;
 
-: BENCHMARK 11 22 33 TEST.. TEST.IF TEST.BEGIN.LOOP TEST.NESTED.IF TEST.NESTED.LOOP TEST.0= TEST.0< TEST.= TEST.AND TEST.OR TEST.DROP TEST.SWAP TEST.ROT TEST.DUP TEST.2D TEST.R TEST.+ TEST.* TEST.*/ TEST.*/MOD TEST./ TEST./MOD TEST.< TEST.MEM TEST.CMEM TEST.BASE_RECORD TEST.BASE_PRINT TEST.EMIT
+: BENCHMARK 11 22 33 TEST..
+TEST.IF TEST.BEGIN.LOOP TEST.NESTED.IF TEST.NESTED.LOOP
+TEST.0= TEST.0< TEST.= TEST.AND TEST.OR TEST.XOR
+TEST.DROP TEST.SWAP TEST.ROT TEST.DUP TEST.2D TEST.R TEST.NIP TEST.OVER TEST.TUCK
+TEST.+ TEST.* TEST.*/ TEST.*/MOD TEST./ TEST./MOD TEST.< TEST.> TEST.MAX TEST.MIN TEST.NEGATE
+TEST.MEM TEST.CMEM
+TEST.BASE_RECORD TEST.BASE_PRINT
+TEST.EMIT TEST.BL
 ." Printing 33: " . CR ;
 
 BENCHMARK 
