@@ -17,4 +17,7 @@
 : nip swap drop ;
 : over 2dup drop ;
 : tuck dup rot swap ;
+: 2over 3 pick 3 pick ;
+: 2>r swap >r >r ;
+: 2r> r> r> swap ;
 
