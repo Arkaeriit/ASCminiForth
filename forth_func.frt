@@ -12,8 +12,8 @@
 : char+ 1+ ;
 : chars ;
 : max 2dup < if swap then drop ;
-: min 2dup max negate + + ;
 : negate -1 * ;
+: min 2dup max negate + + ;
 : nip swap drop ;
 : over 2dup drop ;
 : tuck dup rot swap ;

@@ -15,6 +15,14 @@ error amf_compile_user_word(forth_dictionary_t* fd, const char* name, size_t sub
     def->content = malloc(sizeof(word_node_t) * subword_n);
     for (size_t i = 0; i < subword_n; i++) {
         def->content[i] = amf_compile_node(subwords[i], base);
+#if AMF_LOG > 1
+        if (def->content[i].type == normal_word) {
+			error find_rc = amf_find(fd, NULL, NULL, amf_hash(subwords[i]));
+			if (find_rc != OK) {
+				warn_msg("The word %s is needed but it is not in the dictionary.\n", subwords[i]);
+			}
+		}
+#endif
     }
     entry_t e;
     e.hash = amf_hash(name);
@@ -146,7 +154,6 @@ static char** cut_string(const char* str, size_t* list_size) {
 // Convert a string to a number, return true if the string was a number and
 // false otherwise. stroll cannot be used alone as we need to differentiate
 // valid 0 from errors.
-#include <stdio.h>
 static bool str_to_num(const char* str, amf_int_t* num, int base) {
     char* end;
     *num = strtoll(str, &end, base);
