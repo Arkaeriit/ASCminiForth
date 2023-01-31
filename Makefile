@@ -4,7 +4,7 @@ CFLAGS ?= -Werror -Wall -Wextra -g
 # Files lists
 C_SRC := hash.c dictionary.c forth_state.c C_func.c main.c user_words.c parser.c amf_io.c utils.c
 FRT_SRC := forth_func.frt
-C_HEADER := amf_config.h amf_io.h ASCminiForth.h C_func.h dictionary.h errors.h forth_state.h hash.h parser.h user_words.h utils.h
+C_HEADER := amf_config.h amf_io.h ASCminiForth.h C_func.h dictionary.h errors.h forth_state.h hash.h parser.h user_words.h utils.h amf_debug.h
 TARGET := amForth
 C_AUTO_SRC := $(FRT_SRC:%.frt=%.c)
 C_SRC += $(C_AUTO_SRC)

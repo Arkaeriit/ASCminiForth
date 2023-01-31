@@ -1,5 +1,6 @@
 
 #include "dictionary.h"
+#include "amf_debug.h"
 #include "string.h"
 #include "stdio.h"
 
@@ -165,7 +166,7 @@ error amf_call_func(forth_state_t* fs, hash_t hash) {
     entry_t e;
     error find_rc = amf_find(fs->dic, &e, NULL, hash);
     if (find_rc != OK) {
-        error_msg("Unable to find desired function.\n");
+        error_msg("Unable to find desired function with hash %" AMF_INT_PRINT ".\n", hash);
         return find_rc;
     }
     switch (e.type) {
@@ -190,9 +191,7 @@ error amf_call_name(forth_state_t* fs, const char* name) {
     hash_t hash = amf_hash(name);
     error rc = amf_call_func(fs, hash);
     if (rc != OK) {
-        error_msg("Can't call function ");
-        error_msg(name);
-        error_msg(".\n");
+        error_msg("Can't call function %s.\n", name);
     }
     return rc;
 }

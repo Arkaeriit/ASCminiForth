@@ -1,4 +1,5 @@
 #include "user_words.h"
+#include "amf_debug.h"
 #include "string.h"
 
 static int words_in_str(const char* str);

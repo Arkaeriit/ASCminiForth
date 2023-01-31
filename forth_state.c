@@ -1,4 +1,5 @@
 #include "forth_state.h"
+#include "amf_debug.h"
 #include "string.h"
 
 // Init the interpreter

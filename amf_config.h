@@ -26,7 +26,8 @@ typedef intptr_t amf_int_t;
 #define AMF_CASE_INSENSITIVE 1
 
 // Log messages
-#define AMF_LOG 0
+// 0 = no logs; 1 = erros; 2 = errors and warnings; 3 = errors, warning, and debug
+#define AMF_LOG 2
 
 // Use words defined in Forth
 #define AMF_REGISTER_FORTH_FUNC 1
@@ -36,26 +37,6 @@ typedef intptr_t amf_int_t;
 
 // Max number of digits in a number
 #define AMF_MAX_NUMBER_DIGIT 64
-
-#if AMF_LOG
-#include "stdio.h"
-#include "stdarg.h"
-static void __attribute__((unused)) error_msg(const char* msg) {
-    fprintf(stderr, "\033[31m%s\033[0m", msg);
-}
-static void __attribute__((unused)) debug_msg(const char* msg, ...) {
-    fprintf(stderr, "\033[36m");
-    va_list arg;
-    va_start(arg, msg);
-    vfprintf(stderr, msg, arg);
-    va_end(arg);
-    fprintf(stderr, "\033[0m");
-}
-#else
-#define error_msg(X,...)
-#define debug_msg(X,...)
-#endif
-
 
 #endif
 
