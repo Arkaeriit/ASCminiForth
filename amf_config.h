@@ -5,13 +5,14 @@
 typedef intptr_t amf_int_t;
 #define AMF_INT_PRINT PRIdPTR
 
-// Optional fonctionalites and words. Set to 1 to enable and to 0 to disble
-// Enable reaading source files
+// Optional features and words. Set to 1 to enable and to 0 to disable
+// Enable reading source files
 #define AMF_USE_SOURCE_FILE 1
 
-// Depth of the two stacks
+// Depth of the three stacks
 #define CODE_STACK_SIZE 100
 #define DATA_STACK_SIZE 100
+#define LOOP_STACK_SIZE 100
 
 // Dummy values to put in the state's code position to indicate that
 // the interpreter is idling and not inside a function

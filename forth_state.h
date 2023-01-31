@@ -50,6 +50,8 @@ typedef struct {
     // The two stack used by the interpreter
     data_stack_t* data;
     code_stack_t* code;
+    // A special stack used for loop control flow
+    data_stack_t* loop_control;
     // The dictionary
     struct forth_dictionary_s* dic;
     // A copy of the word being processed, to ensure fast access
@@ -69,6 +71,9 @@ amf_int_t amf_pop_data(forth_state_t* fs);
 void amf_push_data(forth_state_t* fs, amf_int_t w);
 void amf_push_code(forth_state_t* fs, code_pointer_t p);
 code_pointer_t amf_pop_code(forth_state_t* fs);
+void amf_push_loop(forth_state_t* fs, amf_int_t w);
+amf_int_t amf_pop_loop(forth_state_t* fs);
+amf_int_t amf_peek_loop(forth_state_t* fs);
 
 bool amf_run_step(forth_state_t* fs);
 error amf_executes_node(forth_state_t* fs, struct word_node_s* node);

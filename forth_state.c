@@ -11,6 +11,9 @@ forth_state_t* amf_init_state(void) {
     ret->code = malloc(sizeof(code_stack_t));
     ret->code->stack_pointer = 0;
     ret->code->stack = malloc(sizeof(code_pointer_t) * CODE_STACK_SIZE);
+    ret->loop_control = malloc(sizeof(data_stack_t));
+    ret->loop_control->stack_pointer = 0;
+    ret->loop_control->stack = malloc(sizeof(amf_int_t) * LOOP_STACK_SIZE);
     ret->dic = amf_init_dic();
     amf_register_default_C_func(ret);
     ret->pos.code.current_word = IDLE_CURRENT_WORD;
@@ -23,6 +26,8 @@ forth_state_t* amf_init_state(void) {
 // Clean the code used by the dictionary
 void amf_clean_state(forth_state_t* fs) {
     amf_clean_dic(fs->dic);
+    free(fs->loop_control->stack);
+    free(fs->loop_control);
     free(fs->code->stack);
     free(fs->code);
     free(fs->data->stack);
@@ -57,6 +62,27 @@ code_pointer_t amf_pop_code(forth_state_t* fs) {
     debug_msg("pop code at index: %zi\n", fs->code->stack_pointer - 1);
     code_pointer_t ret = fs->code->stack[fs->code->stack_pointer - 1];
     fs->code->stack_pointer--;
+    return ret;
+}
+
+// Push a new element in the loop stack
+void amf_push_loop(forth_state_t* fs, amf_int_t w) {
+    debug_msg("push loop at index: %zi\n", fs->loop_control->stack_pointer);
+    fs->loop_control->stack[fs->loop_control->stack_pointer] = w;
+    fs->loop_control->stack_pointer++;
+}
+
+// Pops the last element from the loop stack
+amf_int_t amf_pop_loop(forth_state_t* fs) {
+    debug_msg("pop loop at index: %zi\n", fs->loop_control->stack_pointer - 1);
+    amf_int_t ret = fs->loop_control->stack[fs->loop_control->stack_pointer - 1];
+    fs->loop_control->stack_pointer--;
+    return ret;
+}
+
+// Look at the last element from the loop stack
+amf_int_t amf_peek_loop(forth_state_t* fs) {
+    amf_int_t ret = fs->loop_control->stack[fs->loop_control->stack_pointer - 1];
     return ret;
 }
 

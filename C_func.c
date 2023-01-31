@@ -280,6 +280,47 @@ static void until(forth_state_t* fs) {
     }
 }
 
+// do
+static void DO(forth_state_t* fs) {
+    CHECK_BEING_IN_WORD(fs);
+    amf_int_t start_index = amf_pop_data(fs);
+    amf_int_t end_index = amf_pop_data(fs);
+    amf_push_loop(fs, end_index);
+    amf_push_loop(fs, start_index);
+}
+
+// I
+static void I(forth_state_t* fs) {
+    CHECK_BEING_IN_WORD(fs);
+    amf_push_data(fs, amf_peek_loop(fs));
+}
+
+// loop
+static void loop(forth_state_t* fs) {
+    CHECK_BEING_IN_WORD(fs);
+    amf_int_t current_index = amf_pop_loop(fs);
+    amf_int_t end_index = amf_pop_loop(fs);
+    current_index++;
+    if (current_index < end_index) {
+        amf_push_loop(fs, end_index);
+        amf_push_loop(fs, current_index);
+        // Jumping to the corresponding do
+        hash_t do_hash = amf_hash("do");
+        hash_t loop_hash = amf_hash("loop");
+        size_t i = fs->pos.code.pos_in_word - 2;
+        int loop_depth = 1;
+        while (loop_depth) {    // Note: if no matching begin is found, there is a fault
+            if (fs->current_word_copy->content[i].content.hash == do_hash) {
+                loop_depth--;
+            } else if (fs->current_word_copy->content[i].content.hash == loop_hash) {
+                loop_depth++;
+            }
+            i--;
+        }
+        fs->pos.code.pos_in_word = i + 2;
+    }
+}
+
 // Memory management
 
 // cells
@@ -428,6 +469,9 @@ struct c_func_s all_default_c_func[] = {
     {"then", then},
     {"begin", begin},
     {"until", until},
+    {"do", DO},
+    {"i", I},
+    {"loop", loop},
     // Memory management
     {"allot", allot},
     {"cells", cells},
