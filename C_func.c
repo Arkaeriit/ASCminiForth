@@ -301,19 +301,21 @@ static void plus_loop(forth_state_t* fs) {
     amf_int_t current_index = amf_pop_loop(fs);
     amf_int_t end_index = amf_pop_loop(fs);
     amf_int_t increment = amf_pop_data(fs);
+    debug_msg("loop % 4li % 4li % 4li % 4zi.\n", current_index, end_index, increment, fs->loop_control->stack_pointer);
     current_index += increment;
-    if ( ((increment >= 0) && (current_index < end_index)) || ((increment < 0) && (current_index > end_index)) ) { // Increment of 0 should do an infinite loop
+    if ( ((increment >= 0) && (current_index < end_index)) || ((increment < 0) && (current_index >= end_index)) ) { // Increment of 0 should do an infinite loop
         amf_push_loop(fs, end_index);
         amf_push_loop(fs, current_index);
         // Jumping to the corresponding do
         hash_t do_hash = amf_hash("do");
         hash_t loop_hash = amf_hash("loop");
+        hash_t plus_loop_hash = amf_hash("+loop");
         size_t i = fs->pos.code.pos_in_word - 2;
         int loop_depth = 1;
         while (loop_depth) {    // Note: if no matching begin is found, there is a fault
             if (fs->current_word_copy->content[i].content.hash == do_hash) {
                 loop_depth--;
-            } else if (fs->current_word_copy->content[i].content.hash == loop_hash) {
+            } else if (fs->current_word_copy->content[i].content.hash == loop_hash || fs->current_word_copy->content[i].content.hash == plus_loop_hash) {
                 loop_depth++;
             }
             i--;
