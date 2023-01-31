@@ -295,13 +295,14 @@ static void I(forth_state_t* fs) {
     amf_push_data(fs, amf_peek_loop(fs));
 }
 
-// loop
-static void loop(forth_state_t* fs) {
+// +loop
+static void plus_loop(forth_state_t* fs) {
     CHECK_BEING_IN_WORD(fs);
     amf_int_t current_index = amf_pop_loop(fs);
     amf_int_t end_index = amf_pop_loop(fs);
-    current_index++;
-    if (current_index < end_index) {
+    amf_int_t increment = amf_pop_data(fs);
+    current_index += increment;
+    if ( ((increment >= 0) && (current_index < end_index)) || ((increment < 0) && (current_index > end_index)) ) { // Increment of 0 should do an infinite loop
         amf_push_loop(fs, end_index);
         amf_push_loop(fs, current_index);
         // Jumping to the corresponding do
@@ -319,6 +320,12 @@ static void loop(forth_state_t* fs) {
         }
         fs->pos.code.pos_in_word = i + 2;
     }
+}
+
+// loop TODO: When macro will be available, this should be made with one
+static void loop(forth_state_t* fs) {
+    amf_push_data(fs, 1);
+    plus_loop(fs);
 }
 
 // Memory management
@@ -471,6 +478,7 @@ struct c_func_s all_default_c_func[] = {
     {"until", until},
     {"do", DO},
     {"i", I},
+    {"+loop", plus_loop},
     {"loop", loop},
     // Memory management
     {"allot", allot},
