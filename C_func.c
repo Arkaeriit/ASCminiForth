@@ -205,6 +205,12 @@ static void xor(forth_state_t* fs) {
         return;                                                             \
     }                                                                        
 
+// Check the i-th word in the current executed word against two hashes
+#define CHECK_AGAINST_HASH(fs, i, hash1, hash2) ({                \
+    (fs->current_word_copy->content[i].type == normal_word) &&    \
+    ((fs->current_word_copy->content[i].content.hash == hash1) || \
+    (fs->current_word_copy->content[i].content.hash == hash2)); }) 
+
 // if
 static void IF(forth_state_t* fs) {
     CHECK_BEING_IN_WORD(fs);
@@ -213,13 +219,15 @@ static void IF(forth_state_t* fs) {
         hash_t else_hash = amf_hash("else");
         hash_t then_hash = amf_hash("then");
         hash_t if_hash = amf_hash("if");
+        hash_t ELSE_hash = amf_hash("ELSE");
+        hash_t THEN_hash = amf_hash("THEN");
+        hash_t IF_hash = amf_hash("IF");
         size_t i = fs->pos.code.pos_in_word + 1;
         int if_depth = 1;
         while (if_depth) {
-            word_node_t target_node = fs->current_word_copy->content[i];
-            if (target_node.content.hash == else_hash || target_node.content.hash == then_hash) {
+            if (CHECK_AGAINST_HASH(fs, i, else_hash, ELSE_hash) || CHECK_AGAINST_HASH(fs, i, then_hash, THEN_hash)) {
                 if_depth--;
-            } else if (target_node.content.hash == if_hash) {
+            } else if (CHECK_AGAINST_HASH(fs, i, if_hash, IF_hash)) {
                 if_depth++;
             }
             i++;
@@ -234,14 +242,15 @@ static void ELSE(forth_state_t* fs) {
     CHECK_BEING_IN_WORD(fs);
     hash_t then_hash = amf_hash("then");
     hash_t if_hash = amf_hash("if");
+    hash_t THEN_hash = amf_hash("THEN");
+    hash_t IF_hash = amf_hash("IF");
     size_t i = fs->pos.code.pos_in_word + 1;
     int if_depth = 1;
     while (if_depth) {  // Note: not finding matching then cause a fault
         /*printf("%li, %i\n",i, if_depth); */
-        word_node_t target_node = fs->current_word_copy->content[i];
-        if (target_node.content.hash == then_hash && target_node.type == normal_word) {
+        if (CHECK_AGAINST_HASH(fs, i, then_hash, THEN_hash)) {
             if_depth--;
-        } else if (target_node.content.hash == if_hash && target_node.type == normal_word) {
+        } else if (CHECK_AGAINST_HASH(fs, i, if_hash, IF_hash)) {
             if_depth++;
         }
         i++;
@@ -266,12 +275,14 @@ static void until(forth_state_t* fs) {
         // Jumping to the corresponding until
         hash_t begin_hash = amf_hash("begin");
         hash_t until_hash = amf_hash("until");
+        hash_t BEGIN_hash = amf_hash("BEGIN");
+        hash_t UNTIL_hash = amf_hash("UNTIL");
         size_t i = fs->pos.code.pos_in_word - 2;
         int loop_depth = 1;
         while (loop_depth) {    // Note: if no matching begin is found, there is a fault
-            if (fs->current_word_copy->content[i].content.hash == begin_hash) {
+            if (CHECK_AGAINST_HASH(fs, i, begin_hash, BEGIN_hash)) {
                 loop_depth--;
-            } else if (fs->current_word_copy->content[i].content.hash == until_hash) {
+            } else if (CHECK_AGAINST_HASH(fs, i, until_hash, UNTIL_hash)) {
                 loop_depth++;
             }
             i--;
@@ -310,12 +321,15 @@ static void plus_loop(forth_state_t* fs) {
         hash_t do_hash = amf_hash("do");
         hash_t loop_hash = amf_hash("loop");
         hash_t plus_loop_hash = amf_hash("+loop");
+        hash_t DO_hash = amf_hash("DO");
+        hash_t LOOP_hash = amf_hash("LOOP");
+        hash_t plus_LOOP_hash = amf_hash("+LOOP");
         size_t i = fs->pos.code.pos_in_word - 2;
         int loop_depth = 1;
         while (loop_depth) {    // Note: if no matching begin is found, there is a fault
-            if (fs->current_word_copy->content[i].content.hash == do_hash) {
+            if (CHECK_AGAINST_HASH(fs, i, do_hash, DO_hash)) {
                 loop_depth--;
-            } else if (fs->current_word_copy->content[i].content.hash == loop_hash || fs->current_word_copy->content[i].content.hash == plus_loop_hash) {
+            } else if (CHECK_AGAINST_HASH(fs, i, loop_hash, LOOP_hash) || CHECK_AGAINST_HASH(fs, i, plus_loop_hash, plus_LOOP_hash)) {
                 loop_depth++;
             }
             i--;
