@@ -97,24 +97,23 @@ bool amf_run_step(forth_state_t* fs) {
 }
 
 // Executes the content of a word_node
-void amf_executes_node(forth_state_t* fs, struct word_node_s* node) {
+error amf_executes_node(forth_state_t* fs, struct word_node_s* node) {
     switch (node->type) {
         case normal_word:
             debug_msg("Calling hash %u from pos %zi.\n", node->content.hash, fs->pos.code.pos_in_word - 1);
-            amf_call_func(fs, node->content.hash);
-            break;
+            return amf_call_func(fs, node->content.hash);
         case raw_number:
             amf_push_data(fs, node->content.value);
-            break;
+            return OK;
         case printed_string:
             amf_print_string(node->content.string);
-            break;
+            return OK;
         case forth_string:
             amf_push_data(fs, (amf_int_t) node->content.string);
             amf_push_data(fs, (amf_int_t) strlen(node->content.string));
-            break;
-        default:
-            break;
+            return OK;
+		default:
+			return OK; //BAD BAD BAD
     }
 }
 

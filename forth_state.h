@@ -71,7 +71,7 @@ void amf_push_code(forth_state_t* fs, code_pointer_t p);
 code_pointer_t amf_pop_code(forth_state_t* fs);
 
 bool amf_run_step(forth_state_t* fs);
-void amf_executes_node(forth_state_t* fs, struct word_node_s* node);
+error amf_executes_node(forth_state_t* fs, struct word_node_s* node);
 void amf_run(forth_state_t* fs);
 void amf_exit(forth_state_t* fs);
 
