@@ -404,6 +404,7 @@ static void printNum(forth_state_t* fs) {
     char buff[AMF_MAX_NUMBER_DIGIT];
     char* str = amf_base_format(w1, buff, fs->base);
     amf_print_string(str);
+    amf_print_string(" ");
 }
 
 // emit
