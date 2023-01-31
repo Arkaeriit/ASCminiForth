@@ -110,6 +110,12 @@ void amf_parse_char(parser_state_t* parse, char ch) {
     parse->is_last_escaped = false;
 }
 
+void amf_parse_string(parser_state_t* parse, const char* s) {
+    for (size_t i=0; i<strlen(s); i++) {
+        amf_parse_char(parse, s[i]);
+    }
+}
+
 void amf_shell(void) {
     amf_print_string("Starting the ASCminiForth shell.\n");
     parser_state_t* parse = amf_init_parser();
