@@ -75,26 +75,26 @@ void amf_clean_dic(forth_dictionary_t* fd) {
 
 // Display nicely the content of a dictionary
 void amf_display_dictionary(forth_dictionary_t* dic) {
-	for (size_t i=0; i<dic->n_entries; i++) {
+    for (size_t i=0; i<dic->n_entries; i++) {
 #if AMF_STORE_NAME
-		printf("Entry %zi/%zi %s:\n", i+1, dic->n_entries+1, dic->entries[i].name);
+        printf("Entry %zu/%zu %s:\n", i+1, dic->n_entries+1, dic->entries[i].name);
 #else
-		printf("Entry %zi/%zi:\n", i+1, dic->n_entries+1);
+        printf("Entry %zu/%zu:\n", i+1, dic->n_entries+1);
 #endif
-		const char* type;
-		switch (dic->entries[i].type) {
-			case C_word:
-				type = "C word";
-				break;
-			case FORTH_word:
-				type = "Forth word";
-				break;
-			case compile_word:
-				type = "compile word";
-				break;
-		}
-		printf("type = %s, hash = %X\n\n", type, dic->entries[i].hash);
-	}
+        const char* type;
+        switch (dic->entries[i].type) {
+            case C_word:
+                type = "C word";
+                break;
+            case FORTH_word:
+                type = "Forth word";
+                break;
+            case compile_word:
+                type = "compile word";
+                break;
+        }
+        printf("type = %s, hash = %X\n\n", type, dic->entries[i].hash);
+    }
 }
 
 // If there is an element in the dictionary with the desired hash,

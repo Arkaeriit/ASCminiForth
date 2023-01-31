@@ -17,11 +17,11 @@ error amf_compile_user_word(forth_dictionary_t* fd, const char* name, size_t sub
         def->content[i] = amf_compile_node(subwords[i], base);
 #if AMF_LOG > 1
         if (def->content[i].type == normal_word) {
-			error find_rc = amf_find(fd, NULL, NULL, amf_hash(subwords[i]));
-			if (find_rc != OK) {
-				warn_msg("The word %s is needed but it is not in the dictionary.\n", subwords[i]);
-			}
-		}
+            error find_rc = amf_find(fd, NULL, NULL, amf_hash(subwords[i]));
+            if (find_rc != OK) {
+                warn_msg("The word %s is needed but it is not in the dictionary.\n", subwords[i]);
+            }
+        }
 #endif
     }
     entry_t e;

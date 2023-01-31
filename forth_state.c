@@ -112,9 +112,9 @@ error amf_executes_node(forth_state_t* fs, struct word_node_s* node) {
             amf_push_data(fs, (amf_int_t) node->content.string);
             amf_push_data(fs, (amf_int_t) strlen(node->content.string));
             return OK;
-		default:
-			return OK; //BAD BAD BAD
     }
+    error_msg("Invalid node type.\n");
+    return impossible_error;
 }
 
 // Run the interpreter until it finishes all calls
