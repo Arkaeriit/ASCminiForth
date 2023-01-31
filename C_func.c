@@ -1,6 +1,7 @@
+#include "amf_debug.h"
 #include "C_func.h"
-#include "stdio.h"
 #include "string.h"
+#include "stdio.h"
 #include "utils.h"
 
 #define UNUSED(x) (void)(x)
@@ -198,8 +199,15 @@ static void xor(forth_state_t* fs) {
 
 // Flow control
 
+#define CHECK_BEING_IN_WORD(fs)                                             \
+    if (fs->pos.code.current_word == IDLE_CURRENT_WORD) {                   \
+        error_msg("Control flow impossible outside of word definition.\n"); \
+        return;                                                             \
+    }                                                                        
+
 // if
 static void IF(forth_state_t* fs) {
+    CHECK_BEING_IN_WORD(fs);
     amf_int_t w1 = amf_pop_data(fs);
     if (!w1) {  // If w1 is not true, we want to get to the next else or the next then
         hash_t else_hash = amf_hash("else");
@@ -223,11 +231,12 @@ static void IF(forth_state_t* fs) {
 // else
 // If we meet that word, it means that we were in an if block, thus we need to jump to the next then
 static void ELSE(forth_state_t* fs) {
+    CHECK_BEING_IN_WORD(fs);
     hash_t then_hash = amf_hash("then");
     hash_t if_hash = amf_hash("if");
     size_t i = fs->pos.code.pos_in_word + 1;
     int if_depth = 1;
-    while (if_depth) {  // Note: not finding mathing then cause a fault
+    while (if_depth) {  // Note: not finding matching then cause a fault
         /*printf("%li, %i\n",i, if_depth); */
         word_node_t target_node = fs->current_word_copy->content[i];
         if (target_node.content.hash == then_hash && target_node.type == normal_word) {
@@ -242,23 +251,24 @@ static void ELSE(forth_state_t* fs) {
 
 // then
 static void then(forth_state_t* fs) {
-    UNUSED(fs);
+    CHECK_BEING_IN_WORD(fs);
 };
 
 // begin
 static void begin(forth_state_t* fs) {
-    UNUSED(fs);
+    CHECK_BEING_IN_WORD(fs);
 };
 
 // until
 static void until(forth_state_t* fs) {
+    CHECK_BEING_IN_WORD(fs);
     if (!amf_pop_data(fs)) {
-        // Jumping to the correspinging until
+        // Jumping to the corresponding until
         hash_t begin_hash = amf_hash("begin");
         hash_t until_hash = amf_hash("until");
         size_t i = fs->pos.code.pos_in_word - 2;
         int loop_depth = 1;
-        while (loop_depth) {    // Note: if no mathing begin is found, there is a fault
+        while (loop_depth) {    // Note: if no matching begin is found, there is a fault
             if (fs->current_word_copy->content[i].content.hash == begin_hash) {
                 loop_depth--;
             } else if (fs->current_word_copy->content[i].content.hash == until_hash) {
@@ -278,7 +288,7 @@ static void cells(forth_state_t* fs) {
 }
 
 // here
-// This word is here fore compatibility with other Forth dialect but as the memory management of this dialect is different, it doesn't make sence to have a here word
+// This word is here fore compatibility with other Forth dialect but as the memory management of this dialect is different, it doesn't make sense to have a here word
 static void here(forth_state_t* fs) {
     UNUSED(fs);
 }
