@@ -4,14 +4,22 @@
 #include "amf_config.h"
 
 #include "stdio.h"
+#include "string.h"
 #include "stdarg.h"
+#include "amf_io.h"
 static void __attribute__((unused)) amf_log_error_msg(int ANSI_color, const char* tag, const char* msg, ...) {
-    fprintf(stderr, "\033[%im%s ", ANSI_color, tag);
+    char buff[150];
+    snprintf(buff, 40, "\033[%im%s ", ANSI_color, tag);
     va_list arg;
     va_start(arg, msg);
-    vfprintf(stderr, msg, arg);
+    vsnprintf(buff + strlen(buff), 100, msg, arg);
     va_end(arg);
-    fprintf(stderr, "\033[0m");
+    snprintf(buff + strlen(buff), 9, "\033[0m");
+#if AMF_LOG_OVER_STDERR
+    fprintf(stderr, "%s", buff);
+#else
+    amf_print_string(buff);
+#endif
 }
 
 #if AMF_LOG > 0

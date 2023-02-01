@@ -247,7 +247,6 @@ static void ELSE(forth_state_t* fs) {
     size_t i = fs->pos.code.pos_in_word + 1;
     int if_depth = 1;
     while (if_depth) {  // Note: not finding matching then cause a fault
-        /*printf("%li, %i\n",i, if_depth); */
         if (CHECK_AGAINST_HASH(fs, i, then_hash, THEN_hash)) {
             if_depth--;
         } else if (CHECK_AGAINST_HASH(fs, i, if_hash, IF_hash)) {
@@ -400,7 +399,7 @@ static void cstore(forth_state_t* fs) {
 // print
 static void put_str(forth_state_t* fs) {
     char* str = (char *) amf_pop_data(fs);
-    printf("%s", str);
+    amf_print_string(str);
 }
 
 // strlen

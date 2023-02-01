@@ -30,6 +30,9 @@ typedef intptr_t amf_int_t;
 // 0 = no logs; 1 = errors; 2 = errors and warnings; 3 = errors, warning, and debug
 #define AMF_LOG 2
 
+// Writing logs to stderr instead of the usual canals
+#define AMF_LOG_OVER_STDERR 0
+
 // Use words defined in Forth
 #define AMF_REGISTER_FORTH_FUNC 1
 

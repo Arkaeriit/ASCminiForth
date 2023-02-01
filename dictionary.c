@@ -76,11 +76,13 @@ void amf_clean_dic(forth_dictionary_t* fd) {
 // Display nicely the content of a dictionary
 void amf_display_dictionary(forth_dictionary_t* dic) {
     for (size_t i=0; i<dic->n_entries; i++) {
+        char buff[200];
 #if AMF_STORE_NAME
-        printf("Entry %zu/%zu %s:\n", i+1, dic->n_entries+1, dic->entries[i].name);
+        snprintf(buff, 199, "Entry %zu/%zu %s:\n", i+1, dic->n_entries+1, dic->entries[i].name);
 #else
-        printf("Entry %zu/%zu:\n", i+1, dic->n_entries+1);
+        snprintf(buff, 199, "Entry %zu/%zu:\n", i+1, dic->n_entries+1);
 #endif
+        amf_print_string(buff);
         const char* type;
         switch (dic->entries[i].type) {
             case C_word:
