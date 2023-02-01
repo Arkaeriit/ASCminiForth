@@ -123,7 +123,11 @@ bool amf_run_step(forth_state_t* fs) {
 }
 
 // Executes the content of a word_node
+#if AMF_CATCH_SEGFAULTS
+static error _amf_executes_node(forth_state_t* fs, struct word_node_s* node) {
+#else
 error amf_executes_node(forth_state_t* fs, struct word_node_s* node) {
+#endif
     switch (node->type) {
         case normal_word:
             debug_msg("Calling hash %u from pos %zi.\n", node->content.hash, fs->pos.code.pos_in_word - 1);
@@ -142,6 +146,46 @@ error amf_executes_node(forth_state_t* fs, struct word_node_s* node) {
     error_msg("Invalid node type.\n");
     return impossible_error;
 }
+
+#if AMF_CATCH_SEGFAULTS
+#include <setjmp.h>
+#include <signal.h>
+#define UNUSED(x) (void)(x)
+
+error amf_executes_node(forth_state_t* fs, struct word_node_s* node) {
+    // Prepare catching of segfaults
+    static sigjmp_buf point;
+    void handler(int sig, siginfo_t *dont_care, void *dont_care_either) {
+        UNUSED(sig);    
+        UNUSED(dont_care);    
+        UNUSED(dont_care_either);    
+        longjmp(point, 1);
+    }
+    struct sigaction sa;
+    memset(&sa, 0, sizeof(sigaction));
+    sigemptyset(&sa.sa_mask);
+    sa.sa_flags     = SA_NODEFER;
+    sa.sa_sigaction = handler;
+    sigaction(SIGSEGV, &sa, NULL);
+
+    // Execute the risky code
+    error ret;
+    if (setjmp(point) == 0) {
+        ret = _amf_executes_node(fs, node);
+    } else {
+        error_msg("SEGFAULT. TODO: better error reporting.\n");
+        fs->pos.code.current_word = IDLE_CURRENT_WORD;
+        fs->pos.code.pos_in_word = IDLE_POS_IN_WORD;
+        ret = segfault;
+    }
+
+    // Stop the fault catcher
+    sa.sa_sigaction = NULL;
+    sa.sa_handler = SIG_IGN;
+    sigaction(SIGSEGV, &sa, NULL);
+    return ret;
+}
+#endif
 
 // Run the interpreter until it finishes all calls
 void amf_run(forth_state_t* fs) {

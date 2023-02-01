@@ -7,7 +7,8 @@ typedef enum {
     no_memory = 1,
     not_found = 2,
     invalid_file = 3,
-    impossible_error = 4
+    impossible_error = 4,
+    segfault = 5,
 } error;
 
 #endif

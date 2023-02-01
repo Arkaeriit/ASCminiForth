@@ -27,7 +27,7 @@ typedef intptr_t amf_int_t;
 #define AMF_CASE_INSENSITIVE 1
 
 // Log messages
-// 0 = no logs; 1 = erros; 2 = errors and warnings; 3 = errors, warning, and debug
+// 0 = no logs; 1 = errors; 2 = errors and warnings; 3 = errors, warning, and debug
 #define AMF_LOG 2
 
 // Use words defined in Forth
@@ -38,6 +38,13 @@ typedef intptr_t amf_int_t;
 
 // Max number of digits in a number
 #define AMF_MAX_NUMBER_DIGIT 64
+
+// Handling segfaults when running Forth code
+// With this option set to 1, segfaults caused by Forth code will be caught and
+// the interpreter will be put back into an idle state if encountered. This
+// relies on static variable and thus, this prevent the interpreter to be used
+// on multiple threads.
+#define AMF_CATCH_SEGFAULTS 0
 
 #endif
 

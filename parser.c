@@ -93,8 +93,10 @@ void amf_parse_char(parser_state_t* parse, char ch) {
                 parse->pnt = 0;
                 word_node_t node_to_exe = amf_compile_node(parse->buffer, parse->fs->base);
                 error execute_rc = amf_executes_node(parse->fs, &node_to_exe);
-                if (execute_rc != OK) {
+                if (execute_rc == not_found) {
                     error_msg("Calling word %s which is not defined.\n", parse->buffer);
+                } else if (execute_rc != OK) {
+                    warn_msg("Error n°%i when calling word %s\n", execute_rc, parse->buffer);
                 }
                 amf_run(parse->fs);
             }
