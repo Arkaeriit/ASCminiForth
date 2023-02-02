@@ -36,13 +36,13 @@ typedef union {
 // The code stack
 typedef struct {
     code_pointer_t* stack;
-    size_t stack_pointer;       // In both stacks, the poiter point to the first free element
+    ssize_t stack_pointer;       // In both stacks, the poiter point to the first free element
 } code_stack_t;
 
 // The main stack
 typedef struct {
     amf_int_t* stack;
-    size_t stack_pointer;
+    ssize_t stack_pointer;
 } data_stack_t;
 
 // The interpreter's state

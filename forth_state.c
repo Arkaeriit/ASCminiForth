@@ -35,8 +35,29 @@ void amf_clean_state(forth_state_t* fs) {
     free(fs);
 }
 
+// Puts the state back in an idle state, with all stacks empty and no word
+// being executed.
+static void __attribute__((unused)) idle_state(forth_state_t* fs) {
+    fs->pos.code.current_word = IDLE_CURRENT_WORD;
+    fs->pos.code.pos_in_word = IDLE_POS_IN_WORD;
+    fs->data->stack_pointer = 0;
+    fs->code->stack_pointer = 0;
+    fs->loop_control->stack_pointer = 0;
+}
+
+#if AMF_STACK_BOUND_CHECKS
+#define STACK_BOUND_CHECK(stack_name, condition)                               \
+    if (fs->stack_name->stack_pointer condition) {                             \
+        error_msg("Stack `%s` out of bound. Resetting state.\n", #stack_name); \
+        idle_state(fs);                                                        \
+    }                                                                           
+#else
+#define STACK_BOUND_CHECK(x...)
+#endif
+
 // Pops the last element from the data stack
 amf_int_t amf_pop_data(forth_state_t* fs) {
+    STACK_BOUND_CHECK(data, <1);
     debug_msg("pop data at index: %zi\n", fs->data->stack_pointer - 1);
     amf_int_t ret = fs->data->stack[fs->data->stack_pointer - 1];
     fs->data->stack_pointer--;
@@ -48,6 +69,7 @@ void amf_push_data(forth_state_t* fs, amf_int_t w) {
     debug_msg("push data at index: %zi\n", fs->data->stack_pointer);
     fs->data->stack[fs->data->stack_pointer] = w;
     fs->data->stack_pointer++;
+    STACK_BOUND_CHECK(data, >=DATA_STACK_SIZE);
 }
 
 // Push a code_pointer element on the code stack
@@ -55,10 +77,12 @@ void amf_push_code(forth_state_t* fs, code_pointer_t p) {
     debug_msg("push code at index: %zi\n", fs->code->stack_pointer);
     fs->code->stack[fs->code->stack_pointer] = p;
     fs->code->stack_pointer++;
+    STACK_BOUND_CHECK(code, >=CODE_STACK_SIZE);
 }
 
 // Pop a code_pointer element from the code stack
 code_pointer_t amf_pop_code(forth_state_t* fs) {
+    STACK_BOUND_CHECK(code, <1);
     debug_msg("pop code at index: %zi\n", fs->code->stack_pointer - 1);
     code_pointer_t ret = fs->code->stack[fs->code->stack_pointer - 1];
     fs->code->stack_pointer--;
@@ -70,10 +94,12 @@ void amf_push_loop(forth_state_t* fs, amf_int_t w) {
     debug_msg("push loop at index: %zi\n", fs->loop_control->stack_pointer);
     fs->loop_control->stack[fs->loop_control->stack_pointer] = w;
     fs->loop_control->stack_pointer++;
+    STACK_BOUND_CHECK(loop_control, >=LOOP_STACK_SIZE);
 }
 
 // Pops the last element from the loop stack
 amf_int_t amf_pop_loop(forth_state_t* fs) {
+    STACK_BOUND_CHECK(loop_control, <1);
     debug_msg("pop loop at index: %zi\n", fs->loop_control->stack_pointer - 1);
     amf_int_t ret = fs->loop_control->stack[fs->loop_control->stack_pointer - 1];
     fs->loop_control->stack_pointer--;
@@ -174,8 +200,7 @@ error amf_executes_node(forth_state_t* fs, struct word_node_s* node) {
         ret = _amf_executes_node(fs, node);
     } else {
         error_msg("SEGFAULT. TODO: better error reporting.\n");
-        fs->pos.code.current_word = IDLE_CURRENT_WORD;
-        fs->pos.code.pos_in_word = IDLE_POS_IN_WORD;
+        idle_state(fs);
         ret = segfault;
     }
 

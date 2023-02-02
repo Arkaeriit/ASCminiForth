@@ -6,6 +6,7 @@ typedef intptr_t amf_int_t;
 #define AMF_INT_PRINT PRIdPTR
 
 // Optional features and words. Set to 1 to enable and to 0 to disable
+
 // Enable reading source files
 #define AMF_USE_SOURCE_FILE 1
 
@@ -41,6 +42,9 @@ typedef intptr_t amf_int_t;
 
 // Max number of digits in a number
 #define AMF_MAX_NUMBER_DIGIT 64
+
+// Performs bound checks on stack to prevent overflows or underflows
+#define AMF_STACK_BOUND_CHECKS 1
 
 // Handling segfaults when running Forth code
 // With this option set to 1, segfaults caused by Forth code will be caught and
