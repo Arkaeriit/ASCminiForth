@@ -48,7 +48,7 @@ static void __attribute__((unused)) idle_state(forth_state_t* fs) {
 #if AMF_STACK_BOUND_CHECKS
 #define STACK_BOUND_CHECK(stack_name, condition)                               \
     if (fs->stack_name->stack_pointer condition) {                             \
-        error_msg("Stack `%s` out of bound. Resetting state.\n", #stack_name); \
+        error_msg("Stack '%s' out of bound. Resetting state.\n", #stack_name); \
         idle_state(fs);                                                        \
     }                                                                           
 #else
