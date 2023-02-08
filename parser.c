@@ -134,6 +134,11 @@ error amf_register_file(parser_state_t* p, const char* filemane) {
         return invalid_file;
     }
     int ch = fgetc(f);
+    if (ch == '#') { // We ignore the starting shebang
+        while (ch != '\n' && ch != EOF) {
+            ch = fgetc(f);
+        }
+    }
     while (ch != EOF) {
         amf_parse_char(p, ch);
         ch = fgetc(f);
