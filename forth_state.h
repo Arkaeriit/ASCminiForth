@@ -62,6 +62,10 @@ typedef struct {
     amf_int_t base;
     // True by default, set to false when running exit when the code stack is empty
     bool running;
+#if AMF_CLI_ARGS
+    int argc;
+    char** argv;
+#endif
 } forth_state_t;
 
 forth_state_t* amf_init_state(void);

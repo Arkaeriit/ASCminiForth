@@ -20,6 +20,10 @@ forth_state_t* amf_init_state(void) {
     ret->pos.code.pos_in_word = IDLE_POS_IN_WORD;
     ret->base = 10;
     ret->running = true;
+#if AMF_CLI_ARGS
+    ret->argc = 0;
+    ret->argv = NULL;
+#endif
     return ret;
 }
 

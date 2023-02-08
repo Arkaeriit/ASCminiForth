@@ -10,6 +10,10 @@ typedef intptr_t amf_int_t;
 // Enable reading source files
 #define AMF_USE_SOURCE_FILE 1
 
+// Enable the words argc, argv, (arg), and arg to use when giving command
+// line arguments to the interpreter
+#define AMF_CLI_ARGS 1
+
 // Depth of the three stacks
 #define CODE_STACK_SIZE 100
 #define DATA_STACK_SIZE 100

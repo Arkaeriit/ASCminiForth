@@ -408,6 +408,21 @@ static void str_len(forth_state_t* fs) {
     amf_push_data(fs, (amf_int_t) strlen(str));
 }
 
+#if AMF_CLI_ARGS
+// Arguments
+
+// argc
+static void argc(forth_state_t* fs) {
+    amf_push_data(fs, (amf_int_t) fs->argc);
+}
+
+// arg
+static void arg(forth_state_t* fs) {
+    amf_int_t index = amf_pop_data(fs);
+    amf_push_data(fs, (amf_int_t) fs->argv[index]);
+    amf_push_data(fs, (amf_int_t) strlen(fs->argv[index]));
+}
+#endif
 
 // Misc
 
@@ -508,6 +523,11 @@ struct c_func_s all_default_c_func[] = {
     // C strings
     {"print", put_str},
     {"strlen", str_len},
+#if AMF_CLI_ARGS
+    // Arguments
+    {"argc", argc},
+    {"arg", arg},
+#endif    
     // Misc
     {".", printNum},
     {"emit", emit},

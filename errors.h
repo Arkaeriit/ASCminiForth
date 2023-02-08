@@ -11,5 +11,14 @@ typedef enum {
     segfault = 5,
 } error;
 
+// Basic checks on the current configuration
+
+#if AMF_CLI_ARGS
+#if !AMF_USE_SOURCE_FILE
+#error CLI arguments are only used when interpreting a file. It makes no sense to enable CLI arguments while not enabling source files.
+#endif
+#endif
+
+
 #endif
 
