@@ -17,7 +17,7 @@ typedef struct {
     union {
         C_callback_t C_func;                // To define
         user_amf_int_t* F_word;             // Content of words defined in Forth
-        compile_callback_t Compile_func;    //To define or delete
+        compile_callback_t compile_func;    // Function to call on the parser
         amf_int_t constant;                 // Value written in hard
         amf_int_t* variable;                // Data that should be malloced
     } func;
