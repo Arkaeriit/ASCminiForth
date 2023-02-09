@@ -102,4 +102,6 @@ Here is a list of all words, with some notes when the word differs from the stan
 | `." ` | |
 | `argc` | Return the number of command line arguments given to the program when interpreting a file. |
 | `arg` | Take an number n and return the n-th command line argument as a null terminated Forth string. |
-| `free` | W.I.P |
+| `allocate` | |
+| `free` | |
+| `resize` | |

@@ -351,23 +351,37 @@ static void cells(forth_state_t* fs) {
 }
 
 // here
-// This word is here fore compatibility with other Forth dialect but as the memory management of this dialect is different, it doesn't make sense to have a here word
 static void here(forth_state_t* fs) {
     amf_push_data(fs, ((amf_int_t) fs->forth_memory) + fs->forth_memory_index);
-}
-
-// free
-static void FREE(forth_state_t* fs) {
-    free((void *) amf_pop_data(fs));
 }
 
 // allot
 static void allot(forth_state_t* fs) {
     amf_int_t size = amf_pop_data(fs);
-    /*
-    amf_push_data(fs, (amf_int_t) malloc(size));
-    */
     amf_allot(fs, size);
+}
+
+// allocate
+static void allocate(forth_state_t* fs) {
+    amf_int_t size = amf_pop_data(fs);
+    char* mem = malloc(size);
+    amf_push_data(fs, (amf_int_t) mem);
+    amf_push_data(fs, mem == NULL);
+}
+
+// free
+static void FREE(forth_state_t* fs) {
+    free((void *) amf_pop_data(fs));
+    amf_push_data(fs, 0);
+}
+
+// resize
+static void resize(forth_state_t* fs) {
+    amf_int_t new_size = amf_pop_data(fs);
+    void* mem = (void*) amf_pop_data(fs);
+    void* new_mem = realloc(mem, new_size);
+    amf_push_data(fs, (amf_int_t) new_mem);
+    amf_push_data(fs, new_mem == NULL);
 }
 
 // @
@@ -518,7 +532,9 @@ struct c_func_s all_default_c_func[] = {
     {"allot", allot},
     {"cells", cells},
     {"here", here},
+    {"allocate", allocate},
     {"free", FREE},
+    {"resize", resize},
     {"@", fetch},
     {"!", store},
     {"c@", cfetch},
