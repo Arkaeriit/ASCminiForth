@@ -14,10 +14,11 @@ typedef intptr_t amf_int_t;
 // line arguments to the interpreter
 #define AMF_CLI_ARGS 1
 
-// Depth of the three stacks
+// Depth of the memory blocks
 #define CODE_STACK_SIZE 100
 #define DATA_STACK_SIZE 100
 #define LOOP_STACK_SIZE 100
+#define FORTH_MEMORY_SIZE 100
 
 // Dummy values to put in the state's code position to indicate that
 // the interpreter is idling and not inside a function

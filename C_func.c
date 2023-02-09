@@ -353,7 +353,7 @@ static void cells(forth_state_t* fs) {
 // here
 // This word is here fore compatibility with other Forth dialect but as the memory management of this dialect is different, it doesn't make sense to have a here word
 static void here(forth_state_t* fs) {
-    UNUSED(fs);
+    amf_push_data(fs, ((amf_int_t) fs->forth_memory) + fs->forth_memory_index);
 }
 
 // free
@@ -364,7 +364,10 @@ static void FREE(forth_state_t* fs) {
 // allot
 static void allot(forth_state_t* fs) {
     amf_int_t size = amf_pop_data(fs);
+    /*
     amf_push_data(fs, (amf_int_t) malloc(size));
+    */
+    amf_allot(fs, size);
 }
 
 // @

@@ -52,6 +52,9 @@ typedef struct {
     code_stack_t* code;
     // A special stack used for loop control flow
     data_stack_t* loop_control;
+    // The forth memory used for allot and variables
+    char* forth_memory;
+    size_t forth_memory_index;
     // The dictionary
     struct forth_dictionary_s* dic;
     // A copy of the word being processed, to ensure fast access
@@ -83,6 +86,8 @@ bool amf_run_step(forth_state_t* fs);
 error amf_executes_node(forth_state_t* fs, struct word_node_s* node);
 void amf_run(forth_state_t* fs);
 void amf_exit(forth_state_t* fs);
+
+void amf_allot(forth_state_t* fs, size_t byte_requested);
 
 #endif
 

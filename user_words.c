@@ -199,7 +199,8 @@ error amf_compile_variable(const char* name, forth_state_t* fs) {
     entry_t e;
     e.hash = amf_hash(name);
     e.type = variable;
-    e.func.variable = malloc(sizeof(amf_int_t));
+    e.func.variable = (amf_int_t*) (fs->forth_memory + fs->forth_memory_index);
+    amf_allot(fs, sizeof(amf_int_t));
 #if AMF_STORE_NAME
     e.name = malloc(strlen(name) + 1);
     strcpy(e.name, name);

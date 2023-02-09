@@ -14,6 +14,8 @@ forth_state_t* amf_init_state(void) {
     ret->loop_control = malloc(sizeof(data_stack_t));
     ret->loop_control->stack_pointer = 0;
     ret->loop_control->stack = malloc(sizeof(amf_int_t) * LOOP_STACK_SIZE);
+    ret->forth_memory = malloc(FORTH_MEMORY_SIZE);
+    ret->forth_memory_index = 0;
     ret->dic = amf_init_dic();
     amf_register_default_C_func(ret);
     ret->pos.code.current_word = IDLE_CURRENT_WORD;
@@ -30,6 +32,7 @@ forth_state_t* amf_init_state(void) {
 // Clean the code used by the dictionary
 void amf_clean_state(forth_state_t* fs) {
     amf_clean_dic(fs->dic);
+    free(fs->forth_memory);
     free(fs->loop_control->stack);
     free(fs->loop_control);
     free(fs->code->stack);
@@ -219,5 +222,18 @@ error amf_executes_node(forth_state_t* fs, struct word_node_s* node) {
 // Run the interpreter until it finishes all calls
 void amf_run(forth_state_t* fs) {
     while (amf_run_step(fs));
+}
+
+// Request some bytes from the forth memory and align the index
+void amf_allot(forth_state_t* fs, size_t byte_requested) {
+    fs->forth_memory_index += byte_requested;
+    while(fs->forth_memory_index % sizeof(amf_int_t)) {
+        fs->forth_memory_index++;
+    }
+#if AMF_STACK_BOUND_CHECKS
+    if (fs->forth_memory_index > FORTH_MEMORY_SIZE) {
+        error_msg("Forth memory overflowed by %i bytes.\n", fs->forth_memory_index - FORTH_MEMORY_SIZE);
+    }
+#endif
 }
 

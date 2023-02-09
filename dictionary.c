@@ -49,9 +49,7 @@ static void free_word(entry_t e) {
         case constant:
         case C_word:
         case compile_word:
-            break;
         case variable:
-            free(e.func.variable);
             break;
     }
 }
