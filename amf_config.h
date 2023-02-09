@@ -14,6 +14,9 @@ typedef intptr_t amf_int_t;
 // line arguments to the interpreter
 #define AMF_CLI_ARGS 1
 
+// Enable words related to file manipulation
+#define AMF_FILE 1
+
 // Depth of the memory blocks
 #define CODE_STACK_SIZE 100
 #define DATA_STACK_SIZE 100

@@ -441,6 +441,85 @@ static void arg(forth_state_t* fs) {
 }
 #endif
 
+#if AMF_FILE
+// File manipulation
+
+enum file_modes {
+    m_ro = 1,
+    m_wo = 2,
+    m_rw = 3,
+};
+
+static const char* file_modes_to_create(enum file_modes fm) {
+    switch (fm) {
+        case m_wo:
+            return "w";
+        case m_rw:
+            return "w+";
+        default:
+            error_msg("Invalid mode for file creation.");
+            return NULL;
+    }
+}
+
+static const char* file_modes_to_open(enum file_modes fm) {
+    switch (fm) {
+        case m_wo:
+            return "a";
+        case m_rw:
+            return "a+";
+        case m_ro:
+            return "r";
+        default:
+            error_msg("Invalid mode for file opening.");
+            return NULL;
+    }
+}
+
+// r/o
+static void ro(forth_state_t* fs) {
+    amf_push_data(fs, m_ro);
+}
+
+// w/o
+static void wo(forth_state_t* fs) {
+    amf_push_data(fs, m_wo);
+}
+
+// r/w
+static void rw(forth_state_t* fs) {
+    amf_push_data(fs, m_rw);
+}
+
+// create-file and open-file generic
+static void file_action(forth_state_t* fs, const char* (*mode_f)(enum file_modes)) {
+    enum file_modes mode = amf_pop_data(fs);
+    amf_pop_data(fs); // Ignoring string length as we use C strings
+    const char* filename = (const char*) amf_pop_data(fs);
+    FILE* ret = fopen(filename, mode_f(mode));
+    amf_push_data(fs, (amf_int_t) ret);
+    amf_push_data(fs, ret == NULL);
+}
+
+// create-file
+static void create_file(forth_state_t* fs) {
+    file_action(fs, file_modes_to_create);
+}
+
+
+// open-file
+static void open_file(forth_state_t* fs) {
+    file_action(fs, file_modes_to_open);
+}
+
+// close-file
+static void close_file(forth_state_t* fs) {
+    FILE* f = (FILE*) amf_pop_data(fs);
+    fclose(f);
+    amf_push_data(fs, 0);
+}
+#endif
+
 // Misc
 
 // .
@@ -547,6 +626,15 @@ struct c_func_s all_default_c_func[] = {
     {"argc", argc},
     {"arg", arg},
 #endif    
+#if AMF_FILE
+    // File manipulation
+    {"r/o", ro},
+    {"r/w", rw},
+    {"w/o", wo},
+    {"create-file", create_file},
+    {"open-file", open_file},
+    {"close-file", close_file},
+#endif
     // Misc
     {".", printNum},
     {"emit", emit},
