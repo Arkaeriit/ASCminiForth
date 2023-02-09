@@ -2,19 +2,24 @@
 #ifndef DICTIONARY_H
 #define DICTIONARY_H
 
-// Describes the kind of data that can be put inthe dictionary
+// Describes the kind of data that can be put in the dictionary
 enum entry_type {
     C_word,                     // Words defined in C
     FORTH_word,                 // Words defined in Forth
-    compile_word                // Words that have effetct at compile time (such as : or ;)
+    compile_word,               // Words that have effect at compile time (such as : or ;)
+    constant,                   // Words that are just putting a constant on the stack
+    variable,                   // Words that are aliased to a memory address
+    
 };
 
 // This structure represent the entries in the dictionary
 typedef struct {
     union {
         C_callback_t C_func;                // To define
-        user_amf_int_t* F_word;             // Content of wors defined in Forth
+        user_amf_int_t* F_word;             // Content of words defined in Forth
         compile_callback_t Compile_func;    //To define or delete
+        amf_int_t constant;                 // Value written in hard
+        amf_int_t* variable;                // Data that should be malloced
     } func;
     enum entry_type type;
     hash_t hash;
@@ -23,7 +28,7 @@ typedef struct {
 #endif
 } entry_t;
 
-// This structure represent the dictionary. Should be used as a bynamic array. The values should be sorted 
+// This structure represent the dictionary. Should be used as a dynamic array. The values should be sorted 
 typedef struct forth_dictionary_s {
     entry_t* entries;
     size_t n_entries;

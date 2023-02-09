@@ -18,5 +18,8 @@ word_node_t amf_compile_node(const char* str, int base);
 bool amf_is_delimiter(char ch);
 void amf_clean_user_word(user_amf_int_t * w);
 
+error amf_compile_constant(const char* name, forth_state_t* fs);
+error amf_compile_variable(const char* name, forth_state_t* fs);
+
 #endif
 

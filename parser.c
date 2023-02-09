@@ -16,6 +16,8 @@ parser_state_t* amf_init_parser(void) {
     ret->is_between_quotes = false;
     ret->is_last_escaped = false;
     ret->wait_for_new_line = false;
+    ret->in_defining_constant = false;
+    ret->in_defining_variable = false;
     amf_init_io();
 #if AMF_REGISTER_FORTH_FUNC
     extern const char* forth_func;
@@ -91,14 +93,26 @@ void amf_parse_char(parser_state_t* parse, char ch) {
                 parse->buffer[parse->pnt] = 0;
                 parse->in_word = false;
                 parse->pnt = 0;
-                word_node_t node_to_exe = amf_compile_node(parse->buffer, parse->fs->base);
-                error execute_rc = amf_executes_node(parse->fs, &node_to_exe);
-                if (execute_rc == not_found) {
-                    error_msg("Calling word %s which is not defined.\n", parse->buffer);
-                } else if (execute_rc != OK) {
-                    warn_msg("Error n°%i when calling word %s\n", execute_rc, parse->buffer);
+                if (parse->in_defining_constant) {
+                    amf_compile_constant(parse->buffer, parse->fs);
+                    parse->in_defining_constant = false;
+                } else if (parse->in_defining_variable) {
+                    amf_compile_variable(parse->buffer, parse->fs);
+                    parse->in_defining_variable = false;
+                } else if (!strcmp(parse->buffer, "constant") || !strcmp(parse->buffer, "CONSTANT")) {
+                    parse->in_defining_constant = true;
+                } else if (!strcmp(parse->buffer, "variable") || !strcmp(parse->buffer, "VARIABLE")) {
+                    parse->in_defining_variable = true;
+                } else { // Normal word to execute
+                    word_node_t node_to_exe = amf_compile_node(parse->buffer, parse->fs->base);
+                    error execute_rc = amf_executes_node(parse->fs, &node_to_exe);
+                    if (execute_rc == not_found) {
+                        error_msg("Calling word %s which is not defined.\n", parse->buffer);
+                    } else if (execute_rc != OK) {
+                        warn_msg("Error n°%i when calling word %s\n", execute_rc, parse->buffer);
+                    }
+                    amf_run(parse->fs);
                 }
-                amf_run(parse->fs);
             }
         } else if (parse->in_def && !parse->writing_definition_s_name) {
             parse->buffer[parse->pnt] = ch;

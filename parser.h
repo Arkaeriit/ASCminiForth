@@ -14,6 +14,8 @@ typedef struct {
     bool is_between_quotes;         // Are we betweens " quotes "
     bool is_last_escaped;           // Is the previous character '\'
     bool wait_for_new_line;         // Not parsing until new line because we are in a comment
+    bool in_defining_constant;      // The last word was "constant"
+    bool in_defining_variable;      // The last word was "variable"
 } parser_state_t;
 
 parser_state_t* amf_init_parser(void);

@@ -46,8 +46,12 @@ static void free_word(entry_t e) {
         case FORTH_word:   // Part of those words are dynamicaly allocated
             amf_clean_user_word(e.func.F_word);
             break;
-        default:
-            // Noting allocated yet otherwize TODO: check is some switches can be changed to if(){} when the roject is more mature
+        case constant:
+        case C_word:
+        case compile_word:
+            break;
+        case variable:
+            free(e.func.variable);
             break;
     }
 }
@@ -93,6 +97,12 @@ void amf_display_dictionary(forth_dictionary_t* dic) {
                 break;
             case compile_word:
                 type = "compile word";
+                break;
+            case constant:
+                type = "constant";
+                break;
+            case variable:
+                type = "variable";
                 break;
         }
         printf("type = %s, hash = %X\n\n", type, dic->entries[i].hash);
@@ -181,9 +191,15 @@ error amf_call_func(forth_state_t* fs, hash_t hash) {
             fs->pos.code.pos_in_word = 0;
             fs->current_word_copy = e.func.F_word;
             break;
-        default:
-            //TODO
+        case constant:
+            amf_push_data(fs, e.func.constant);
             break;
+        case variable:
+            amf_push_data(fs, (amf_int_t) e.func.variable);
+            break;
+        case compile_word:
+            error_msg("compile_word not used yet.\n");
+            return impossible_error;
     }
     return OK;
 }
