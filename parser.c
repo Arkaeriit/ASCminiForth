@@ -21,8 +21,6 @@ parser_state_t* amf_init_parser(void) {
     ret->is_between_quotes = false;
     ret->is_last_escaped = false;
     ret->wait_for_new_line = false;
-    ret->in_defining_constant = false;
-    ret->in_defining_variable = false;
     amf_init_io();
 #if AMF_REGISTER_FORTH_FUNC
     extern const char* forth_func;
@@ -158,14 +156,7 @@ static void definition_name_hook(parser_state_t* p) {
 // This hook is meant to read name of a variable or constant
 static void var_const_hook(parser_state_t* p) {
     p->pnt = 0;
-#warning TODO: join them
-    error (*var_const_def_cb)(const char* name, forth_state_t* fs) =
-        (p->in_defining_variable ? amf_compile_variable : 
-          (p->in_defining_constant ? amf_compile_constant :
-            ( ({error_msg("Calling war_const_hook while defining neither a variable nor a constant.\n"); NULL;}) )));
-    var_const_def_cb(p->buffer, p->fs);
-    p->in_defining_variable = false;
-    p->in_defining_constant = false;
+    amf_compile_constant_or_variable(p->buffer, p->fs, p->in_defining_constant);
     p->new_word_hook = run_next_word_hook;
 }
 
@@ -212,7 +203,7 @@ static void _constant(parser_state_t* p) {
 
 // variable
 static void _variable(struct parser_state_s* p) {
-    p->in_defining_variable = true;
+    p->in_defining_constant = false;
     p->new_word_hook = var_const_hook;
     p->pnt = 0;
 }
