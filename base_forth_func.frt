@@ -20,4 +20,5 @@
 : 2over 3 pick 3 pick ;
 : 2>r swap >r >r ;
 : 2r> r> r> swap ;
+: decimal 10 base ! ;
 
