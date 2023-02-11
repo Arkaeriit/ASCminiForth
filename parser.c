@@ -100,13 +100,18 @@ void amf_parse_string(parser_state_t* parse, const char* s) {
     }
 }
 
-void amf_shell(void) {
+int amf_shell(void) {
     amf_print_string("Starting the ASCminiForth shell.\n");
     parser_state_t* parse = amf_init_parser();
     while (parse->fs->running) {
         amf_parse_char(parse, amf_input());
     }
+    int rc = 0;
+#if AMF_PROGRAMMING_TOOLS
+    rc = parse->fs->exit_code;
+#endif
     amf_clean_parser(parse);
+    return rc;
 }
 
 #if AMF_USE_SOURCE_FILE

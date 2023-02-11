@@ -2,6 +2,7 @@
 #include "stdio.h"
 
 int main(int argc, char** argv) {
+    int rc = 0;
 #if AMF_USE_SOURCE_FILE
     if (argc > 1) {
         parser_state_t* parse = amf_init_parser();
@@ -14,11 +15,14 @@ int main(int argc, char** argv) {
             return 1;
         }
         amf_run(parse->fs);
+#if AMF_PROGRAMMING_TOOLS
+        rc = parse->fs->exit_code;
+#endif
         amf_clean_parser(parse);
-        return 0;
+        return rc;
     }
 #endif
-    amf_shell();
-    return 0;
+    rc = amf_shell();
+    return rc;
 }
 

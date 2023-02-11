@@ -25,7 +25,7 @@ parser_state_t* amf_init_parser(void);
 void amf_clean_parser(parser_state_t * parse);
 void amf_parse_char(parser_state_t * parse, char ch);
 void amf_parse_string(parser_state_t* parse, const char* s);
-void amf_shell(void);
+int amf_shell(void);
 
 #if AMF_USE_SOURCE_FILE
 error amf_register_file(parser_state_t * p, const char* filemane);

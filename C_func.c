@@ -607,7 +607,21 @@ static void write_line(forth_state_t* fs) {
     written += fwrite("\n", 1, 1, f);
     amf_push_data(fs, written != (size + 1));
 }
+#endif
 
+#if AMF_PROGRAMMING_TOOLS
+// Programming tools
+
+// exit-code
+static void exit_code(forth_state_t* fs) {
+    int ec = amf_pop_data(fs);
+    fs->exit_code = ec;
+}
+
+// bye
+static void bye(forth_state_t* fs) {
+    UNUSED(fs);
+}
 #endif
 
 // Misc
@@ -737,6 +751,11 @@ struct c_func_s all_default_c_func[] = {
     {"write-file", write_file},
     {"read-line", read_line},
     {"write-line", write_line},
+#endif
+#if AMF_PROGRAMMING_TOOLS
+    // Programming tools
+    {"exit-code", exit_code},
+    {"bye", bye},
 #endif
     // Misc
     {".", printNum},

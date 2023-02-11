@@ -69,6 +69,9 @@ typedef struct {
     int argc;
     char** argv;
 #endif
+#if AMF_PROGRAMMING_TOOLS
+    int exit_code;
+#endif
 } forth_state_t;
 
 forth_state_t* amf_init_state(void);

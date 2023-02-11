@@ -26,6 +26,9 @@ forth_state_t* amf_init_state(void) {
     ret->argc = 0;
     ret->argv = NULL;
 #endif
+#if AMF_PROGRAMMING_TOOLS
+    ret->exit_code = 0;
+#endif
     return ret;
 }
 
