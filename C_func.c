@@ -325,7 +325,7 @@ static void plus_loop(forth_state_t* fs) {
         hash_t plus_LOOP_hash = amf_hash("+LOOP");
         size_t i = fs->pos.code.pos_in_word - 2;
         int loop_depth = 1;
-        while (loop_depth) {    // Note: if no matching begin is found, there is a fault
+        while (loop_depth) {    // Note: if no matching do is found, there is a fault
             if (CHECK_AGAINST_HASH(fs, i, do_hash, DO_hash)) {
                 loop_depth--;
             } else if (CHECK_AGAINST_HASH(fs, i, loop_hash, LOOP_hash) || CHECK_AGAINST_HASH(fs, i, plus_loop_hash, plus_LOOP_hash)) {
@@ -347,6 +347,28 @@ static void loop(forth_state_t* fs) {
 static void unloop(forth_state_t* fs) {
     amf_pop_loop(fs);
     amf_pop_loop(fs);
+}
+
+// leave
+static void leave(forth_state_t* fs) {
+    unloop(fs);
+    hash_t do_hash = amf_hash("do");
+    hash_t loop_hash = amf_hash("loop");
+    hash_t plus_loop_hash = amf_hash("+loop");
+    hash_t DO_hash = amf_hash("DO");
+    hash_t LOOP_hash = amf_hash("LOOP");
+    hash_t plus_LOOP_hash = amf_hash("+LOOP");
+    size_t i = fs->pos.code.pos_in_word;
+    int loop_depth = 1;
+    while (loop_depth) {
+        if (CHECK_AGAINST_HASH(fs, i, do_hash, DO_hash)) {
+            loop_depth++;
+        } else if (CHECK_AGAINST_HASH(fs, i, loop_hash, LOOP_hash) || CHECK_AGAINST_HASH(fs, i, plus_loop_hash, plus_LOOP_hash)) {
+            loop_depth--;
+        }
+        i++;
+    }
+    fs->pos.code.pos_in_word = i;
 }
 
 // Memory management
@@ -682,6 +704,7 @@ struct c_func_s all_default_c_func[] = {
     {"+loop", plus_loop},
     {"loop", loop},
     {"unloop", unloop},
+    {"leave", leave},
     // Memory management
     {"allot", allot},
     {"cells", cells},
