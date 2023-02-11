@@ -60,6 +60,7 @@ Here is a list of all words, with some notes when the word differs from the stan
 | `i` | |
 | `+loop` | Same note as if. |
 | `loop` | Same note as if. |
+| `unloop` | |
 | `allot` | |
 | `cells` | |
 | `here` | |

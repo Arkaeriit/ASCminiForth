@@ -343,6 +343,12 @@ static void loop(forth_state_t* fs) {
     plus_loop(fs);
 }
 
+// unloop
+static void unloop(forth_state_t* fs) {
+    amf_pop_loop(fs);
+    amf_pop_loop(fs);
+}
+
 // Memory management
 
 // cells
@@ -609,6 +615,7 @@ struct c_func_s all_default_c_func[] = {
     {"i", I},
     {"+loop", plus_loop},
     {"loop", loop},
+    {"unloop", unloop},
     // Memory management
     {"allot", allot},
     {"cells", cells},
