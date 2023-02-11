@@ -113,4 +113,5 @@ Here is a list of all words, with some notes when the word differs from the stan
 | `execute` | |
 | `invert` | |
 | `type` | |
+| `compare` | Return 0 is the strings are the same, -1 if they are different but same size. 1 id different sizes. |
 | `cmove` | |
