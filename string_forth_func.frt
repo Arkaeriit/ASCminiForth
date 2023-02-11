@@ -8,5 +8,5 @@
         2drop 0
     else 2drop 2drop 1 then ;
 : cmove ( c-addr1 c-addr2 u -- ) dup 0> 0= if drop else
-    0 do swap dup @ rot dup rot swap ! 1+ swap 1+ swap loop then 2drop ;
+    0 do swap dup c@ rot dup rot swap c! 1+ swap 1+ swap loop then 2drop ;
 
