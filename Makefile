@@ -5,7 +5,7 @@ CFLAGS ?= -Werror -Wall -Wextra -g -Wno-error=cpp
 C_SRC := hash.c dictionary.c forth_state.c C_func.c user_words.c parser.c utils.c
 FRT_SRC := base_forth_func.frt file_forth_func.frt string_forth_func.frt
 C_HEADER := amf_config.h amf_io.h ASCminiForth.h C_func.h dictionary.h errors.h forth_state.h hash.h parser.h user_words.h utils.h amf_debug.h
-TARGET := amForth
+TARGET := amforth
 C_AUTO_SRC := $(FRT_SRC:%.frt=%.c)
 C_SRC += $(C_AUTO_SRC)
 C_OBJS := $(C_SRC:%.c=%.o)
