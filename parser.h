@@ -11,7 +11,7 @@ typedef struct parser_state_s {
     char* new_word_buffer;          // Store the currently defined word
     char* custom_word_name;         // Stores a copy of the name of the word being defined
     new_word_hook_t new_word_hook;  // Function to call when reaching the end of a word
-    int pnt;                        // Pointer to the curent portiotion of buffer where we are writing
+    int pnt;                        // Index to the curent portiotion of buffer where we are writing
     bool in_word;                   // Are we writing a word or whitespace
     bool in_def;                    // Are we writing a definition
     bool is_in_parenthesis;         // Are we in a ( xx ) comment

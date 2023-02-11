@@ -1,7 +1,9 @@
 #include "amf_debug.h"
+#include "utils.h"
 #include "parser.h"
 #include "stdio.h"
 #include "string.h"
+#include "assert.h"
 
 static void run_next_word_hook(parser_state_t* p);
 static void register_compile_time_words(parser_state_t* p);
@@ -160,6 +162,16 @@ static void var_const_hook(parser_state_t* p) {
     p->new_word_hook = run_next_word_hook;
 }
 
+// Replace the new word with its exec token
+static void get_exec_token_hook(parser_state_t* p) {
+    hash_t hash = amf_hash(p->buffer);
+    char buffer[64];
+    char* hash_as_string = amf_base_format(hash, buffer, p->fs->base);
+    strcpy(p->buffer, hash_as_string);
+    p->new_word_hook = (new_word_hook_t) amf_pop_data(p->fs);
+    p->new_word_hook(p);
+}
+
 /* --------------------------- Compile time words --------------------------- */
 
 // (
@@ -208,6 +220,19 @@ static void _variable(struct parser_state_s* p) {
     p->pnt = 0;
 }
 
+// '
+static_assert(sizeof(hash_t) <= sizeof(amf_int_t), "To handle execution tokens, hashes should fit in a cell.");
+static void single_quote(struct parser_state_s* p) {
+    // A bit dirty, we use one of the stacks to push the current new word hook to save it
+    amf_push_data(p->fs, (amf_int_t) p->new_word_hook);
+#if 0
+    // Same with the pointer that we need to pinpoint what the word is
+    amf_push_data(p->fs, p->pnt);
+#endif
+    p->new_word_hook = get_exec_token_hook;
+    p->pnt = 0;
+}
+
 // Register a compile time word
 void amf_register_compile_time_word(parser_state_t* p, const char* name, compile_callback_t compile_func) {
     entry_t e;
@@ -232,6 +257,7 @@ struct compile_func_s all_default_compile_words[] = {
     {";", semi_colon},
     {"constant", _constant},
     {"variable", _variable},
+    {"'", single_quote},
 };
 
 // Register the previously defined words

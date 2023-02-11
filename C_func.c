@@ -633,6 +633,12 @@ static void base(forth_state_t* fs) {
     amf_push_data(fs, (amf_int_t) base_pnt);
 }
 
+// execute
+static void execute(forth_state_t* fs) {
+    hash_t exec_tocken = amf_pop_data(fs);
+    amf_call_func(fs, exec_tocken);
+}
+
 struct c_func_s {
     const char* name;
     void (*func)(forth_state_t*);
@@ -717,6 +723,7 @@ struct c_func_s all_default_c_func[] = {
     {"abort", abort_word},
     {"cr", cr},
     {"base", base},
+    {"execute", execute},
 };
 
 // Register all the default C_func
