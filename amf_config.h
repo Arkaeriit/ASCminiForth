@@ -17,6 +17,9 @@ typedef intptr_t amf_int_t;
 // Enable words related to file manipulation
 #define AMF_FILE 1
 
+// Enable words related to string manipulation
+#define AMF_STRING 1
+
 // Depth of the memory blocks
 #define CODE_STACK_SIZE 100
 #define DATA_STACK_SIZE 100

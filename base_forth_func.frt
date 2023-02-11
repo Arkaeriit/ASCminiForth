@@ -22,6 +22,7 @@
 : 2r> r> r> swap ;
 : decimal 10 base ! ;
 : space bl emit ;
-: spaces dup 0> if 0 do space loop else drop exit then ;
+: spaces dup 0> if 0 do space loop else drop then ;
 : invert -1 xor ;
+: type dup 0> if 0 do dup c@ emit 1+ loop drop else drop then ;
 
