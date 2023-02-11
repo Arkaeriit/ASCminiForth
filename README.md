@@ -106,3 +106,5 @@ Here is a list of all words, with some notes when the word differs from the stan
 | `allocate` | |
 | `free` | |
 | `resize` | |
+| `space` | |
+| `spaces` | |

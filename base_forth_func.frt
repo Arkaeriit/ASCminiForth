@@ -21,4 +21,6 @@
 : 2>r swap >r >r ;
 : 2r> r> r> swap ;
 : decimal 10 base ! ;
+: space bl emit ;
+: spaces dup 0> if 0 do space loop else drop exit then ;
 
