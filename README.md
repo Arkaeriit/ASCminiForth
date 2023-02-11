@@ -108,3 +108,5 @@ Here is a list of all words, with some notes when the word differs from the stan
 | `resize` | |
 | `space` | |
 | `spaces` | |
+| `'` | The execution token is a simple hash of a word. Thus, it is possible to get an execution token before defining a word. |
+| `execute` | |
