@@ -55,4 +55,5 @@ clean :
 
 test : $(TARGET).bin
 	./$(TARGET).bin benchmark.frt
+	./$(TARGET).bin benchmark_specific.frt
 

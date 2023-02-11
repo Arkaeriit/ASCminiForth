@@ -1,5 +1,6 @@
 ( This file contain various test function used to validate )
 ( the words from ASCminiForth that are complient to the Forth standard )
+( This file is meant to be tested with ASCminiForth and ciforth )
 
 : TEST.. ." Printing 0: " 0 . CR ;
 : is_true IF ." OK. " ELSE ." Failed! " THEN ;
