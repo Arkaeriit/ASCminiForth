@@ -620,7 +620,9 @@ static void exit_code(forth_state_t* fs) {
 
 // bye
 static void bye(forth_state_t* fs) {
-    UNUSED(fs);
+    fs->running = false;
+    fs->pos.code.pos_in_word = IDLE_POS_IN_WORD;
+    fs->pos.code.current_word = IDLE_CURRENT_WORD;
 }
 #endif
 
