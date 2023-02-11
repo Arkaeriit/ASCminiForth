@@ -526,6 +526,66 @@ static void close_file(forth_state_t* fs) {
     fclose(f);
     amf_push_data(fs, 0);
 }
+
+// read-file
+static void read_file(forth_state_t* fs) {
+    FILE* f = (FILE*) amf_pop_data(fs);
+    size_t size = amf_pop_data(fs);
+    char* dest = (char*) amf_pop_data(fs);
+    size_t ret = fread(dest, size, 1, f);
+    amf_push_data(fs, ret);
+    amf_push_data(fs, ret <= 0);
+}
+
+// write-file
+static void write_file(forth_state_t* fs) {
+    FILE* f = (FILE*) amf_pop_data(fs);
+    size_t size = amf_pop_data(fs);
+    char* source = (char*) amf_pop_data(fs);
+    size_t written = fwrite(source, size, 1, f);
+    amf_push_data(fs, written != size);
+}
+
+// read-line
+static void read_line(forth_state_t* fs) {
+    FILE* f = (FILE*) amf_pop_data(fs);
+    size_t size = amf_pop_data(fs);
+    char* dest = (char*) amf_pop_data(fs);
+    size_t dest_index = 0;
+    for (size_t i=0; i<size; i++) {
+        int c = getc(f);
+        switch (c) {
+            case EOF:
+                goto endloop;
+            case '\n':
+                dest[dest_index] = c;
+                goto endloop;
+            default:
+                dest[dest_index++] = c;
+                break;
+        }
+    }
+endloop:
+    amf_push_data(fs, dest_index);
+    if (dest_index > 0) { // Good: flag true, ior = 0
+        amf_push_data(fs, 1);
+        amf_push_data(fs, 0);
+    } else { // Bad: flag false, ior = !0
+        amf_push_data(fs, 0);
+        amf_push_data(fs, ~0);
+    }
+}
+
+// write-line
+static void write_line(forth_state_t* fs) {
+    FILE* f = (FILE*) amf_pop_data(fs);
+    size_t size = amf_pop_data(fs);
+    const char* source = (char*) amf_pop_data(fs);
+    size_t written = fwrite(source, size, 1, f);
+    written += fwrite("\n", 1, 1, f);
+    amf_push_data(fs, written != (size + 1));
+}
+
 #endif
 
 // Misc
@@ -637,12 +697,17 @@ struct c_func_s all_default_c_func[] = {
 #endif    
 #if AMF_FILE
     // File manipulation
+#warning TODO: test and document
     {"r/o", ro},
     {"r/w", rw},
     {"w/o", wo},
     {"create-file", create_file},
     {"open-file", open_file},
     {"close-file", close_file},
+    {"read-file", read_file},
+    {"write-file", write_file},
+    {"read-line", read_line},
+    {"write-line", write_line},
 #endif
     // Misc
     {".", printNum},

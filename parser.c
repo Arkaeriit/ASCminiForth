@@ -23,9 +23,11 @@ parser_state_t* amf_init_parser(void) {
     ret->wait_for_new_line = false;
     amf_init_io();
     extern const char* base_forth_func;
-    for (size_t i=0; i<strlen(base_forth_func); i++) {
-        amf_parse_char(ret, base_forth_func[i]);
-    }
+    amf_parse_string(ret, base_forth_func);
+#if AMF_FILE
+    extern const char* file_forth_func;
+    amf_parse_string(ret, file_forth_func);
+#endif
     //amf_display_dictionary(ret->fs->dic);
     return ret;
 }
