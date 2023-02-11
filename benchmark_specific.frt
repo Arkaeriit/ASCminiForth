@@ -12,7 +12,8 @@
 : benchmark 11 22 33
 test.arg
 test.compare
-." Printing 33: " . cr ;
+." Testing stack state: " 33 = is_true cr
+;
 
 benchmark
 

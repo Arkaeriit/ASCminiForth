@@ -54,6 +54,6 @@ clean :
 	$(RM) $(C_AUTO_SRC)
 
 test : $(TARGET).bin
-	./$(TARGET).bin benchmark.frt
-	./$(TARGET).bin benchmark_specific.frt
+	@./$(TARGET).bin benchmark.frt
+	@./$(TARGET).bin benchmark_specific.frt
 

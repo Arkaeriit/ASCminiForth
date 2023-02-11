@@ -93,7 +93,7 @@ TEST.EMIT TEST.BL
 TEST.CONSTANT TEST.VARIABLE
 TEST.EXECUTE
 TEST.TYPE TEST.CMOVE
-." Printing 33: " . CR ;
+." Testing stack state: " 33 = is_true CR ;
 
 BENCHMARK 
 
