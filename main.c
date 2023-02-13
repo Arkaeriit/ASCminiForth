@@ -8,7 +8,7 @@ int main(int argc, char** argv) {
         parser_state_t* parse = amf_init_parser();
 #if AMF_CLI_ARGS
         parse->fs->argc = argc - 2;
-        parse->fs->argv = argv + 2;
+        parse->fs->argv = argv + 1;
 #endif
         if (amf_register_file(parse, argv[1])) {
             fprintf(stderr, "Error, unable to read file %s.\n", argv[1]);
