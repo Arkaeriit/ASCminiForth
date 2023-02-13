@@ -629,8 +629,7 @@ static void _stderr(forth_state_t* fs) {
 
 // exit-code
 static void exit_code(forth_state_t* fs) {
-    int ec = amf_pop_data(fs);
-    fs->exit_code = ec;
+    amf_push_data(fs, (amf_int_t) &fs->exit_code);
 }
 
 // bye
