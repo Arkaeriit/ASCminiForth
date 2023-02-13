@@ -607,6 +607,21 @@ static void write_line(forth_state_t* fs) {
     written += fwrite("\n", 1, 1, f);
     amf_push_data(fs, written != (size + 1));
 }
+
+// stdin
+static void _stdin(forth_state_t* fs) {
+    amf_push_data(fs, (amf_int_t) stdin);
+}
+
+// stdout
+static void _stdout(forth_state_t* fs) {
+    amf_push_data(fs, (amf_int_t) stdout);
+}
+
+// stderr
+static void _stderr(forth_state_t* fs) {
+    amf_push_data(fs, (amf_int_t) stderr);
+}
 #endif
 
 #if AMF_PROGRAMMING_TOOLS
@@ -753,6 +768,9 @@ struct c_func_s all_default_c_func[] = {
     {"write-file", write_file},
     {"read-line", read_line},
     {"write-line", write_line},
+    {"stdin", _stdin},
+    {"stdout", _stdout},
+    {"stderr", _stderr},
 #endif
 #if AMF_PROGRAMMING_TOOLS
     // Programming tools
