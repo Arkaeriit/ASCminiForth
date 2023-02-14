@@ -15,7 +15,7 @@ char amf_input(void) {
     if (ret != -1) {    // Check for unexpected char that could do bad things to  the rest of the parser
         return ret;
     } else {
-        return ' ';
+        return 4; // Return end of transmission in ASCII
     }
 }
 

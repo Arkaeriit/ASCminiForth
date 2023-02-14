@@ -104,7 +104,11 @@ int amf_shell(void) {
     amf_print_string("Starting the ASCminiForth shell.\n");
     parser_state_t* parse = amf_init_parser();
     while (parse->fs->running) {
-        amf_parse_char(parse, amf_input());
+        char ch = amf_input();
+        if (ch == 4) { // End of transmission
+            break;
+        }
+        amf_parse_char(parse, ch);
     }
     int rc = 0;
 #if AMF_PROGRAMMING_TOOLS
