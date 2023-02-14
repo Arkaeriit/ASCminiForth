@@ -554,7 +554,7 @@ static void read_file(forth_state_t* fs) {
     FILE* f = (FILE*) amf_pop_data(fs);
     size_t size = amf_pop_data(fs);
     char* dest = (char*) amf_pop_data(fs);
-    size_t ret = fread(dest, size, 1, f);
+    size_t ret = fread(dest, 1, size, f);
     amf_push_data(fs, ret);
     amf_push_data(fs, ret <= 0);
 }
@@ -564,7 +564,7 @@ static void write_file(forth_state_t* fs) {
     FILE* f = (FILE*) amf_pop_data(fs);
     size_t size = amf_pop_data(fs);
     char* source = (char*) amf_pop_data(fs);
-    size_t written = fwrite(source, size, 1, f);
+    size_t written = fwrite(source, 1, size, f);
     amf_push_data(fs, written != size);
 }
 

@@ -52,8 +52,10 @@ clean :
 	$(RM) $(C_OBJS)
 	$(RM) $(EXEC_OBJS)
 	$(RM) $(C_AUTO_SRC)
+	$(RM) test.txt
 
 test : $(TARGET).bin
 	@./$(TARGET).bin benchmark.frt
 	@./$(TARGET).bin benchmark_specific.frt
+	@$(RM) test.txt
 

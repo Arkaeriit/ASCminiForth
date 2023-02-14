@@ -12,9 +12,19 @@
 ( Programming tools )
 : test.bye ." Testing bye: " 1 is_true CR bye ." Not Okay at all, abbort everything.!!!" CR ;
 
+( Files )
+S" content in the file" drop constant _cif
+: cif ( -- caddr n ) _cif _cif strlen ;
+: test-file-name s" test.txt" ;
+: test.write ." Testing writting to a file: " test-file-name w/o create-file is_0 dup >r cif r> write-file is_0 close-file is_0 cr ;
+1024 constant buf-size
+: test.read ." Testing reading from file: " buf-size allocate is_0 dup buf-size test-file-name r/o open-file is_0 dup >r read-file is_0 r> close-file is_0 cif compare is_0 cr ;
+
+
 : benchmark 11 22 33
 test.arg
 test.compare
+test.write test.read
 ." Testing stack state: " 33 = is_true cr
 ;
 
