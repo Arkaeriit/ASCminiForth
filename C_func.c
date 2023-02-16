@@ -225,10 +225,12 @@ static void IF(forth_state_t* fs) {
         size_t i = fs->pos.code.pos_in_word + 1;
         int if_depth = 1;
         while (if_depth) {
-            if (CHECK_AGAINST_HASH(fs, i, else_hash, ELSE_hash) || CHECK_AGAINST_HASH(fs, i, then_hash, THEN_hash)) {
-                if_depth--;
-            } else if (CHECK_AGAINST_HASH(fs, i, if_hash, IF_hash)) {
+            if (CHECK_AGAINST_HASH(fs, i, if_hash, IF_hash)) {
                 if_depth++;
+            } else if (CHECK_AGAINST_HASH(fs, i, then_hash, THEN_hash)) {
+                if_depth--;
+            } else if (CHECK_AGAINST_HASH(fs, i, else_hash, ELSE_hash) && (if_depth == 1)) { // Elses are a valid exit point only if we are not in a nested if
+                if_depth--;
             }
             i++;
         }
