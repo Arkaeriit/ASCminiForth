@@ -576,10 +576,12 @@ static void read_line(forth_state_t* fs) {
     size_t size = amf_pop_data(fs);
     char* dest = (char*) amf_pop_data(fs);
     size_t dest_index = 0;
+    bool eof = false;
     for (size_t i=0; i<size; i++) {
         int c = getc(f);
         switch (c) {
             case EOF:
+                eof = true;
                 goto endloop;
             case '\n':
                 dest[dest_index] = c;
@@ -591,12 +593,12 @@ static void read_line(forth_state_t* fs) {
     }
 endloop:
     amf_push_data(fs, dest_index);
-    if (dest_index > 0) { // Good: flag true, ior = 0
-        amf_push_data(fs, 1);
-        amf_push_data(fs, 0);
-    } else { // Bad: flag false, ior = !0
+    if (dest_index == 0 && eof) { // Bad, no char were written; flag = false, ior = ~0
         amf_push_data(fs, 0);
         amf_push_data(fs, ~0);
+    } else { // Good: flag true, ior = 0
+        amf_push_data(fs, 1);
+        amf_push_data(fs, 0);
     }
 }
 
