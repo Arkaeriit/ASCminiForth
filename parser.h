@@ -17,7 +17,6 @@ typedef struct parser_state_s {
     bool in_def;                    // Are we writing a definition
     bool is_in_parenthesis;         // Are we in a ( xx ) comment
     bool is_between_quotes;         // Are we betweens " quotes "
-    bool is_last_escaped;           // Is the previous character '\'
     bool wait_for_new_line;         // Not parsing until new line because we are in a comment
     bool in_defining_constant;      // If needed, define a constant instead of a variable
 } parser_state_t;

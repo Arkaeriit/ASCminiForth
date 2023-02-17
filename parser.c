@@ -21,7 +21,6 @@ parser_state_t* amf_init_parser(void) {
     ret->in_def = false;
     ret->is_in_parenthesis = false;
     ret->is_between_quotes = false;
-    ret->is_last_escaped = false;
     ret->wait_for_new_line = false;
     amf_init_io();
     extern const char* base_forth_func;
@@ -55,10 +54,6 @@ void amf_parse_char(parser_state_t* parse, char ch) {
             return;
         }
     }
-    if (ch == '\\' && !parse->is_last_escaped) {
-        parse->is_last_escaped = true;
-        return;
-    }
     if (parse->is_in_parenthesis) {
         if (ch == ')') {
             parse->is_in_parenthesis = false;
@@ -75,11 +70,6 @@ void amf_parse_char(parser_state_t* parse, char ch) {
             parse->pnt++;
         }
     } else if (amf_is_delimiter(ch)) {
-        if (parse->is_last_escaped) {
-            parse->wait_for_new_line = true;
-            parse->is_last_escaped = false;
-            return;
-        }
         if (!parse->in_word) {
             return;
         }
@@ -89,18 +79,15 @@ void amf_parse_char(parser_state_t* parse, char ch) {
         if (amf_find(parse->fs->dic, &compile_time_entry, NULL, amf_hash(parse->buffer)) == OK) {
             if (compile_time_entry.type == compile_word) {
                 compile_time_entry.func.compile_func(parse);
-            } else {
-                parse->new_word_hook(parse);
+                return;
             }
-        } else {
-            parse->new_word_hook(parse);
         }
+        parse->new_word_hook(parse);
     } else {
         parse->in_word = true;
         parse->buffer[parse->pnt] = ch;
         parse->pnt++;
     }
-    parse->is_last_escaped = false;
 }
 
 void amf_parse_string(parser_state_t* parse, const char* s) {
@@ -283,9 +270,15 @@ static void single_quote(struct parser_state_s* p) {
 }
 
 // ." s"
-static void any_string(parser_state_t* fs) {
-    fs->is_between_quotes = true;
-    fs->end_block_hook = register_string_hook;
+static void any_string(parser_state_t* p) {
+    p->is_between_quotes = true;
+    p->end_block_hook = register_string_hook;
+}
+
+/* \ */
+static void backslash(parser_state_t* p) {
+    p->wait_for_new_line = true;
+    p->pnt = 0;
 }
 
 // Register a compile time word
@@ -315,6 +308,7 @@ struct compile_func_s all_default_compile_words[] = {
     {"'", single_quote},
     {"s\"", any_string},
     {".\"", any_string},
+    {"\\", backslash},
 };
 
 // Register the previously defined words
