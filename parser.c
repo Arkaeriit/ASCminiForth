@@ -7,12 +7,12 @@
 
 static void run_next_word_hook(parser_state_t* p);
 static void invalid_hook(parser_state_t* p);
-static void register_compile_time_words(parser_state_t* p);
+static void register_compile_time_words_list(parser_state_t* p);
 
 parser_state_t* amf_init_parser(void) {
     parser_state_t* ret = malloc(sizeof(parser_state_t));
     ret->fs = amf_init_state();
-    register_compile_time_words(ret);
+    register_compile_time_words_list(ret);
     ret->buffer = malloc(PARSER_BUFFER_SIZE);
     ret->new_word_buffer = malloc(PARSER_BUFFER_SIZE);
     ret->custom_word_name = malloc(PARSER_CUSTOM_NAME_SIZE);
@@ -80,7 +80,7 @@ void amf_parse_char(parser_state_t* parse, char ch) {
         entry_t compile_time_entry;
         if (amf_find(parse->fs->dic, &compile_time_entry, NULL, amf_hash(parse->buffer)) == OK) {
             if (compile_time_entry.type == compile_word) {
-                compile_time_entry.func.compile_func(parse);
+                compile_time_entry.func.compile_func.func(parse, compile_time_entry.func.compile_func.payload);
                 return;
             }
         }
@@ -142,6 +142,8 @@ error amf_register_file(parser_state_t* p, const char* filemane) {
     amf_push_code(p->fs, to_push)                                          
 
 #define POP_HOOK(p, hook_name) p->hook_name = (new_word_hook_t) amf_pop_code(p->fs).optional_data
+
+#define UNUSED(x) (void)(x)
 
 // This hook is the parser's default one, it tries to run the buffer
 static void run_next_word_hook(parser_state_t* p) {
@@ -221,14 +223,15 @@ static void register_def_hook(parser_state_t* p) {
 
 // Error when no hooks registered
 static void invalid_hook(parser_state_t* p) {
-    (void) p;
+    UNUSED(p);
     error_msg("Invalid hook should not be run.\n");
 }
 
 /* --------------------------- Compile time words --------------------------- */
 
 // (
-static void open_par(parser_state_t* p) {
+static void open_par(parser_state_t* p, const char* payload) {
+    UNUSED(payload);
     if (!p->is_between_quotes) {
         p->is_in_parenthesis = true;
         p->pnt--;
@@ -236,7 +239,8 @@ static void open_par(parser_state_t* p) {
 }
 
 // :
-static void colon(parser_state_t* p) {
+static void colon(parser_state_t* p, const char* payload) {
+    UNUSED(payload);
     if (p->in_def) {
         error_msg("Using : in a definition is not allowed.\n");
     } else {
@@ -249,7 +253,8 @@ static void colon(parser_state_t* p) {
 }
 
 // ;
-static void semi_colon(parser_state_t* p) {
+static void semi_colon(parser_state_t* p, const char* payload) {
+    UNUSED(payload);
     if (p->in_def) {
         p->in_def = false;
         p->buffer[p->pnt] = 0;
@@ -263,14 +268,16 @@ static void semi_colon(parser_state_t* p) {
 }
 
 // constant
-static void _constant(parser_state_t* p) {
+static void _constant(parser_state_t* p, const char* payload) {
+    UNUSED(payload);
     p->in_defining_constant = true;
     p->new_word_hook = var_const_hook;
     p->pnt = 0;
 }
 
 // variable
-static void _variable(struct parser_state_s* p) {
+static void _variable(parser_state_t* p, const char* payload) {
+    UNUSED(payload);
     p->in_defining_constant = false;
     p->new_word_hook = var_const_hook;
     p->pnt = 0;
@@ -278,31 +285,35 @@ static void _variable(struct parser_state_s* p) {
 
 // '
 static_assert(sizeof(hash_t) <= sizeof(amf_int_t), "To handle execution tokens, hashes should fit in a cell.");
-static void single_quote(struct parser_state_s* p) {
+static void single_quote(struct parser_state_s* p, const char* payload) {
+    UNUSED(payload);
     PUSH_HOOK(p, new_word_hook);
     p->new_word_hook = get_exec_token_hook;
     p->pnt = 0;
 }
 
 // ." s"
-static void any_string(parser_state_t* p) {
+static void any_string(parser_state_t* p, const char* payload) {
+    UNUSED(payload);
     p->is_between_quotes = true;
     PUSH_HOOK(p, end_block_hook);
     p->end_block_hook = register_string_hook;
 }
 
 /* \ */
-static void backslash(parser_state_t* p) {
+static void backslash(parser_state_t* p, const char* payload) {
+    UNUSED(payload);
     p->wait_for_new_line = true;
     p->pnt = 0;
 }
 
 // Register a compile time word
-void amf_register_compile_time_word(parser_state_t* p, const char* name, compile_callback_t compile_func) {
+void amf_register_compile_time_word(parser_state_t* p, const char* name, compile_callback_t compile_func, char* payload) {
     entry_t e;
     e.type = compile_word;
     e.hash = amf_hash(name);
-    e.func.compile_func = compile_func;
+    e.func.compile_func.func = compile_func;
+    e.func.compile_func.payload = payload;
 #if AMF_STORE_NAME
     e.name = malloc(strlen(name) + 1);
     strcpy(e.name, name);
@@ -328,10 +339,10 @@ struct compile_func_s all_default_compile_words[] = {
 };
 
 // Register the previously defined words
-static void register_compile_time_words(parser_state_t* p) {
+static void register_compile_time_words_list(parser_state_t* p) {
     for (size_t i = 0; i < sizeof(all_default_compile_words) / sizeof(struct compile_func_s); i++) {
         const char* name = all_default_compile_words[i].name;
-        amf_register_compile_time_word(p, name, all_default_compile_words[i].func);
+        amf_register_compile_time_word(p, name, all_default_compile_words[i].func, NULL);
 #if AMF_CASE_INSENSITIVE == 0   // Register upper case version of the name as well.
         char name_upper[strlen(name) + 1];
         for (size_t j = 0; j <= strlen(name); j++) {

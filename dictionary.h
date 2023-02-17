@@ -17,7 +17,10 @@ typedef struct {
     union {
         C_callback_t C_func;                // To define
         user_amf_int_t* F_word;             // Content of words defined in Forth
-        compile_callback_t compile_func;    // Function to call on the parser
+        struct {                            // Function to call on the parser
+            compile_callback_t func;
+            char* payload; // Extra argument to the compile func, should be freeable
+        } compile_func;
         amf_int_t constant;                 // Value written in hard
         amf_int_t* variable;                // Data on the Forth memory
         struct {                            // Strings stored in the dictionary
