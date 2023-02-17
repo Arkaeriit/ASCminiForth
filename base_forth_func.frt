@@ -6,7 +6,7 @@
 : 0<> 0 <> ;
 : > 2dup < 0= rot rot <> and ;
 : 0> 0 > ;
-: bl S"  " drop C@ ;
+: bl s"  " drop c@ ;
 : c 1 allot ;
 : cell+ 1 cells + ;
 : char+ 1+ ;

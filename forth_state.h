@@ -16,7 +16,6 @@ typedef struct word_node_s {
     union {
         hash_t hash;            // To find the word in the dictionary
         amf_int_t value;        // When used as a raw number
-        char* string;           // When used as a printd string or a raw_string
     } content;
 } word_node_t;
 
