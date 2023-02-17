@@ -183,8 +183,6 @@ static void get_exec_token_hook(parser_state_t* p) {
 
 // Register a string
 static void register_string_hook(parser_state_t* p) {
-    // TODO: stack the hooks
-    /*printf("buff = %s\n", p->buffer);*/
     const char* str = p->buffer + 2; // As of now, the string always start 3 chars after the initializing word. But the first whitespace have been ignored.
     size_t size = strlen(str);
     hash_t str_id = amf_register_string(p->fs->dic, str, size);
@@ -205,7 +203,7 @@ static void register_string_hook(parser_state_t* p) {
         default:
             error_msg("Unknown string type %c\n", string_type);
     }
-    // TODO: unstack hook
+    p->end_block_hook = (new_word_hook_t) amf_pop_code(p->fs).optional_data;
 }
 
 /* --------------------------- Compile time words --------------------------- */
@@ -272,6 +270,9 @@ static void single_quote(struct parser_state_s* p) {
 // ." s"
 static void any_string(parser_state_t* p) {
     p->is_between_quotes = true;
+    // A bit dirty, we use one of the stacks to push the current new word hook to save it
+    code_pointer_t to_push = {.optional_data = (amf_int_t) p->end_block_hook};
+    amf_push_code(p->fs, to_push);
     p->end_block_hook = register_string_hook;
 }
 
