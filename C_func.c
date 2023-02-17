@@ -339,12 +339,6 @@ static void plus_loop(forth_state_t* fs) {
     }
 }
 
-// loop TODO: When macro will be available, this should be made with one
-static void loop(forth_state_t* fs) {
-    amf_push_data(fs, 1);
-    plus_loop(fs);
-}
-
 // unloop
 static void unloop(forth_state_t* fs) {
     amf_pop_loop(fs);
@@ -736,7 +730,6 @@ struct c_func_s all_default_c_func[] = {
     {"do", DO},
     {"i", I},
     {"+loop", plus_loop},
-    {"loop", loop},
     {"unloop", unloop},
     {"leave", leave},
     // Memory management
