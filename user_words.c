@@ -43,13 +43,6 @@ word_node_t amf_compile_node(const char* str, int base) {
         ret.type = raw_number;
         ret.content.value = num;
         // Checking if it is a raw string
-    } else if ((str[0] == '.' || str[0] == 'S' || str[0] == 's') && str[1] == '"') {
-        ret.type = (str[0] == '.' ? printed_string : forth_string);
-        char* true_string = malloc(strlen(str) - 3);
-        memcpy(true_string, str + 3, strlen(str) - 4);
-        true_string[strlen(str) - 4] = 0;
-        ret.content.string = true_string;
-        // Else, its a call to an other word
     } else {
         debug_msg("Registering word %s with hash %" AMF_INT_PRINT ".\n", str, amf_hash(str));
         ret.type = normal_word;
@@ -170,10 +163,6 @@ void amf_clean_user_word(user_amf_int_t* w) {
         switch (n.type) {
             case normal_word:
             case raw_number:
-                break;
-            case printed_string:
-            case forth_string:
-                free(n.content.string);
                 break;
         }
     }

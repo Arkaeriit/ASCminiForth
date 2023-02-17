@@ -65,10 +65,16 @@ void amf_parse_char(parser_state_t* parse, char ch) {
         }
         return;
     }
-    if (ch == '"' && !parse->is_last_escaped) {
-        parse->is_between_quotes = !parse->is_between_quotes;
-    }
-    if (amf_is_delimiter(ch) && !parse->is_between_quotes) {
+    if (parse->is_between_quotes) {
+        if (ch == '"') {
+            parse->buffer[parse->pnt] = 0;
+            parse->is_between_quotes = false;
+            parse->end_block_hook(parse);
+        } else {
+            parse->buffer[parse->pnt] = ch;
+            parse->pnt++;
+        }
+    } else if (amf_is_delimiter(ch)) {
         if (parse->is_last_escaped) {
             parse->wait_for_new_line = true;
             parse->is_last_escaped = false;
@@ -188,6 +194,33 @@ static void get_exec_token_hook(parser_state_t* p) {
     p->new_word_hook(p);
 }
 
+// Register a string
+static void register_string_hook(parser_state_t* p) {
+    // TODO: stack the hooks
+    /*printf("buff = %s\n", p->buffer);*/
+    const char* str = p->buffer + 2; // As of now, the string always start 3 chars after the initializing word. But the first whitespace have been ignored.
+    size_t size = strlen(str);
+    hash_t str_id = amf_register_string(p->fs->dic, str, size);
+    char string_type = p->buffer[0];
+    char tmp[AMF_MAX_NUMBER_DIGIT];
+    snprintf(p->buffer, PARSER_BUFFER_SIZE, "%s", amf_base_format(str_id, tmp, p->fs->base));
+    p->new_word_hook(p);
+    snprintf(p->buffer, strlen("execute")+1, "execute");
+    p->new_word_hook(p);
+    switch (string_type) {
+        case 's':
+        case 'S':
+            break;
+        case '.':
+            snprintf(p->buffer, strlen("type")+1, "type");
+            p->new_word_hook(p);
+            break;
+        default:
+            error_msg("Unknown string type %c\n", string_type);
+    }
+    // TODO: unstack hook
+}
+
 /* --------------------------- Compile time words --------------------------- */
 
 // (
@@ -249,6 +282,12 @@ static void single_quote(struct parser_state_s* p) {
     p->pnt = 0;
 }
 
+// ." s"
+static void any_string(parser_state_t* fs) {
+    fs->is_between_quotes = true;
+    fs->end_block_hook = register_string_hook;
+}
+
 // Register a compile time word
 void amf_register_compile_time_word(parser_state_t* p, const char* name, compile_callback_t compile_func) {
     entry_t e;
@@ -274,6 +313,8 @@ struct compile_func_s all_default_compile_words[] = {
     {"constant", _constant},
     {"variable", _variable},
     {"'", single_quote},
+    {"s\"", any_string},
+    {".\"", any_string},
 };
 
 // Register the previously defined words

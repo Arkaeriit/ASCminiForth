@@ -171,13 +171,6 @@ error amf_executes_node(forth_state_t* fs, struct word_node_s* node) {
         case raw_number:
             amf_push_data(fs, node->content.value);
             return OK;
-        case printed_string:
-            amf_print_string(node->content.string);
-            return OK;
-        case forth_string:
-            amf_push_data(fs, (amf_int_t) node->content.string);
-            amf_push_data(fs, (amf_int_t) strlen(node->content.string));
-            return OK;
     }
     error_msg("Invalid node type.\n");
     return impossible_error;

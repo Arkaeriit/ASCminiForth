@@ -8,8 +8,6 @@
 enum amf_int_type {
     normal_word,                // Words found in the dictionary
     raw_number,                 // User-inputed word such as 3, 6, 8
-    printed_string,             // String to print such as ." coucou"
-    forth_string,               // Forth strings such as S" coucou"
 };
 
 // This struct rpresunt each words called in a word definition
