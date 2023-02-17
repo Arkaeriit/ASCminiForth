@@ -135,6 +135,12 @@ error amf_register_file(parser_state_t* p, const char* filemane) {
 
 /* ---------------------------- Next words hooks ---------------------------- */
 
+#define PUSH_HOOK(p, hook_name)                                           \
+    code_pointer_t to_push = {.optional_data = (amf_int_t) p->hook_name}; \
+    amf_push_code(p->fs, to_push)                                          
+
+#define POP_HOOK(p, hook_name) p->hook_name = (new_word_hook_t) amf_pop_code(p->fs).optional_data
+
 // This hook is the parser's default one, it tries to run the buffer
 static void run_next_word_hook(parser_state_t* p) {
     p->pnt = 0;
@@ -177,7 +183,7 @@ static void get_exec_token_hook(parser_state_t* p) {
     char buffer[64];
     char* hash_as_string = amf_base_format(hash, buffer, p->fs->base);
     strcpy(p->buffer, hash_as_string);
-    p->new_word_hook = (new_word_hook_t) amf_pop_data(p->fs);
+    POP_HOOK(p, new_word_hook);
     p->new_word_hook(p);
 }
 
@@ -203,7 +209,7 @@ static void register_string_hook(parser_state_t* p) {
         default:
             error_msg("Unknown string type %c\n", string_type);
     }
-    p->end_block_hook = (new_word_hook_t) amf_pop_code(p->fs).optional_data;
+    POP_HOOK(p, end_block_hook);
 }
 
 /* --------------------------- Compile time words --------------------------- */
@@ -257,12 +263,7 @@ static void _variable(struct parser_state_s* p) {
 // '
 static_assert(sizeof(hash_t) <= sizeof(amf_int_t), "To handle execution tokens, hashes should fit in a cell.");
 static void single_quote(struct parser_state_s* p) {
-    // A bit dirty, we use one of the stacks to push the current new word hook to save it
-    amf_push_data(p->fs, (amf_int_t) p->new_word_hook);
-#if 0
-    // Same with the pointer that we need to pinpoint what the word is
-    amf_push_data(p->fs, p->pnt);
-#endif
+    PUSH_HOOK(p, new_word_hook);
     p->new_word_hook = get_exec_token_hook;
     p->pnt = 0;
 }
@@ -270,9 +271,7 @@ static void single_quote(struct parser_state_s* p) {
 // ." s"
 static void any_string(parser_state_t* p) {
     p->is_between_quotes = true;
-    // A bit dirty, we use one of the stacks to push the current new word hook to save it
-    code_pointer_t to_push = {.optional_data = (amf_int_t) p->end_block_hook};
-    amf_push_code(p->fs, to_push);
+    PUSH_HOOK(p, end_block_hook);
     p->end_block_hook = register_string_hook;
 }
 
