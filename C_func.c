@@ -222,7 +222,7 @@ static void IF(forth_state_t* fs) {
         hash_t ELSE_hash = amf_hash("ELSE");
         hash_t THEN_hash = amf_hash("THEN");
         hash_t IF_hash = amf_hash("IF");
-        size_t i = fs->pos.code.pos_in_word + 1;
+        size_t i = fs->pos.code.pos_in_word;
         int if_depth = 1;
         while (if_depth) {
             if (CHECK_AGAINST_HASH(fs, i, if_hash, IF_hash)) {
@@ -246,7 +246,7 @@ static void ELSE(forth_state_t* fs) {
     hash_t if_hash = amf_hash("if");
     hash_t THEN_hash = amf_hash("THEN");
     hash_t IF_hash = amf_hash("IF");
-    size_t i = fs->pos.code.pos_in_word + 1;
+    size_t i = fs->pos.code.pos_in_word;
     int if_depth = 1;
     while (if_depth) {  // Note: not finding matching then cause a fault
         if (CHECK_AGAINST_HASH(fs, i, then_hash, THEN_hash)) {
