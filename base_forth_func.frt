@@ -28,4 +28,5 @@
 : type dup 0> if 0 do dup c@ emit 1+ loop drop else drop then ;
 :macro while if ;
 :macro repeat 0 until then ;
+: ?dup dup if dup then ;
 
