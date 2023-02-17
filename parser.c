@@ -236,6 +236,18 @@ static void register_macro_hook(parser_state_t* p) {
     amf_register_compile_time_word(p, p->custom_word_name, macro, payload);
 }
 
+// Register a string-macro
+static void string_macro_hook(parser_state_t* p) {
+    strcpy(p->custom_word_name, p->buffer);
+    size_t macro_size = amf_pop_data(p->fs);
+    const char* macro_content = (const char*) amf_pop_data(p->fs);
+    memcpy(p->new_word_buffer, macro_content, macro_size);
+    p->new_word_buffer[macro_size] = 0;
+    register_macro_hook(p);
+    POP_HOOK(p, new_word_hook);
+    p->pnt = 0;
+}
+
 /* --------------------------- Compile time words --------------------------- */
 
 // (
@@ -247,32 +259,33 @@ static void open_par(parser_state_t* p, const char* payload) {
     }
 }
 
+#define NOT_IN_DEF(p, name)                                            \
+    if (p->in_def) {                                                   \
+        error_msg("Using %s in a definition is not allowed.\n", name); \
+        return;                                                        \
+    }                                                                   
+        
+
 // :
 static void colon(parser_state_t* p, const char* payload) {
     UNUSED(payload);
-    if (p->in_def) {
-        error_msg("Using : in a definition is not allowed.\n");
-    } else {
-        p->in_def = true;
-        p->pnt = 0;
-        p->new_word_hook = definition_name_hook;
-        PUSH_HOOK(p, end_block_hook);
-        p->end_block_hook = register_def_hook;
-    }
+    NOT_IN_DEF(p, ":");
+    p->in_def = true;
+    p->pnt = 0;
+    p->new_word_hook = definition_name_hook;
+    PUSH_HOOK(p, end_block_hook);
+    p->end_block_hook = register_def_hook;
 }
 
 // :macro
 static void colon_macro(parser_state_t* p, const char* payload) {
     UNUSED(payload);
-    if (p->in_def) {
-        error_msg("Using :macro in a definition is not allowed.\n");
-    } else {
-        p->in_def = true;
-        p->pnt = 0;
-        p->new_word_hook = definition_name_hook;
-        PUSH_HOOK(p, end_block_hook);
-        p->end_block_hook = register_macro_hook;
-    }
+    NOT_IN_DEF(p, ":macro");
+    p->in_def = true;
+    p->pnt = 0;
+    p->new_word_hook = definition_name_hook;
+    PUSH_HOOK(p, end_block_hook);
+    p->end_block_hook = register_macro_hook;
 }
 
 // ;
@@ -293,6 +306,7 @@ static void semi_colon(parser_state_t* p, const char* payload) {
 // constant
 static void _constant(parser_state_t* p, const char* payload) {
     UNUSED(payload);
+    NOT_IN_DEF(p, "constant");
     p->in_defining_constant = true;
     p->new_word_hook = var_const_hook;
     p->pnt = 0;
@@ -301,6 +315,7 @@ static void _constant(parser_state_t* p, const char* payload) {
 // variable
 static void _variable(parser_state_t* p, const char* payload) {
     UNUSED(payload);
+    NOT_IN_DEF(p, "variable");
     p->in_defining_constant = false;
     p->new_word_hook = var_const_hook;
     p->pnt = 0;
@@ -328,6 +343,16 @@ static void backslash(parser_state_t* p, const char* payload) {
     UNUSED(payload);
     p->wait_for_new_line = true;
     p->pnt = 0;
+}
+
+// macro-string
+static void macro_string(parser_state_t* p, const char* payload) {
+    UNUSED(payload);
+    NOT_IN_DEF(p, "macro-string");
+    p->in_defining_constant = false;
+    p->pnt = 0;
+    PUSH_HOOK(p, new_word_hook);
+    p->new_word_hook = string_macro_hook;
 }
 
 // Generic word used by macros
@@ -368,6 +393,7 @@ struct compile_func_s all_default_compile_words[] = {
     {"s\"", any_string},
     {".\"", any_string},
     {"\\", backslash},
+    {"macro-string", macro_string},
 };
 
 // Register the previously defined words

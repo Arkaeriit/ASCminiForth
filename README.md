@@ -116,3 +116,4 @@ Here is a list of all words, with some notes when the word differs from the stan
 | `compare` | Return 0 is the strings are the same, -1 if they are different but same size. 1 id different sizes. |
 | `cmove` | |
 | `:macro` | Register the code until `;` as a macro after expanding compile time words. |
+| `macro-string` | Pops a Forth string and register it as a macro named after the word following `macro-string`. |
