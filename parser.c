@@ -212,6 +212,11 @@ static void register_string_hook(parser_state_t* p) {
     POP_HOOK(p, end_block_hook);
 }
 
+// Register a normal word definition
+static void register_def_hook(parser_state_t* p) {
+    amf_compile_string(p->fs->dic, p->custom_word_name, p->new_word_buffer, p->fs->base);
+}
+
 /* --------------------------- Compile time words --------------------------- */
 
 // (
@@ -230,6 +235,8 @@ static void colon(parser_state_t* p) {
         p->in_def = true;
         p->pnt = 0;
         p->new_word_hook = definition_name_hook;
+        PUSH_HOOK(p, end_block_hook);
+        p->end_block_hook = register_def_hook;
     }
 }
 
@@ -239,7 +246,8 @@ static void semi_colon(parser_state_t* p) {
         p->in_def = false;
         p->buffer[p->pnt] = 0;
         p->pnt = 0;
-        amf_compile_string(p->fs->dic, p->custom_word_name, p->new_word_buffer, p->fs->base);
+        p->end_block_hook(p);
+        POP_HOOK(p, end_block_hook);
         p->new_word_hook = run_next_word_hook;
     } else {
         error_msg("Using ; outside of a definition is not allowed.\n");
