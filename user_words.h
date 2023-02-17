@@ -3,7 +3,6 @@
 #define USER_WORDS_H
 
 #include "parser.h"
-typedef void (*compile_callback_t)(parser_state_t*, const char*);
 
 // This struct represent an user-define word. It is a list of all the
 // word_node that will be called when the word is called.

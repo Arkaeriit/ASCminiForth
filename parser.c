@@ -8,6 +8,7 @@
 static void run_next_word_hook(parser_state_t* p);
 static void invalid_hook(parser_state_t* p);
 static void register_compile_time_words_list(parser_state_t* p);
+static void macro(parser_state_t* p, const char* payload);
 
 parser_state_t* amf_init_parser(void) {
     parser_state_t* ret = malloc(sizeof(parser_state_t));
@@ -145,6 +146,12 @@ error amf_register_file(parser_state_t* p, const char* filemane) {
 
 #define UNUSED(x) (void)(x)
 
+// Error when no hooks registered
+static void invalid_hook(parser_state_t* p) {
+    UNUSED(p);
+    error_msg("Invalid hook should not be run.\n");
+}
+
 // This hook is the parser's default one, it tries to run the buffer
 static void run_next_word_hook(parser_state_t* p) {
     p->pnt = 0;
@@ -221,10 +228,12 @@ static void register_def_hook(parser_state_t* p) {
     amf_compile_string(p->fs->dic, p->custom_word_name, p->new_word_buffer, p->fs->base);
 }
 
-// Error when no hooks registered
-static void invalid_hook(parser_state_t* p) {
-    UNUSED(p);
-    error_msg("Invalid hook should not be run.\n");
+// Register a macro
+static void register_macro_hook(parser_state_t* p) {
+    char* payload = malloc(strlen(p->new_word_buffer)+1);
+    strcpy(payload, p->new_word_buffer);
+    debug_msg("macroing '%s' as '%s'\n", payload, p->custom_word_name);
+    amf_register_compile_time_word(p, p->custom_word_name, macro, payload);
 }
 
 /* --------------------------- Compile time words --------------------------- */
@@ -249,6 +258,20 @@ static void colon(parser_state_t* p, const char* payload) {
         p->new_word_hook = definition_name_hook;
         PUSH_HOOK(p, end_block_hook);
         p->end_block_hook = register_def_hook;
+    }
+}
+
+// :macro
+static void colon_macro(parser_state_t* p, const char* payload) {
+    UNUSED(payload);
+    if (p->in_def) {
+        error_msg("Using :macro in a definition is not allowed.\n");
+    } else {
+        p->in_def = true;
+        p->pnt = 0;
+        p->new_word_hook = definition_name_hook;
+        PUSH_HOOK(p, end_block_hook);
+        p->end_block_hook = register_macro_hook;
     }
 }
 
@@ -285,7 +308,7 @@ static void _variable(parser_state_t* p, const char* payload) {
 
 // '
 static_assert(sizeof(hash_t) <= sizeof(amf_int_t), "To handle execution tokens, hashes should fit in a cell.");
-static void single_quote(struct parser_state_s* p, const char* payload) {
+static void single_quote(parser_state_t* p, const char* payload) {
     UNUSED(payload);
     PUSH_HOOK(p, new_word_hook);
     p->new_word_hook = get_exec_token_hook;
@@ -305,6 +328,14 @@ static void backslash(parser_state_t* p, const char* payload) {
     UNUSED(payload);
     p->wait_for_new_line = true;
     p->pnt = 0;
+}
+
+// Generic word used by macros
+static void macro(parser_state_t* p, const char* payload) {
+    p->pnt = 0;
+    for (size_t i=0; i<strlen(payload); i++) {
+        amf_parse_char(p, payload[i]);
+    }
 }
 
 // Register a compile time word
@@ -329,6 +360,7 @@ struct compile_func_s {
 struct compile_func_s all_default_compile_words[] = {
     {"(", open_par},
     {":", colon},
+    {":macro", colon_macro},
     {";", semi_colon},
     {"constant", _constant},
     {"variable", _variable},

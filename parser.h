@@ -27,6 +27,9 @@ void amf_parse_char(parser_state_t * parse, char ch);
 void amf_parse_string(parser_state_t* parse, const char* s);
 int amf_shell(void);
 
+typedef void (*compile_callback_t)(parser_state_t*, const char*);
+void amf_register_compile_time_word(parser_state_t* p, const char* name, compile_callback_t compile_func, char* payload);
+
 #if AMF_USE_SOURCE_FILE
 error amf_register_file(parser_state_t * p, const char* filemane);
 #endif
