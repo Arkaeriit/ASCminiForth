@@ -18,7 +18,7 @@ S" content in the file" drop constant _cif
 : test-file-name s" test.txt" ;
 : test.write ." Testing writting to a file: " test-file-name w/o create-file is_0 dup >r cif r> write-file is_0 close-file is_0 cr ;
 1024 constant buf-size
-: test.read ." Testing reading from file: " buf-size allocate is_0 dup buf-size test-file-name r/o open-file is_0 dup >r read-file is_0 r> close-file is_0 cif compare is_0 cr ;
+: test.read ." Testing reading from file: " buf-size allocate is_0 dup dup buf-size test-file-name r/o open-file is_0 dup >r read-file is_0 r> close-file is_0 cif compare is_0 cr free drop ;
 
 
 : benchmark 11 22 33
