@@ -202,7 +202,13 @@ error amf_executes_node(forth_state_t* fs, struct word_node_s* node) {
     if (setjmp(point) == 0) {
         ret = _amf_executes_node(fs, node);
     } else {
-        error_msg("SEGFAULT. TODO: better error reporting.\n");
+        error_msg("SEGFAULT. Executing node with hash %i\n", node->content.hash); // I assume that the degfault is is a normal word and not a raw_number. How bold...
+#if AMF_STORE_NAME
+    entry_t e;
+    amf_find(fs->dic, &e, NULL, node->content.hash); // An error check have already been made in _execute_node
+    error_msg("The word causing issue is %s\n", e.name);
+
+#endif
         idle_state(fs);
         ret = segfault;
     }
