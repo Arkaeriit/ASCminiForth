@@ -74,6 +74,9 @@ void amf_parse_char(parser_state_t* parse, char ch) {
             parse->is_last_escaped = false;
             return;
         }
+        if (!parse->in_word) {
+            return;
+        }
         parse->in_word = false;
         parse->buffer[parse->pnt] = 0;
         entry_t compile_time_entry;
