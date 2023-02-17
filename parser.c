@@ -6,6 +6,7 @@
 #include "assert.h"
 
 static void run_next_word_hook(parser_state_t* p);
+static void invalid_hook(parser_state_t* p);
 static void register_compile_time_words(parser_state_t* p);
 
 parser_state_t* amf_init_parser(void) {
@@ -16,6 +17,7 @@ parser_state_t* amf_init_parser(void) {
     ret->new_word_buffer = malloc(PARSER_BUFFER_SIZE);
     ret->custom_word_name = malloc(PARSER_CUSTOM_NAME_SIZE);
     ret->new_word_hook = run_next_word_hook;
+    ret->end_block_hook = invalid_hook;
     ret->pnt = 0;
     ret->in_word = false;
     ret->in_def = false;
@@ -215,6 +217,12 @@ static void register_string_hook(parser_state_t* p) {
 // Register a normal word definition
 static void register_def_hook(parser_state_t* p) {
     amf_compile_string(p->fs->dic, p->custom_word_name, p->new_word_buffer, p->fs->base);
+}
+
+// Error when no hooks registered
+static void invalid_hook(parser_state_t* p) {
+    (void) p;
+    error_msg("Invalid hook should not be run.\n");
 }
 
 /* --------------------------- Compile time words --------------------------- */
