@@ -26,4 +26,6 @@
 : spaces dup 0> if 0 do space loop else drop then ;
 : invert -1 xor ;
 : type dup 0> if 0 do dup c@ emit 1+ loop drop else drop then ;
+:macro while if ;
+:macro repeat 0 until then ;
 

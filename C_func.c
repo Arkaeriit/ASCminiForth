@@ -518,7 +518,7 @@ static void rw(forth_state_t* fs) {
 // create-file and open-file generic
 static void file_action(forth_state_t* fs, const char* (*mode_f)(enum file_modes)) {
     enum file_modes mode = amf_pop_data(fs);
-    amf_int_t filename_size = amf_pop_data(fs); // Ignoring string length as we use C strings
+    amf_int_t filename_size = amf_pop_data(fs);
     const char* filename_forth = (const char*) amf_pop_data(fs);
     char filename[filename_size+1]; // Convert forth string to C string
     memcpy(filename, filename_forth, filename_size);
