@@ -46,6 +46,9 @@ static void free_word(entry_t e) {
         case FORTH_word:   // Part of those words are dynamicaly allocated
             amf_clean_user_word(e.func.F_word);
             break;
+        case string:
+            free(e.func.string.data);
+            break;
         case constant:
         case C_word:
         case compile_word:
@@ -102,6 +105,9 @@ void amf_display_dictionary(forth_dictionary_t* dic) {
             case variable:
                 type = "variable";
                 break;
+            case string:
+                type = "string";
+                break;
         }
         printf("type = %s, hash = %X\n\n", type, dic->entries[i].hash);
     }
@@ -145,6 +151,45 @@ error amf_find(forth_dictionary_t* fd, entry_t* e, size_t* index, hash_t hash) {
     return OK;
 }
 
+// hash_t have their MSB at 0 when they are regular hashes and at 1 when they
+// are special hashes (id to index a special content). Thin function returns an
+// unused special hash
+hash_t amf_unused_special_hash(forth_dictionary_t* fd) {
+    const hash_t first_special_hash = 0x80000000;
+    if (fd->n_entries == 0) {
+        return first_special_hash;
+    }
+    hash_t last_hash = fd->entries[fd->n_entries-1].hash;
+    // The special hashes are at the end of the dictionary. Thus, the last
+    // element in the dictionary have the highest special hash. The hash right
+    // after it have to be free
+    if (last_hash >= first_special_hash) {
+        return last_hash + 1;
+    } else {
+        return first_special_hash;
+    }
+}
+
+// Register a string in the dictionary under a special hash and return that
+// hash
+#define STRING_ENTRY_NAME "~~ string ~~"
+hash_t amf_register_string(forth_dictionary_t* fd, const char* str, size_t size) {
+    entry_t e = {
+        .type = string,
+        .hash = amf_unused_special_hash(fd),
+        .func.string.size = size,
+        .func.string.data = malloc(size+1),
+    };
+#if AMF_STORE_NAME
+    e.name = malloc(strlen(STRING_ENTRY_NAME)+1);
+    strcpy(e.name, STRING_ENTRY_NAME);
+#endif
+    memcpy(e.func.string.data, str, size);
+    e.func.string.data[size] = 0; // Null terminating
+    amf_add_elem(fd, e);
+    return e.hash;
+}
+
 // This function adds a new element to the dictionary.
 // The size is extended if needed and the dictionary is left sorted
 // If an element in the array got a similar hash, it is overwritten
@@ -179,6 +224,9 @@ error amf_call_func(forth_state_t* fs, hash_t hash) {
         error_msg("Unable to find desired function with hash %" AMF_INT_PRINT ".\n", hash);
         return find_rc;
     }
+#if AMF_STORE_NAME
+    debug_msg("Calling hash %" PRIdPTR " named %s\n", hash, e.name);
+#endif
     switch (e.type) {
         case C_word:
             e.func.C_func(fs);
@@ -198,6 +246,11 @@ error amf_call_func(forth_state_t* fs, hash_t hash) {
         case compile_word:
             error_msg("compile_word not used yet.\n");
             return impossible_error;
+        case string:
+            amf_push_data(fs, (amf_int_t) e.func.string.data);
+            amf_push_data(fs, (amf_int_t) e.func.string.size);
+            debug_msg("Pushing string `%s` of size %zu\n", e.func.string.data, e.func.string.size);
+            break;
     }
     return OK;
 }

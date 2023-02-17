@@ -9,7 +9,7 @@ enum entry_type {
     compile_word,               // Words that have effect at compile time (such as : or ;)
     constant,                   // Words that are just putting a constant on the stack
     variable,                   // Words that are aliased to a memory address
-    
+    string,                     // Strings stored in the dictionary 
 };
 
 // This structure represent the entries in the dictionary
@@ -19,7 +19,11 @@ typedef struct {
         user_amf_int_t* F_word;             // Content of words defined in Forth
         compile_callback_t compile_func;    // Function to call on the parser
         amf_int_t constant;                 // Value written in hard
-        amf_int_t* variable;                // Data that should be malloced
+        amf_int_t* variable;                // Data on the Forth memory
+        struct {                            // Strings stored in the dictionary
+            char* data;
+            size_t size;
+        } string;
     } func;
     enum entry_type type;
     hash_t hash;
@@ -40,6 +44,8 @@ void amf_display_dictionary(forth_dictionary_t* dic);
 void amf_clean_dic(forth_dictionary_t* fd);
 error amf_find(forth_dictionary_t* fd, entry_t* e, size_t* index, hash_t hash);
 error amf_add_elem(forth_dictionary_t* fd, entry_t e);
+hash_t amf_unused_special_hash(forth_dictionary_t* fd);
+hash_t amf_register_string(forth_dictionary_t* fd, const char* str, size_t size);
 
 error amf_call_name(forth_state_t* fs, const char* name);
 error amf_call_func(forth_state_t* fs, hash_t hash);
