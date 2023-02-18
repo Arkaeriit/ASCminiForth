@@ -14,7 +14,6 @@ int main(int argc, char** argv) {
             fprintf(stderr, "Error, unable to read file %s.\n", argv[1]);
             return 1;
         }
-        amf_run(parse->fs);
 #if AMF_PROGRAMMING_TOOLS
         rc = parse->fs->exit_code;
 #endif
