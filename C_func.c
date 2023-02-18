@@ -636,6 +636,11 @@ static void bye(forth_state_t* fs) {
     fs->pos.code.pos_in_word = IDLE_POS_IN_WORD;
     fs->pos.code.current_word = IDLE_CURRENT_WORD;
 }
+
+// words
+static void words(forth_state_t* fs) {
+    amf_display_dictionary(fs->dic);
+}
 #endif
 
 // Misc
@@ -772,6 +777,7 @@ struct c_func_s all_default_c_func[] = {
     // Programming tools
     {"exit-code", exit_code},
     {"bye", bye},
+    {"words", words},
 #endif
     // Misc
     {".", printNum},

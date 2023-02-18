@@ -174,7 +174,6 @@ hash_t amf_unused_special_hash(forth_dictionary_t* fd) {
 
 // Register a string in the dictionary under a special hash and return that
 // hash
-#define STRING_ENTRY_NAME "~~ string ~~"
 hash_t amf_register_string(forth_dictionary_t* fd, const char* str, size_t size) {
     entry_t e = {
         .type = string,
@@ -183,8 +182,9 @@ hash_t amf_register_string(forth_dictionary_t* fd, const char* str, size_t size)
         .func.string.data = malloc(size+1),
     };
 #if AMF_STORE_NAME
-    e.name = malloc(strlen(STRING_ENTRY_NAME)+1);
-    strcpy(e.name, STRING_ENTRY_NAME);
+    e.name = malloc(size+1);
+    memcpy(e.name, str, size);
+    e.name[size] = 0;
 #endif
     memcpy(e.func.string.data, str, size);
     e.func.string.data[size] = 0; // Null terminating
