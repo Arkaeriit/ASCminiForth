@@ -182,9 +182,11 @@ hash_t amf_register_string(forth_dictionary_t* fd, const char* str, size_t size)
         .func.string.data = malloc(size+1),
     };
 #if AMF_STORE_NAME
-    e.name = malloc(size+1);
-    memcpy(e.name, str, size);
-    e.name[size] = 0;
+    e.name = malloc(size+3);
+    memcpy(e.name+1, str, size);
+    e.name[0] = '"';
+    e.name[size+1] = '"';
+    e.name[size+2] = 0;
 #endif
     memcpy(e.func.string.data, str, size);
     e.func.string.data[size] = 0; // Null terminating
