@@ -235,11 +235,13 @@ error amf_call_func(forth_state_t* fs, hash_t hash) {
         case C_word:
             e.func.C_func(fs);
             break;
-        case FORTH_word:
-            amf_push_code(fs, fs->pos);
+        case FORTH_word: {
+            code_pointer_t old_pos = fs->pos;
             fs->pos.code.current_word = hash;
             fs->pos.code.pos_in_word = 0;
             fs->current_word_copy = e.func.F_word;
+            amf_push_code(fs, old_pos);
+            }
             break;
         case constant:
             amf_push_data(fs, e.func.constant);
