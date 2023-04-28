@@ -199,7 +199,8 @@ hash_t amf_register_string(forth_dictionary_t* fd, const char* str, size_t size)
 // If an element in the array got a similar hash, it is overwritten
 error amf_add_elem(forth_dictionary_t* fd, entry_t e) {
     size_t index;
-    if (amf_find(fd, NULL, &index, e.hash) == not_found) {  // We need to add a new element
+    entry_t old_entry;
+    if (amf_find(fd, &old_entry, &index, e.hash) == not_found) {  // We need to add a new element
         if (fd->n_entries == fd->max) {
             error rc = double_size(fd);
             if (rc != OK) {
@@ -211,6 +212,14 @@ error amf_add_elem(forth_dictionary_t* fd, entry_t e) {
         sort_dic(fd);
         return OK;
     } else {    // We need to overwrite an element
+#ifdef AMF_STORE_NAME
+        warn_msg("Overwriting the word with hash %"PRIx32" named %s.\n", e.hash, old_entry.name);
+        if (strcmp(old_entry.name, e.name)) {
+            error_msg("New entry named %s have the same name as old entry named %s. Hash algorithm should be changed.\n");
+        }
+#else
+        warn_msg("Overwriting the word with hash %"PRIx32".\n", e.hash);
+#endif
         entry_t old = fd->entries[index];
         free_word(old);
         fd->entries[index] = e;
