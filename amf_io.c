@@ -11,7 +11,7 @@
 
 #include "stdio.h"
 char amf_input(void) {
-    char ret = getchar();
+    int ret = getchar();
     if (ret != -1) {    // Check for unexpected char that could do bad things to  the rest of the parser
         return ret;
     } else {
