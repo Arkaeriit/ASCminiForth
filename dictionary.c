@@ -110,6 +110,9 @@ void amf_display_dictionary(forth_dictionary_t* dic) {
             case string:
                 type = "string";
                 break;
+            default:
+                type = "!! INVALID TYPE !!";
+                break;
         }
         printf("type = %s, hash = %X\n\n", type, dic->entries[i].hash);
     }
