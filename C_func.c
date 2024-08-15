@@ -454,7 +454,7 @@ static void str_len(forth_state_t* fs) {
 
 // argc
 static void argc(forth_state_t* fs) {
-    amf_push_data(fs, (amf_int_t) fs->argc);
+    amf_push_data(fs, (amf_int_t) &fs->argc);
 }
 
 // arg

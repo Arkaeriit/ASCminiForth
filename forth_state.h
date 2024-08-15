@@ -63,7 +63,7 @@ typedef struct {
     // True by default, set to false when running exit when the code stack is empty
     bool running;
 #if AMF_CLI_ARGS
-    int argc;
+    amf_int_t argc;
     char** argv;
 #endif
 #if AMF_PROGRAMMING_TOOLS

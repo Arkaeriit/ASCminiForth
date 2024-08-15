@@ -36,6 +36,10 @@ parser_state_t* amf_init_parser(void) {
     extern const char* string_forth_func;
     amf_parse_string(ret, string_forth_func);
 #endif
+#if AMF_PROGRAMMING_TOOLS
+    extern const char* programming_forth_func;
+    amf_parse_string(ret, programming_forth_func); 
+#endif
     //amf_display_dictionary(ret->fs->dic);
     return ret;
 }

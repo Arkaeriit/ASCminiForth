@@ -102,7 +102,7 @@ Here is a list of all words, with some notes when the word differs from the stan
 | `2r>` | |
 | `S" ` | The string given is null terminated. |
 | `." ` | |
-| `argc` | Return the number of command line arguments given to the program when interpreting a file. |
+| `argc` | Return an address pointing to the number of command line arguments given to the program when interpreting a file. |
 | `arg` | Take an number n and return the n-th command line argument as a null terminated Forth string. |
 | `allocate` | |
 | `free` | |
@@ -117,3 +117,6 @@ Here is a list of all words, with some notes when the word differs from the stan
 | `cmove` | |
 | `:macro` | Register the code until `;` as a macro after expanding compile time words. |
 | `macro-string` | Pops a Forth string and register it as a macro named after the word following `macro-string`. |
+| `shift-args` | Do nothing, used for some semblance of compatibility with Gforth. |
+| `bye` | Exit the program. |
+| `(bye)` | Put the top of the stack into `exit-code` and exit the program. |
