@@ -218,7 +218,7 @@ error amf_add_elem(forth_dictionary_t* fd, entry_t e) {
 #ifdef AMF_STORE_NAME
         warn_msg("Overwriting the word with hash %"PRIx32" named %s.\n", e.hash, old_entry.name);
         if (strcmp(old_entry.name, e.name)) {
-            error_msg("New entry named %s have the same name as old entry named %s. Hash algorithm should be changed.\n");
+            error_msg("New entry named %s have the same name as old entry named %s. Hash algorithm should be changed.\n", old_entry.name, e.name);
         }
 #else
         warn_msg("Overwriting the word with hash %"PRIx32".\n", e.hash);
