@@ -365,6 +365,7 @@ static void macro(parser_state_t* p, const char* payload) {
     for (size_t i=0; i<strlen(payload); i++) {
         amf_parse_char(p, payload[i]);
     }
+    amf_parse_char(p, ' '); // If the macro doesn't end in whitespace and there is a single whitespace char between the macro and the next word, the last char of the macro would be concatenated with the following word. We add an extra space to ensure this can't happen.
 }
 
 // Register a compile time word
