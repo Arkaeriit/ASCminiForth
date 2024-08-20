@@ -133,6 +133,9 @@ error amf_register_file(parser_state_t* p, const char* filemane) {
     }
     while (ch != EOF) {
         amf_parse_char(p, ch);
+        if (!p->fs->running) {
+            break;
+        }
         ch = fgetc(f);
     }
     fclose(f);
