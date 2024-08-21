@@ -146,7 +146,6 @@ bool amf_run_step(forth_state_t* fs) {
         debug_msg("Nothing to do, idleing.\n");
         return false;
     }
-#warning "Check the size."
     if (fs->pos.pos_in_word >= fs->current_word_copy->size) {  // We return from the function as we reached the end of the word
         amf_exit(fs);
         return true;

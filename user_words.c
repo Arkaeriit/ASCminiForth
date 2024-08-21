@@ -12,6 +12,11 @@ static bool str_to_num(const char* str, amf_int_t* num, int base);
 error amf_compile_user_word(forth_dictionary_t* fd, const char* name, size_t subword_n, char** subwords, int base) {
     user_amf_int_t* def = malloc(sizeof(user_amf_int_t));
     def->size = subword_n;
+    if (def->size >= (1 << AMF_WORD_CONTENT_SIZE_BITS)) {
+        free(def);
+        error_msg("Error, trying to register a word with %zi subwords while the maximum is %zi.\n", subword_n, (1 << AMF_WORD_CONTENT_SIZE_BITS) - 1);
+        return amf_config_error;
+    }
     def->content = malloc(sizeof(word_node_t) * subword_n);
     for (size_t i = 0; i < subword_n; i++) {
         def->content[i] = amf_compile_node(subwords[i], base);

@@ -9,6 +9,7 @@ typedef enum {
     invalid_file = 3,
     impossible_error = 4,
     segfault = 5,
+    amf_config_error = 6,
 } error;
 
 // Basic checks on the current configuration
