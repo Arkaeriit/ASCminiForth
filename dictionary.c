@@ -9,7 +9,7 @@ static error double_size(forth_dictionary_t* fd);
 static void sort_dic(forth_dictionary_t* fd);
 static void free_word(entry_t e);
 
-// This functions double the size of the dinamic array.
+// This functions double the size of the dynamic array.
 static error double_size(forth_dictionary_t* fd) {
     entry_t* new = malloc(sizeof(entry_t) * fd->max * 2);
     if (new == NULL) {
@@ -24,7 +24,7 @@ static error double_size(forth_dictionary_t* fd) {
     return OK;
 }
 
-// This functions assumes that all the elemnt of the aray but the last are sorted and sort the last one.
+// This functions assumes that all the element of the array but the last are sorted and sort the last one.
 static void sort_dic(forth_dictionary_t* fd) {
     for (size_t i = fd->n_entries - 1; i > 0; i--) {
         if (fd->entries[i].hash < fd->entries[i - 1].hash) {
@@ -43,7 +43,7 @@ static void free_word(entry_t e) {
     free(e.name);
 #endif
     switch (e.type) {
-        case FORTH_word:   // Part of those words are dynamicaly allocated
+        case FORTH_word:   // Part of those words are dynamically allocated
             amf_clean_user_word(e.func.F_word);
             break;
         case string:
@@ -120,7 +120,7 @@ void amf_display_dictionary(forth_dictionary_t* dic) {
 
 // If there is an element in the dictionary with the desired hash,
 // put it in e, put its index in index and return OK.
-// Otherwize, returns not_found;
+// Otherwise, returns not_found;
 // If e or index are NULL, the values are not copied.
 error amf_find(forth_dictionary_t* fd, entry_t* e, size_t* index, hash_t hash) {
     if (fd->n_entries == 0) {
