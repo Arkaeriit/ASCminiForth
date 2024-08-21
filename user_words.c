@@ -14,7 +14,7 @@ error amf_compile_user_word(forth_dictionary_t* fd, const char* name, size_t sub
     def->size = subword_n;
     if (def->size >= (1 << AMF_WORD_CONTENT_SIZE_BITS)) {
         free(def);
-        error_msg("Error, trying to register a word with %zi subwords while the maximum is %zi.\n", subword_n, (1 << AMF_WORD_CONTENT_SIZE_BITS) - 1);
+        error_msg("Error, trying to register a word with %zi (%s) subwords while the maximum is %zi.\n", subword_n, name, (1 << AMF_WORD_CONTENT_SIZE_BITS) - 1);
         return amf_config_error;
     }
     def->content = malloc(sizeof(word_node_t) * subword_n);

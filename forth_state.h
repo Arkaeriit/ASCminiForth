@@ -37,7 +37,7 @@ static inline code_pointer_t amf_int_to_code_pointer(amf_int_t i) {
 
 static inline amf_int_t amf_code_pointer_to_int(code_pointer_t* code) {
     amf_int_t ret = code->pos_in_word & AMF_POS_IN_WORD_MASK;
-    ret <<= AMF_WORD_CONTENT_SIZE_BITS;
+    ret <<= AMF_HASH_SIZE_BITS;
     ret |= code->current_word & AMF_HASH_MASK;
     return ret;
 }
