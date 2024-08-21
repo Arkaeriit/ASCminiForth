@@ -19,21 +19,33 @@ typedef struct word_node_s {
     } content;
 } word_node_t;
 
-// This union is used to represent the value put on the code stack
-// This value can either be a word (optional data) or some indication
-// about what piece of code we should be running
-typedef union {
-    struct {
-        hash_t current_word;
-        size_t pos_in_word; // Maybe change this type so that both members of the union are of the same size/
-    } code;
-    amf_int_t optional_data;
+// When stored in the stack, the code pointer is serialized to an amf_int_t.
+typedef struct {
+    hash_t current_word;
+    size_t pos_in_word;
 } code_pointer_t;
+
+#define AMF_POS_IN_WORD_MASK ((1 << AMF_WORD_CONTENT_SIZE_BITS) - 1)
+#define IDLE_POS_IN_WORD     (size_t) (~0 & AMF_POS_IN_WORD_MASK)
+
+static inline code_pointer_t amf_int_to_code_pointer(amf_int_t i) {
+    code_pointer_t ret;
+    ret.current_word = i & AMF_HASH_MASK;
+    ret.pos_in_word = (i >> AMF_HASH_SIZE_BITS) & AMF_POS_IN_WORD_MASK;
+    return ret;
+}
+
+static inline amf_int_t amf_code_pointer_to_int(code_pointer_t* code) {
+    amf_int_t ret = code->pos_in_word & AMF_POS_IN_WORD_MASK;
+    ret <<= AMF_WORD_CONTENT_SIZE_BITS;
+    ret |= code->current_word & AMF_HASH_MASK;
+    return ret;
+}
 
 // The code stack
 typedef struct {
-    code_pointer_t* stack;
-    ssize_t stack_pointer;       // In both stacks, the poiter point to the first free element
+    amf_int_t* stack;
+    ssize_t stack_pointer;       // In both stacks, the pointer point to the first free element
 } code_stack_t;
 
 // The main stack
@@ -76,8 +88,8 @@ void amf_clean_state(forth_state_t* fs);
 
 amf_int_t amf_pop_data(forth_state_t* fs);
 void amf_push_data(forth_state_t* fs, amf_int_t w);
-void amf_push_code(forth_state_t* fs, code_pointer_t p);
-code_pointer_t amf_pop_code(forth_state_t* fs);
+void amf_push_code(forth_state_t* fs, amf_int_t p);
+amf_int_t amf_pop_code(forth_state_t* fs);
 void amf_push_loop(forth_state_t* fs, amf_int_t w);
 amf_int_t amf_pop_loop(forth_state_t* fs);
 amf_int_t amf_peek_loop(forth_state_t* fs);

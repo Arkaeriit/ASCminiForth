@@ -49,10 +49,8 @@ static uint32_t crc32(uint32_t crc, const char* buf, size_t len) {
     return ~crc;
 }
 
-
 // Returns the CRC32 of a C-string
 // The MSB is then set to 0 to reserve it for special cases
-#include "inttypes.h"
 hash_t amf_hash(const char* data) {
 #if AMF_CASE_INSENSITIVE
     char cpy[strlen(data) + 1];
@@ -68,7 +66,7 @@ hash_t amf_hash(const char* data) {
     uint32_t ret = crc32(0, data, strlen(data));
 #endif
     /*debug_msg("Hash of %s (size=%zi) is %" PRIu32 ".\n",data, strlen(data), ret); */
-    ret &= 0x7FFFFFFF;
+    ret &= AMF_RAW_HASH_MASK;
     return ret;
 }
 

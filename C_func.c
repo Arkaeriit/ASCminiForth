@@ -57,15 +57,14 @@ static void drop(forth_state_t* fs) {
 
 // r>
 static void r_from(forth_state_t* fs) {
-    code_pointer_t data = amf_pop_code(fs);
-    amf_push_data(fs, data.optional_data);
+    amf_int_t data = amf_pop_code(fs);
+    amf_push_data(fs, data);
 }
 
 // >r
 static void to_r(forth_state_t* fs) {
     amf_int_t w = amf_pop_data(fs);
-    code_pointer_t to_push = {.optional_data = w};
-    amf_push_code(fs, to_push);
+    amf_push_code(fs, w);
 }
 
 // roll
@@ -200,7 +199,7 @@ static void xor(forth_state_t* fs) {
 // Flow control
 
 #define CHECK_BEING_IN_WORD(fs)                                             \
-    if (fs->pos.code.current_word == IDLE_CURRENT_WORD) {                   \
+    if (fs->pos.current_word == IDLE_CURRENT_WORD) {                        \
         error_msg("Control flow impossible outside of word definition.\n"); \
         return;                                                             \
     }                                                                        
@@ -222,7 +221,7 @@ static void IF(forth_state_t* fs) {
         hash_t ELSE_hash = amf_hash("ELSE");
         hash_t THEN_hash = amf_hash("THEN");
         hash_t IF_hash = amf_hash("IF");
-        size_t i = fs->pos.code.pos_in_word;
+        size_t i = fs->pos.pos_in_word;
         int if_depth = 1;
         while (if_depth) {
             if (CHECK_AGAINST_HASH(fs, i, if_hash, IF_hash)) {
@@ -234,7 +233,7 @@ static void IF(forth_state_t* fs) {
             }
             i++;
         }
-        fs->pos.code.pos_in_word = i;
+        fs->pos.pos_in_word = i;
     }
 }
 
@@ -246,7 +245,7 @@ static void ELSE(forth_state_t* fs) {
     hash_t if_hash = amf_hash("if");
     hash_t THEN_hash = amf_hash("THEN");
     hash_t IF_hash = amf_hash("IF");
-    size_t i = fs->pos.code.pos_in_word;
+    size_t i = fs->pos.pos_in_word;
     int if_depth = 1;
     while (if_depth) {  // Note: not finding matching then cause a fault
         if (CHECK_AGAINST_HASH(fs, i, then_hash, THEN_hash)) {
@@ -256,7 +255,7 @@ static void ELSE(forth_state_t* fs) {
         }
         i++;
     }
-    fs->pos.code.pos_in_word = i;
+    fs->pos.pos_in_word = i;
 }
 
 // then
@@ -278,7 +277,7 @@ static void until(forth_state_t* fs) {
         hash_t until_hash = amf_hash("until");
         hash_t BEGIN_hash = amf_hash("BEGIN");
         hash_t UNTIL_hash = amf_hash("UNTIL");
-        size_t i = fs->pos.code.pos_in_word - 2;
+        size_t i = fs->pos.pos_in_word - 2;
         int loop_depth = 1;
         while (loop_depth) {    // Note: if no matching begin is found, there is a fault
             if (CHECK_AGAINST_HASH(fs, i, begin_hash, BEGIN_hash)) {
@@ -288,7 +287,7 @@ static void until(forth_state_t* fs) {
             }
             i--;
         }
-        fs->pos.code.pos_in_word = i + 1;
+        fs->pos.pos_in_word = i + 1;
     }
 }
 
@@ -325,7 +324,7 @@ static void plus_loop(forth_state_t* fs) {
         hash_t DO_hash = amf_hash("DO");
         hash_t LOOP_hash = amf_hash("LOOP");
         hash_t plus_LOOP_hash = amf_hash("+LOOP");
-        size_t i = fs->pos.code.pos_in_word - 2;
+        size_t i = fs->pos.pos_in_word - 2;
         int loop_depth = 1;
         while (loop_depth) {    // Note: if no matching do is found, there is a fault
             if (CHECK_AGAINST_HASH(fs, i, do_hash, DO_hash)) {
@@ -335,7 +334,7 @@ static void plus_loop(forth_state_t* fs) {
             }
             i--;
         }
-        fs->pos.code.pos_in_word = i + 2;
+        fs->pos.pos_in_word = i + 2;
     }
 }
 
@@ -354,7 +353,7 @@ static void leave(forth_state_t* fs) {
     hash_t DO_hash = amf_hash("DO");
     hash_t LOOP_hash = amf_hash("LOOP");
     hash_t plus_LOOP_hash = amf_hash("+LOOP");
-    size_t i = fs->pos.code.pos_in_word;
+    size_t i = fs->pos.pos_in_word;
     int loop_depth = 1;
     while (loop_depth) {
         if (CHECK_AGAINST_HASH(fs, i, do_hash, DO_hash)) {
@@ -364,7 +363,7 @@ static void leave(forth_state_t* fs) {
         }
         i++;
     }
-    fs->pos.code.pos_in_word = i;
+    fs->pos.pos_in_word = i;
 }
 
 // Memory management
@@ -633,8 +632,8 @@ static void exit_code(forth_state_t* fs) {
 // bye
 static void bye(forth_state_t* fs) {
     fs->running = false;
-    fs->pos.code.pos_in_word = IDLE_POS_IN_WORD;
-    fs->pos.code.current_word = IDLE_CURRENT_WORD;
+    fs->pos.pos_in_word = IDLE_POS_IN_WORD;
+    fs->pos.current_word = IDLE_CURRENT_WORD;
 }
 
 // words

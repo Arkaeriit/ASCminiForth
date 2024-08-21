@@ -145,11 +145,11 @@ error amf_register_file(parser_state_t* p, const char* filemane) {
 
 /* ---------------------------- Next words hooks ---------------------------- */
 
-#define PUSH_HOOK(p, hook_name)                                           \
-    code_pointer_t to_push = {.optional_data = (amf_int_t) p->hook_name}; \
-    amf_push_code(p->fs, to_push)                                          
+#define PUSH_HOOK(p, hook_name)                   \
+    amf_int_t to_push = (amf_int_t) p->hook_name; \
+    amf_push_code(p->fs, to_push)                  
 
-#define POP_HOOK(p, hook_name) p->hook_name = (new_word_hook_t) amf_pop_code(p->fs).optional_data
+#define POP_HOOK(p, hook_name) p->hook_name = (new_word_hook_t) amf_pop_code(p->fs)
 
 #define UNUSED(x) (void)(x)
 

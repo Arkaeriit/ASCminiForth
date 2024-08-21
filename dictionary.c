@@ -160,7 +160,7 @@ error amf_find(forth_dictionary_t* fd, entry_t* e, size_t* index, hash_t hash) {
 // are special hashes (id to index a special content). Thin function returns an
 // unused special hash
 hash_t amf_unused_special_hash(forth_dictionary_t* fd) {
-    const hash_t first_special_hash = 0x80000000;
+    const hash_t first_special_hash = AMF_RAW_HASH_MASK + 1;
     if (fd->n_entries == 0) {
         return first_special_hash;
     }
@@ -230,7 +230,7 @@ error amf_add_elem(forth_dictionary_t* fd, entry_t e) {
     }
 }
 
-// This function call a known function from the dictionary, the effect will
+// This function calls a known function from the dictionary, the effect will
 // vary depending on the type of the function. The function is id by its hash
 // If something is not found, print an error message
 error amf_call_func(forth_state_t* fs, hash_t hash) {
@@ -249,10 +249,10 @@ error amf_call_func(forth_state_t* fs, hash_t hash) {
             break;
         case FORTH_word: {
             code_pointer_t old_pos = fs->pos;
-            fs->pos.code.current_word = hash;
-            fs->pos.code.pos_in_word = 0;
+            fs->pos.current_word = hash;
+            fs->pos.pos_in_word = 0;
             fs->current_word_copy = e.func.F_word;
-            amf_push_code(fs, old_pos);
+            amf_push_code(fs, amf_code_pointer_to_int(&old_pos));
             }
             break;
         case constant:

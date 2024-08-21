@@ -2,8 +2,16 @@
 #define AMF_CONFIG_H
 
 #include "inttypes.h"
+#include "assert.h"
+
+// Size of the number used everywhere
 typedef intptr_t amf_int_t;
 #define AMF_INT_PRINT PRIdPTR
+
+// Size used to encode the word identifier and the index of each subword in a word
+#define AMF_HASH_SIZE_BITS         24
+#define AMF_WORD_CONTENT_SIZE_BITS 24
+static_assert((sizeof(amf_int_t) * 8) >= (AMF_HASH_SIZE_BITS + AMF_WORD_CONTENT_SIZE_BITS), "You should be able to store word position and hash in a amf_int_t.");
 
 // Optional features and words. Set to 1 to enable and to 0 to disable
 
@@ -28,11 +36,6 @@ typedef intptr_t amf_int_t;
 #define DATA_STACK_SIZE 100
 #define LOOP_STACK_SIZE 100
 #define FORTH_MEMORY_SIZE 1000
-
-// Dummy values to put in the state's code position to indicate that
-// the interpreter is idling and not inside a function
-#define IDLE_CURRENT_WORD (hash_t) ~0
-#define IDLE_POS_IN_WORD  (size_t) ~0
 
 // Parser configuration
 #define PARSER_BUFFER_SIZE 700
