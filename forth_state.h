@@ -101,5 +101,10 @@ void amf_exit(forth_state_t* fs);
 
 void amf_allot(forth_state_t* fs, size_t byte_requested);
 
+#if AMF_STACK_TRACE
+void amf_stack_trace(forth_state_t* fs);
+#endif
+
+
 #endif
 

@@ -55,11 +55,19 @@ static void __attribute__((unused)) idle_state(forth_state_t* fs) {
     fs->loop_control->stack_pointer = 0;
 }
 
+// Do what we want when encoutering an error and return to the idle state.
+static void __attribute__((unused)) recover_from_error(forth_state_t* fs) {
+#if AMF_STACK_TRACE
+    amf_stack_trace(fs);
+#endif
+    idle_state(fs);
+}
+
 #if AMF_STACK_BOUND_CHECKS
 #define STACK_BOUND_CHECK(stack_name, condition)                               \
     if (fs->stack_name->stack_pointer condition) {                             \
         error_msg("Stack '%s' out of bound. Resetting state.\n", #stack_name); \
-        idle_state(fs);                                                        \
+        recover_from_error(fs);                                                \
     }                                                                           
 #else
 #define STACK_BOUND_CHECK(x...)
@@ -209,7 +217,7 @@ error amf_executes_node(forth_state_t* fs, struct word_node_s* node) {
     error_msg("The word causing issue is %s\n", e.name);
 
 #endif
-        idle_state(fs);
+        recover_from_error(fs);
         ret = segfault;
     }
 
@@ -238,4 +246,30 @@ void amf_allot(forth_state_t* fs, size_t byte_requested) {
     }
 #endif
 }
+
+#if AMF_STACK_TRACE
+static void display_element_in_stack_trace(forth_state_t* fs, code_pointer_t code) {
+    hash_t word_hash = code.current_word;
+    entry_t e;
+    if (amf_find(fs->dic, &e, NULL, word_hash) == OK) {
+#if AMF_STORE_NAME
+        error_msg(" * %s\n", e.name);
+#else
+        error_msg(" * %"PRIxPTR"\n", hash); 
+#endif
+    } else {
+        error_msg(" * ???\n");
+    }
+}
+
+void amf_stack_trace(forth_state_t* fs) {
+    error_msg("Stack trace:\n");
+    display_element_in_stack_trace(fs, fs->pos);
+    for (ssize_t _pointer=((ssize_t)fs->code->stack_pointer)-1; _pointer>0; _pointer--) {
+        size_t stack_pointer = _pointer;
+        amf_int_t stack_element = fs->code->stack[stack_pointer];
+        display_element_in_stack_trace(fs, amf_int_to_code_pointer(stack_element));
+    }
+}
+#endif
 

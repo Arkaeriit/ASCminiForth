@@ -70,5 +70,8 @@ static_assert((sizeof(amf_int_t) * 8) >= (AMF_HASH_SIZE_BITS + AMF_WORD_CONTENT_
 // on multiple threads.
 #define AMF_CATCH_SEGFAULTS 0
 
+// Print a stack strace when an error is encountered during execution.
+#define AMF_STACK_TRACE 1
+
 #endif
 
