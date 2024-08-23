@@ -32,14 +32,14 @@ static_assert((sizeof(amf_int_t) * 8) >= (AMF_HASH_SIZE_BITS + AMF_WORD_CONTENT_
 #define AMF_PROGRAMMING_TOOLS 1
 
 // Depth of the memory blocks
-#define CODE_STACK_SIZE 100
-#define DATA_STACK_SIZE 100
+#define CODE_STACK_SIZE 1000
+#define DATA_STACK_SIZE 1000
 #define LOOP_STACK_SIZE 100
-#define FORTH_MEMORY_SIZE 1000
+#define FORTH_MEMORY_SIZE 1000000
 
 // Parser configuration
 #define PARSER_BUFFER_SIZE 700
-#define PARSER_CUSTOM_NAME_SIZE 25
+#define PARSER_CUSTOM_NAME_SIZE 50
 
 // Case-sensitivity
 #define AMF_CASE_INSENSITIVE 1
@@ -68,7 +68,7 @@ static_assert((sizeof(amf_int_t) * 8) >= (AMF_HASH_SIZE_BITS + AMF_WORD_CONTENT_
 // the interpreter will be put back into an idle state if encountered. This
 // relies on static variable and thus, this prevent the interpreter to be used
 // on multiple threads.
-#define AMF_CATCH_SEGFAULTS 0
+#define AMF_CATCH_SEGFAULTS 1
 
 // Print a stack strace when an error is encountered during execution.
 #define AMF_STACK_TRACE 1
