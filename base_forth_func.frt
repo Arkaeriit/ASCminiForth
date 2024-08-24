@@ -36,6 +36,7 @@ s" '" macro-string [']
 : +! dup @ rot + swap ! ;
 : cell 1 cells ;
 : , here cell allot ! ;
+: c, here 1 chars allot c! ;
 : 2! swap over ! cell+ ! ;
 : 2@ dup cell+ @ swap @ ;
 : 2* 2 * ;
