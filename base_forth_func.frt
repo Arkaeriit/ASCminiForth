@@ -18,6 +18,7 @@
 : over 2dup drop ;
 : tuck dup rot swap ;
 : 2over 3 pick 3 pick ;
+: 2swap rot >r rot r> ;
 : 2>r swap >r >r ;
 : 2r> r> r> swap ;
 : decimal 10 base ! ;
@@ -33,4 +34,8 @@ s" '" macro-string [']
 : +! dup @ rot + swap ! ;
 : cell 1 cells ;
 : , here cell allot ! ;
+: 2! swap over ! cell+ ! ;
+: 2@ dup cell+ @ swap @ ;
+: 2* 2 * ;
+: 2/ 2 / ;
 
