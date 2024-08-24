@@ -87,6 +87,11 @@ static void pick(forth_state_t* fs) {
             fs->data->stack[fs->data->stack_pointer - pos - 1]);
 }
 
+// depth
+static void depth(forth_state_t* fs) {
+    amf_push_data(fs, fs->data->stack_pointer);
+}
+
 // Basic maths
 
 // +
@@ -701,6 +706,7 @@ struct c_func_s all_default_c_func[] = {
     {"r>", r_from},
     {"roll", roll},
     {"pick", pick},
+    {"depth", depth},
     // Basic math
     {"+", add},
     {"-", sub},
