@@ -31,4 +31,6 @@
 : ?dup dup if dup then ;
 s" '" macro-string [']
 : +! dup @ rot + swap ! ;
+: cell 1 cells ;
+: , here cell allot ! ;
 
