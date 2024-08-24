@@ -237,9 +237,6 @@ void amf_run(forth_state_t* fs) {
 // Request some bytes from the forth memory and align the index
 void amf_allot(forth_state_t* fs, size_t byte_requested) {
     fs->forth_memory_index += byte_requested;
-    while(fs->forth_memory_index % sizeof(amf_int_t)) {
-        fs->forth_memory_index++;
-    }
 #if AMF_STACK_BOUND_CHECKS
     if (fs->forth_memory_index > FORTH_MEMORY_SIZE) {
         error_msg("Forth memory overflowed by %i bytes.\n", fs->forth_memory_index - FORTH_MEMORY_SIZE);
