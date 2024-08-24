@@ -129,13 +129,6 @@ static void multDivMod(forth_state_t* fs) {
     amf_push_data(fs, tmp / w1);
 }
 
-// /
-static void Div(forth_state_t* fs) {
-    amf_int_t w1 = amf_pop_data(fs);
-    amf_int_t w2 = amf_pop_data(fs);
-    amf_push_data(fs, w2 / w1);
-}
-
 // /MOD
 static void divMod(forth_state_t* fs) {
     amf_int_t w1 = amf_pop_data(fs);
@@ -714,7 +707,6 @@ struct c_func_s all_default_c_func[] = {
     {"*", mult},
     {"*/", multDiv},
     {"*/mod", multDivMod},
-    {"/", Div},
     {"/mod", divMod},
     {"abs", abs_word},
     {"<", less_than},
