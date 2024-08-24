@@ -43,4 +43,5 @@ s" '" macro-string [']
 : 2/ 2 / ;
 : aligned begin dup cell mod 0<> while 1+ repeat ;
 : align begin here aligned here <> while 1 allot repeat ;
+: count dup char+ swap c@ ;
 
