@@ -30,4 +30,5 @@
 :macro repeat 0 until then ;
 : ?dup dup if dup then ;
 s" '" macro-string [']
+: +! dup @ rot + swap ! ;
 
