@@ -56,6 +56,8 @@ typedef struct {
 
 // The interpreter's state
 typedef struct {
+    // A parser used for "evaluate" and the likes
+    struct parser_state_s* parser;
     // The two stack used by the interpreter
     data_stack_t* data;
     code_stack_t* code;
@@ -83,7 +85,7 @@ typedef struct {
 #endif
 } forth_state_t;
 
-forth_state_t* amf_init_state(void);
+forth_state_t* amf_init_state(struct parser_state_s* parser);
 void amf_clean_state(forth_state_t* fs);
 
 amf_int_t amf_pop_data(forth_state_t* fs);

@@ -12,7 +12,7 @@ static void macro(parser_state_t* p, const char* payload);
 
 parser_state_t* amf_init_parser(void) {
     parser_state_t* ret = malloc(sizeof(parser_state_t));
-    ret->fs = amf_init_state();
+    ret->fs = amf_init_state(ret);
     register_compile_time_words_list(ret);
     ret->buffer = malloc(PARSER_BUFFER_SIZE);
     ret->new_word_buffer = malloc(PARSER_BUFFER_SIZE);

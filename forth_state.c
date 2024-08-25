@@ -3,8 +3,9 @@
 #include "string.h"
 
 // Init the interpreter
-forth_state_t* amf_init_state(void) {
+forth_state_t* amf_init_state(struct parser_state_s* parser) {
     forth_state_t* ret = malloc(sizeof(forth_state_t));
+    ret->parser = parser;
     ret->data = malloc(sizeof(data_stack_t));
     ret->data->stack_pointer = 0;
     ret->data->stack = malloc(sizeof(amf_int_t) * DATA_STACK_SIZE);

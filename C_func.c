@@ -691,6 +691,31 @@ static void execute(forth_state_t* fs) {
     amf_call_func(fs, exec_tocken);
 }
 
+// evaluate
+static void evaluate(forth_state_t* fs) {
+
+    // Parse a word and ensure that the execution will stop right after it.
+    // This is needed to ensure correct behavior when using evaluate recursively.
+    void extra_safe_parse(forth_state_t* fs, char c) {
+        code_pointer_t pos_copy = fs->pos;
+        fs->pos.current_word = IDLE_CURRENT_WORD;
+        fs->pos.pos_in_word = IDLE_POS_IN_WORD;
+        struct user_word_s* current_word_copy = fs->current_word_copy;
+
+        amf_parse_char(fs->parser, c);
+
+        fs->pos = pos_copy;
+        fs->current_word_copy = current_word_copy;
+    }
+
+    size_t len = (size_t) amf_pop_data(fs);
+    const char* str = (const char *) amf_pop_data(fs);
+    for (size_t i=0; i<len; i++) {
+        extra_safe_parse(fs, str[i]);
+    }
+    extra_safe_parse(fs, '\n');
+}
+
 struct c_func_s {
     const char* name;
     void (*func)(forth_state_t*);
@@ -785,6 +810,7 @@ struct c_func_s all_default_c_func[] = {
     {"cr", cr},
     {"base", base},
     {"execute", execute},
+    {"evaluate", evaluate},
 };
 
 // Register all the default C_func

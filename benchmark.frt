@@ -87,6 +87,12 @@ VARIABLE g44xt
 ' give44 g44xt !
 : TEST.EXECUTE ." Testing execute " g44xt @ EXECUTE 44 = is_true CR ;
 
+( EVALUATION )
+: p33-def s" : p33 33 ;" ;
+: p44 44 ;
+: p44-33 s" p33-def evaluate" evaluate s" p44" evaluate s" p33" evaluate ;
+: TEST.EVALUATE ." Testing evaluate " p44-33 33 = is_true 44 = s" is_true CR" evaluate ;
+
 ( STRINGS )
 : TEST.TYPE ." Testing type " S" OK." TYPE CR ;
 : TEST.CMOVE ." Testing cmove " S" OK." DUP >R HERE DUP >R SWAP DUP ALLOT CMOVE R> R> TYPE CR ;
@@ -104,7 +110,7 @@ TEST.MEM TEST.CMEM TEST., TEST.C, TEST.ALIGN
 TEST.BASE_RECORD TEST.BASE_PRINT
 TEST.EMIT TEST.BL
 TEST.CONSTANT TEST.VARIABLE
-TEST.EXECUTE
+TEST.EXECUTE TEST.EVALUATE
 TEST.TYPE TEST.CMOVE TEST.STRING-SIZE TEST.STRING-BASE TEST.COUNT
 ." Testing stack state: " 33 = is_true CR ;
 
