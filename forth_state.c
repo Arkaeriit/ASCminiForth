@@ -126,8 +126,8 @@ amf_int_t amf_pop_loop(forth_state_t* fs) {
 }
 
 // Look at the last element from the loop stack
-amf_int_t amf_peek_loop(forth_state_t* fs) {
-    amf_int_t ret = fs->loop_control->stack[fs->loop_control->stack_pointer - 1];
+amf_int_t amf_peek_loop(forth_state_t* fs, int loop_depth) {
+    amf_int_t ret = fs->loop_control->stack[fs->loop_control->stack_pointer - 1 - (2 * loop_depth)];
     return ret;
 }
 

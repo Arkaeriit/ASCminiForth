@@ -301,7 +301,13 @@ static void DO(forth_state_t* fs) {
 // I
 static void I(forth_state_t* fs) {
     CHECK_BEING_IN_WORD(fs);
-    amf_push_data(fs, amf_peek_loop(fs));
+    amf_push_data(fs, amf_peek_loop(fs, 0));
+}
+
+// J
+static void J(forth_state_t* fs) {
+    CHECK_BEING_IN_WORD(fs);
+    amf_push_data(fs, amf_peek_loop(fs, 1));
 }
 
 // +loop
@@ -756,6 +762,7 @@ struct c_func_s all_default_c_func[] = {
     {"until", until},
     {"do", DO},
     {"i", I},
+    {"j", J},
     {"+loop", plus_loop},
     {"unloop", unloop},
     {"leave", leave},
