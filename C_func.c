@@ -719,7 +719,6 @@ static void evaluate(forth_state_t* fs) {
     for (size_t i=0; i<len; i++) {
         extra_safe_parse(fs, str[i]);
     }
-    extra_safe_parse(fs, '\n');
 }
 
 struct c_func_s {
@@ -817,7 +816,7 @@ struct c_func_s all_default_c_func[] = {
     {"cr", cr},
     {"base", base},
     {"execute", execute},
-    {"evaluate", evaluate},
+    {"(evaluate)", evaluate},
 };
 
 // Register all the default C_func
