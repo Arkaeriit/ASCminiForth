@@ -6,15 +6,9 @@
 forth_state_t* amf_init_state(struct parser_state_s* parser) {
     forth_state_t* ret = malloc(sizeof(forth_state_t));
     ret->parser = parser;
-    ret->data = malloc(sizeof(data_stack_t));
-    ret->data->stack_pointer = 0;
-    ret->data->stack = malloc(sizeof(amf_int_t) * DATA_STACK_SIZE);
-    ret->code = malloc(sizeof(code_stack_t));
-    ret->code->stack_pointer = 0;
-    ret->code->stack = malloc(sizeof(code_pointer_t) * CODE_STACK_SIZE);
-    ret->loop_control = malloc(sizeof(data_stack_t));
-    ret->loop_control->stack_pointer = 0;
-    ret->loop_control->stack = malloc(sizeof(amf_int_t) * LOOP_STACK_SIZE);
+    ret->data = amf_stack_init(DATA_STACK_SIZE);
+    ret->code = amf_stack_init(CODE_STACK_SIZE);
+    ret->loop_control = amf_stack_init(LOOP_STACK_SIZE);
     ret->forth_memory = malloc(FORTH_MEMORY_SIZE);
     ret->forth_memory_index = 0;
     ret->dic = amf_init_dic();
@@ -37,12 +31,9 @@ forth_state_t* amf_init_state(struct parser_state_s* parser) {
 void amf_clean_state(forth_state_t* fs) {
     amf_clean_dic(fs->dic);
     free(fs->forth_memory);
-    free(fs->loop_control->stack);
-    free(fs->loop_control);
-    free(fs->code->stack);
-    free(fs->code);
-    free(fs->data->stack);
-    free(fs->data);
+    amf_stack_free(fs->loop_control);
+    amf_stack_free(fs->code);
+    amf_stack_free(fs->data);
     free(fs);
 }
 
@@ -64,71 +55,39 @@ static void __attribute__((unused)) recover_from_error(forth_state_t* fs) {
     idle_state(fs);
 }
 
-#if AMF_STACK_BOUND_CHECKS
-#define STACK_BOUND_CHECK(stack_name, condition)                               \
-    if (fs->stack_name->stack_pointer condition) {                             \
-        error_msg("Stack '%s' out of bound. Resetting state.\n", #stack_name); \
-        recover_from_error(fs);                                                \
-    }                                                                           
-#else
-#define STACK_BOUND_CHECK(x...)
-#endif
-
 // Pops the last element from the data stack
 amf_int_t amf_pop_data(forth_state_t* fs) {
-    STACK_BOUND_CHECK(data, <1);
-    debug_msg("pop data at index: %zi\n", fs->data->stack_pointer - 1);
-    amf_int_t ret = fs->data->stack[fs->data->stack_pointer - 1];
-    fs->data->stack_pointer--;
-    return ret;
+    return STACK_POP(fs, data);
 }
 
 // Push a new element to the data stack
 void amf_push_data(forth_state_t* fs, amf_int_t w) {
-    debug_msg("push data at index: %zi\n", fs->data->stack_pointer);
-    fs->data->stack[fs->data->stack_pointer] = w;
-    fs->data->stack_pointer++;
-    STACK_BOUND_CHECK(data, >=DATA_STACK_SIZE);
+    STACK_PUSH(fs, data, w);
 }
 
 // Push a code_pointer element on the code stack
 void amf_push_code(forth_state_t* fs, amf_int_t p) {
-    debug_msg("push code at index: %zi\n", fs->code->stack_pointer);
-    fs->code->stack[fs->code->stack_pointer] = p;
-    fs->code->stack_pointer++;
-    STACK_BOUND_CHECK(code, >=CODE_STACK_SIZE);
+    STACK_PUSH(fs, code, p);
 }
 
 // Pop a code_pointer element from the code stack
 amf_int_t amf_pop_code(forth_state_t* fs) {
-    STACK_BOUND_CHECK(code, <1);
-    debug_msg("pop code at index: %zi\n", fs->code->stack_pointer - 1);
-    amf_int_t ret = fs->code->stack[fs->code->stack_pointer - 1];
-    fs->code->stack_pointer--;
-    return ret;
+    return STACK_POP(fs, code);
 }
 
 // Push a new element in the loop stack
 void amf_push_loop(forth_state_t* fs, amf_int_t w) {
-    debug_msg("push loop at index: %zi\n", fs->loop_control->stack_pointer);
-    fs->loop_control->stack[fs->loop_control->stack_pointer] = w;
-    fs->loop_control->stack_pointer++;
-    STACK_BOUND_CHECK(loop_control, >=LOOP_STACK_SIZE);
+    STACK_PUSH(fs, loop_control, w);
 }
 
 // Pops the last element from the loop stack
 amf_int_t amf_pop_loop(forth_state_t* fs) {
-    STACK_BOUND_CHECK(loop_control, <1);
-    debug_msg("pop loop at index: %zi\n", fs->loop_control->stack_pointer - 1);
-    amf_int_t ret = fs->loop_control->stack[fs->loop_control->stack_pointer - 1];
-    fs->loop_control->stack_pointer--;
-    return ret;
+    return STACK_POP(fs, loop_control);
 }
 
 // Look at the last element from the loop stack
 amf_int_t amf_peek_loop(forth_state_t* fs, int loop_depth) {
-    amf_int_t ret = fs->loop_control->stack[fs->loop_control->stack_pointer - 1 - (2 * loop_depth)];
-    return ret;
+    return amf_stack_peek(fs->loop_control, loop_depth * 2);
 }
 
 // Return from a word_call

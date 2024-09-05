@@ -9,6 +9,7 @@
 
 #include "stdlib.h"
 #include "amf_config.h"
+#include "amf_stack.h"
 #include "amf_io.h"
 #include "hash.h"
 #include "errors.h"

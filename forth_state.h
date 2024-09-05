@@ -42,27 +42,15 @@ static inline amf_int_t amf_code_pointer_to_int(code_pointer_t* code) {
     return ret;
 }
 
-// The code stack
-typedef struct {
-    amf_int_t* stack;
-    ssize_t stack_pointer;       // In both stacks, the pointer point to the first free element
-} code_stack_t;
-
-// The main stack
-typedef struct {
-    amf_int_t* stack;
-    ssize_t stack_pointer;
-} data_stack_t;
-
 // The interpreter's state
 typedef struct {
     // A parser used for "evaluate" and the likes
     struct parser_state_s* parser;
     // The two stack used by the interpreter
-    data_stack_t* data;
-    code_stack_t* code;
+    amf_stack_t* data;
+    amf_stack_t* code;
     // A special stack used for loop control flow
-    data_stack_t* loop_control;
+    amf_stack_t* loop_control;
     // The forth memory used for allot and variables
     char* forth_memory;
     size_t forth_memory_index;
@@ -84,6 +72,32 @@ typedef struct {
     int exit_code;
 #endif
 } forth_state_t;
+
+#if AMF_STACK_BOUND_CHECKS
+#define STACK_BOUND_CHECK(fs, stack_name)                                      \
+    if (!amf_state_state_valid(fs->stack_name)) {                              \
+        error_msg("Stack '%s' out of bound. Resetting state.\n", #stack_name); \
+        recover_from_error(fs);                                                \
+    }                                                                           
+#else
+#define STACK_BOUND_CHECK(x...)
+#endif
+
+#define STACK_POP(fs, stack_name) ({               \
+    debug_msg("pop on %s at index: %zi\n",         \
+            #stack_name,                           \
+            fs->stack_name->stack_pointer);        \
+    amf_int_t ret = amf_stack_pop(fs->stack_name); \
+    STACK_BOUND_CHECK(fs, stack_name);             \
+    ret;                                           \
+})
+
+#define STACK_PUSH(fs, stack_name, w)       \
+    debug_msg("push on %s at index: %zi\n", \
+            #stack_name,                    \
+            fs->stack_name->stack_pointer); \
+    amf_stack_push(fs->stack_name, w);      \
+    STACK_BOUND_CHECK(fs, stack_name);
 
 forth_state_t* amf_init_state(struct parser_state_s* parser);
 void amf_clean_state(forth_state_t* fs);
