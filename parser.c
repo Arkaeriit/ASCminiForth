@@ -19,6 +19,7 @@ parser_state_t* amf_init_parser(void) {
     ret->custom_word_name = malloc(PARSER_CUSTOM_NAME_SIZE);
     ret->new_word_hook = run_next_word_hook;
     ret->end_block_hook = invalid_hook;
+    ret->hooks_stack = amf_stack_init(LOOP_STACK_SIZE);
     ret->pnt = 0;
     ret->in_word = false;
     ret->in_def = false;
@@ -46,6 +47,7 @@ parser_state_t* amf_init_parser(void) {
 
 void amf_clean_parser(parser_state_t* parse) {
     amf_clean_io();
+    amf_stack_free(parse->hooks_stack);
     free(parse->custom_word_name);
     free(parse->new_word_buffer);
     free(parse->buffer);
@@ -145,11 +147,12 @@ error amf_register_file(parser_state_t* p, const char* filemane) {
 
 /* ---------------------------- Next words hooks ---------------------------- */
 
-#define PUSH_HOOK(p, hook_name)                   \
+#define PUSH_HOOK(p, hook_name) ({                \
     amf_int_t to_push = (amf_int_t) p->hook_name; \
-    amf_push_code(p->fs, to_push)                  
+    amf_stack_push(p->hooks_stack, to_push);      \
+})
 
-#define POP_HOOK(p, hook_name) p->hook_name = (new_word_hook_t) amf_pop_code(p->fs)
+#define POP_HOOK(p, hook_name) p->hook_name = (new_word_hook_t) amf_stack_pop(p->hooks_stack)
 
 #define UNUSED(x) (void)(x)
 

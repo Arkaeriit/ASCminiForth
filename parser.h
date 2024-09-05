@@ -2,7 +2,6 @@
 #ifndef AMF_SHELL_H
 #define AMF_SHELL_H
 
-struct parser_state_s;
 typedef void (*new_word_hook_t)(struct parser_state_s* parse);
 
 typedef struct parser_state_s {
@@ -12,6 +11,7 @@ typedef struct parser_state_s {
     char* custom_word_name;         // Stores a copy of the name of the word being defined
     new_word_hook_t new_word_hook;  // Function to call when reaching the end of a word
     new_word_hook_t end_block_hook; // Function to call when reaching the end of a block with " or ;
+    amf_stack_t* hooks_stack;       // Stack used to store the previous hooks
     int pnt;                        // Index to the curent portiotion of buffer where we are writing
     bool in_word;                   // Are we writing a word or whitespace
     bool in_def;                    // Are we writing a definition
