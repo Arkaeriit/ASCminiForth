@@ -147,12 +147,23 @@ error amf_register_file(parser_state_t* p, const char* filemane) {
 
 /* ---------------------------- Next words hooks ---------------------------- */
 
-#define PUSH_HOOK(p, hook_name) ({                \
+#if AMF_STACK_BOUND_CHECKS
+#define STACK_BOUND_CHECK(p)                      \
+    if (!amf_state_state_valid(p->hooks_stack)) { \
+        error_msg("Hooks stack out of bound.\n"); \
+    }                                              
+#else
+#define STACK_BOUND_CHECK(x...)
+#endif
+
+#define PUSH_HOOK(p, hook_name)                   \
     amf_int_t to_push = (amf_int_t) p->hook_name; \
     amf_stack_push(p->hooks_stack, to_push);      \
-})
+    STACK_BOUND_CHECK(p);                          
 
-#define POP_HOOK(p, hook_name) p->hook_name = (new_word_hook_t) amf_stack_pop(p->hooks_stack)
+#define POP_HOOK(p, hook_name)                                      \
+    p->hook_name = (new_word_hook_t) amf_stack_pop(p->hooks_stack); \
+    STACK_BOUND_CHECK(p)                                             
 
 #define UNUSED(x) (void)(x)
 

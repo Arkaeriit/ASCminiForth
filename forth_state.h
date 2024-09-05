@@ -73,32 +73,6 @@ typedef struct {
 #endif
 } forth_state_t;
 
-#if AMF_STACK_BOUND_CHECKS
-#define STACK_BOUND_CHECK(fs, stack_name)                                      \
-    if (!amf_state_state_valid(fs->stack_name)) {                              \
-        error_msg("Stack '%s' out of bound. Resetting state.\n", #stack_name); \
-        recover_from_error(fs);                                                \
-    }                                                                           
-#else
-#define STACK_BOUND_CHECK(x...)
-#endif
-
-#define STACK_POP(fs, stack_name) ({               \
-    debug_msg("pop on %s at index: %zi\n",         \
-            #stack_name,                           \
-            fs->stack_name->stack_pointer);        \
-    amf_int_t ret = amf_stack_pop(fs->stack_name); \
-    STACK_BOUND_CHECK(fs, stack_name);             \
-    ret;                                           \
-})
-
-#define STACK_PUSH(fs, stack_name, w)       \
-    debug_msg("push on %s at index: %zi\n", \
-            #stack_name,                    \
-            fs->stack_name->stack_pointer); \
-    amf_stack_push(fs->stack_name, w);      \
-    STACK_BOUND_CHECK(fs, stack_name);
-
 forth_state_t* amf_init_state(struct parser_state_s* parser);
 void amf_clean_state(forth_state_t* fs);
 
