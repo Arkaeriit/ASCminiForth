@@ -29,6 +29,9 @@ s" 1 is_true cr ;" macro-string end-word
 ( stack manipulation )
 : test.tuck ." Testing tuck " 1 2 3 tuck 3 = >r 2 = >r 3 = >r 1 = r> r> r> and and and is_true cr ;
 
+( evaluation )
+: test.(evaluate) ." Testing (evaluate) " s" 7" (evaluate) s" 5" (evaluate) s" 6" (evaluate) s"  " (evaluate) 756 = is_true cr ;
+
 
 : benchmark 11 22 33
 test.arg
@@ -36,6 +39,7 @@ test.compare \ test.string-size-with-new-lines
 test.write test.read
 test.macro
 test.tuck
+test.(evaluate)
 ." Testing stack state: " 33 = is_true cr
 ;
 
