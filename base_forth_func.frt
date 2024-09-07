@@ -45,4 +45,5 @@ s" '" macro-string [']
 : align begin here aligned here <> while 1 allot repeat ;
 : count dup char+ swap c@ ;
 : evaluate (evaluate) s"  " (evaluate) ;
+s" char" macro-string [char]
 

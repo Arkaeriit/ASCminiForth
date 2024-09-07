@@ -269,6 +269,16 @@ static void string_macro_hook(parser_state_t* p) {
     p->pnt = 0;
 }
 
+// Get the first character of the next word and use it instead as a raw word
+static void char_hook(parser_state_t* p) {
+    POP_HOOK(p, new_word_hook);
+    size_t old_ptn = amf_stack_pop(p->hooks_stack);
+    char tmp[AMF_MAX_NUMBER_DIGIT];
+    char letter = p->buffer[old_ptn];
+    snprintf(p->buffer, PARSER_BUFFER_SIZE, "%s", amf_base_format(letter, tmp, p->fs->base));
+    p->new_word_hook(p);
+}
+
 /* --------------------------- Compile time words --------------------------- */
 
 // (
@@ -376,6 +386,14 @@ static void macro_string(parser_state_t* p, const char* payload) {
     p->new_word_hook = string_macro_hook;
 }
 
+// char
+static void _char(parser_state_t* p, const char* payload) {
+    UNUSED(payload);
+    amf_stack_push(p->hooks_stack, (amf_int_t) p->pnt);
+    PUSH_HOOK(p, new_word_hook);
+    p->new_word_hook = char_hook;
+}
+
 // Generic word used by macros
 static void macro(parser_state_t* p, const char* payload) {
     p->pnt = 0;
@@ -416,6 +434,7 @@ struct compile_func_s all_default_compile_words[] = {
     {".\"", any_string},
     {"\\", backslash},
     {"macro-string", macro_string},
+    {"char", _char},
 };
 
 // Register the previously defined words

@@ -99,6 +99,7 @@ VARIABLE g44xt
 : TEST.STRING-SIZE ." Testing string size " S" 123 " 4 = SWAP DROP S" 1 " SWAP DROP 2 = S" \ " SWAP DROP 2 = is_true is_true is_true CR ;
 : TEST.STRING-BASE ." Testing strings in non decimal base " 8 BASE ! ." OK." CR DECIMAL ;
 : TEST.COUNT ." Testing count " S" abc" DROP COUNT 97 = is_true COUNT 98 = is_true COUNT 99 = is_true DROP CR ;
+: TEST.CHAR ." Testing [char] " [CHAR] a S" a" DROP C@ = is_true CR ;
 
 
 : BENCHMARK 11 22 33 TEST..
@@ -111,7 +112,7 @@ TEST.BASE_RECORD TEST.BASE_PRINT
 TEST.EMIT TEST.BL
 TEST.CONSTANT TEST.VARIABLE
 TEST.EXECUTE TEST.EVALUATE
-TEST.TYPE TEST.CMOVE TEST.STRING-SIZE TEST.STRING-BASE TEST.COUNT
+TEST.TYPE TEST.CMOVE TEST.STRING-SIZE TEST.STRING-BASE TEST.COUNT TEST.CHAR
 ." Testing stack state: " 33 = is_true CR ;
 
 BENCHMARK 
