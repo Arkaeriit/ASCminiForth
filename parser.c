@@ -29,6 +29,8 @@ parser_state_t* amf_init_parser(void) {
     amf_init_io();
     extern const char* base_forth_func;
     amf_parse_string(ret, base_forth_func);
+    extern const char* numeric_conversion;
+    amf_parse_string(ret, numeric_conversion);
 #if AMF_FILE
     extern const char* file_forth_func;
     amf_parse_string(ret, file_forth_func);
