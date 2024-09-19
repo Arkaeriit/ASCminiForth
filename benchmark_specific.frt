@@ -10,6 +10,7 @@
 : test.compare ." Testing compare: " S" various" S" size" compare S" SAME SIZE" S" same size" compare S" the same" S" the same" compare 0= and and is_true cr ;
 : test.string-size-with-new-lines ." Testing string size " S" 123 " 4 = swap drop S" 1
 " swap drop 2 = S" \ " swap drop 2 = is_true is_true is_true cr ;
+: test.holds ." Testing " <# 10 hold s" OK." holds s" holds: " holds 0 #> type ;
 
 ( Programming tools )
 : test.bye ." Testing bye: " 1 is_true CR bye ." Not Okay at all, abbort everything.!!!" CR ;
@@ -35,7 +36,7 @@ s" 1 is_true cr ;" macro-string end-word
 
 : benchmark 11 22 33
 test.arg
-test.compare \ test.string-size-with-new-lines
+test.compare test.holds test.string-size-with-new-lines
 test.write test.read
 test.macro
 test.tuck
