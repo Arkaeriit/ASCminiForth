@@ -38,7 +38,7 @@ static_assert((sizeof(amf_int_t) * 8) >= (AMF_HASH_SIZE_BITS + AMF_WORD_CONTENT_
 #define FORTH_MEMORY_SIZE 1000000
 
 // Parser configuration
-#define PARSER_BUFFER_SIZE 700
+#define PARSER_BUFFER_SIZE 1000
 #define PARSER_CUSTOM_NAME_SIZE 50
 
 // Case-sensitivity
