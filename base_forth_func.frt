@@ -46,4 +46,5 @@ s" '" macro-string [']
 : count dup char+ swap c@ ;
 : evaluate (evaluate) s"  " (evaluate) ;
 s" char" macro-string [char]
+: hex 16 base ! ;
 

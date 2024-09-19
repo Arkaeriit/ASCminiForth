@@ -64,7 +64,7 @@
 : TEST.ALIGN ." Testing aligned and align " ALIGN HERE ALIGNED HERE = is_true 1 ALLOT HERE ALIGN HERE <> is_true ALIGN HERE ALIGNED HERE = is_true CR ;
 
 ( BASE )
-16 BASE !
+HEX
 : reg-10 10 ;
 A BASE !
 : TEST.BASE_RECORD ." Testing recording in non-10 base " reg-10 16 = is_true CR ;
