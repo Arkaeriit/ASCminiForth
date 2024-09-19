@@ -47,4 +47,7 @@ s" '" macro-string [']
 : evaluate (evaluate) s"  " (evaluate) ;
 s" char" macro-string [char]
 : hex 16 base ! ;
+: 2r@ r> r> 2dup >r >r swap ;
+:macro again 0 until ;
+: false 0 ;
 
