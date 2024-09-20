@@ -102,6 +102,7 @@ VARIABLE g44xt
 : TEST.CHAR ." Testing [char] " [CHAR] a S" a" DROP C@ = is_true CR ;
 : .. <# #s #> type space ;
 : TEST.NUMERIC_CONVERSION ." Printing 7865: " 7865 .. CR ;
+: TEST.COMPILE-TIME-PRINT .( Testing .(: OK.) ; CR
 
 
 : BENCHMARK 11 22 33 TEST..

@@ -274,6 +274,13 @@ static void end_of_comment_hook(parser_state_t* p) {
     p->pnt = 0;
 }
 
+// Print the buffer
+static void compile_time_print_hook(parser_state_t* p) {
+    amf_print_string(p->buffer);
+    POP_HOOK(p, end_block_hook);
+    p->pnt = 0;
+}
+
 /* --------------------------- Compile time words --------------------------- */
 
 // (
@@ -363,6 +370,15 @@ static void any_string(parser_state_t* p, const char* payload) {
     p->end_block_hook = register_string_hook;
 }
 
+// .(
+static void compile_time_print(parser_state_t* p, const char* payload) {
+    UNUSED(payload);
+    p->wait_until = ')';
+    p->pnt = 0;
+    PUSH_HOOK(p, end_block_hook);
+    p->end_block_hook = compile_time_print_hook;
+}
+
 /* \ */
 static void backslash(parser_state_t* p, const char* payload) {
     UNUSED(payload);
@@ -430,6 +446,7 @@ struct compile_func_s all_default_compile_words[] = {
     {"\\", backslash},
     {"macro-string", macro_string},
     {"char", _char},
+    {".(", compile_time_print},
 };
 
 // Register the previously defined words
