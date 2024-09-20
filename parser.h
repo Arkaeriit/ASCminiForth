@@ -15,9 +15,7 @@ typedef struct parser_state_s {
     int pnt;                        // Index to the curent portiotion of buffer where we are writing
     bool in_word;                   // Are we writing a word or whitespace
     bool in_def;                    // Are we writing a definition
-    bool is_in_parenthesis;         // Are we in a ( xx ) comment
-    bool is_between_quotes;         // Are we betweens " quotes "
-    bool wait_for_new_line;         // Not parsing until new line because we are in a comment
+    char wait_until;                // Char we wait until to process a word. Set to 0 during interpretation
     bool in_defining_constant;      // If needed, define a constant instead of a variable
 } parser_state_t;
 

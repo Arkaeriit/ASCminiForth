@@ -23,9 +23,7 @@ parser_state_t* amf_init_parser(void) {
     ret->pnt = 0;
     ret->in_word = false;
     ret->in_def = false;
-    ret->is_in_parenthesis = false;
-    ret->is_between_quotes = false;
-    ret->wait_for_new_line = false;
+    ret->wait_until = 0;
     amf_init_io();
     extern const char* base_forth_func;
     amf_parse_string(ret, base_forth_func);
@@ -58,29 +56,18 @@ void amf_clean_parser(parser_state_t* parse) {
 }
 
 void amf_parse_char(parser_state_t* parse, char ch) {
-    if (parse->wait_for_new_line) {
-        if (ch == '\n') {
-            parse->wait_for_new_line = false;
-        } else {
-            return;
-        }
-    }
-    if (parse->is_in_parenthesis) {
-        if (ch == ')') {
-            parse->is_in_parenthesis = false;
-        }
-        return;
-    }
-    if (parse->is_between_quotes) {
-        if (ch == '"') {
+    if (parse->wait_until != 0) {
+        if (parse->wait_until == ch) {
             parse->buffer[parse->pnt] = 0;
-            parse->is_between_quotes = false;
+            parse->wait_until = 0;
             parse->end_block_hook(parse);
         } else {
             parse->buffer[parse->pnt] = ch;
             parse->pnt++;
         }
-    } else if (amf_is_delimiter(ch)) {
+        return;
+    }
+    if (amf_is_delimiter(ch)) {
         if (!parse->in_word) {
             return;
         }
@@ -133,7 +120,7 @@ error amf_register_file(parser_state_t* p, const char* filemane) {
     }
     int ch = fgetc(f);
     if (ch == '#') { // We ignore the starting shebang
-        p->wait_for_new_line = true;
+        amf_parse_string(p, "\\ ");
     }
     while (ch != EOF) {
         amf_parse_char(p, ch);
@@ -281,15 +268,20 @@ static void char_hook(parser_state_t* p) {
     p->new_word_hook(p);
 }
 
+// Ignore the buffer
+static void end_of_comment_hook(parser_state_t* p) {
+    POP_HOOK(p, end_block_hook);
+    p->pnt = 0;
+}
+
 /* --------------------------- Compile time words --------------------------- */
 
 // (
 static void open_par(parser_state_t* p, const char* payload) {
     UNUSED(payload);
-    if (!p->is_between_quotes) {
-        p->is_in_parenthesis = true;
-        p->pnt--;
-    }
+    p->wait_until = ')';
+    PUSH_HOOK(p, end_block_hook);
+    p->end_block_hook = end_of_comment_hook;
 }
 
 #define NOT_IN_DEF(p, name)                                            \
@@ -366,7 +358,7 @@ static void single_quote(parser_state_t* p, const char* payload) {
 // ." s"
 static void any_string(parser_state_t* p, const char* payload) {
     UNUSED(payload);
-    p->is_between_quotes = true;
+    p->wait_until = '"';
     PUSH_HOOK(p, end_block_hook);
     p->end_block_hook = register_string_hook;
 }
@@ -374,8 +366,9 @@ static void any_string(parser_state_t* p, const char* payload) {
 /* \ */
 static void backslash(parser_state_t* p, const char* payload) {
     UNUSED(payload);
-    p->wait_for_new_line = true;
-    p->pnt = 0;
+    p->wait_until = '\n';
+    PUSH_HOOK(p, end_block_hook);
+    p->end_block_hook = end_of_comment_hook;
 }
 
 // macro-string
