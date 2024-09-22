@@ -51,4 +51,11 @@
 :macro again 0 until ;
 : false 0 ;
 :macro variable align here 1 cells allot constant ;
+: accept dup 0 > 0= if 2drop 0 exit then
+0 begin
+key dup 10 = if drop nip nip exit then
+( addr n1 n2 c )
+swap >r swap >r over c! 1+ r> r> 1+
+( addr n1 n2 )
+2dup = if nip nip exit then repeat ;
 
