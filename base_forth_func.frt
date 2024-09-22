@@ -50,7 +50,8 @@
 : 2r@ r> r> 2dup >r >r swap ;
 :macro again 0 until ;
 : false 0 ;
-:macro variable align here 1 cells allot constant ;
+:macro buffer: align here swap allot constant ;
+:macro variable cell buffer: ;
 : accept dup 0 > 0= if 2drop 0 exit then
 0 begin
 key dup 10 = if drop nip nip exit then
