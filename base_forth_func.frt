@@ -32,7 +32,7 @@
 :macro while if ;
 :macro repeat 0 until then ;
 : ?dup dup if dup then ;
-s" '" macro-string [']
+:macro ['] ' ;
 : +! dup @ rot + swap ! ;
 : cell 1 cells ;
 : , here cell allot ! ;
@@ -45,7 +45,7 @@ s" '" macro-string [']
 : align begin here aligned here <> while 1 allot repeat ;
 : count dup char+ swap c@ ;
 : evaluate (evaluate) s"  " (evaluate) ;
-s" char" macro-string [char]
+:macro [char] char ;
 : hex 16 base ! ;
 : 2r@ r> r> 2dup >r >r swap ;
 :macro again 0 until ;

@@ -145,10 +145,12 @@ error amf_register_file(parser_state_t* p, const char* filemane) {
 #define STACK_BOUND_CHECK(x...)
 #endif
 
-#define PUSH_HOOK(p, hook_name)                   \
-    amf_int_t to_push = (amf_int_t) p->hook_name; \
-    amf_stack_push(p->hooks_stack, to_push);      \
-    STACK_BOUND_CHECK(p);                          
+#define PUSH_HOOK(p, hook_name)                       \
+    do {                                              \
+        amf_int_t to_push = (amf_int_t) p->hook_name; \
+        amf_stack_push(p->hooks_stack, to_push);      \
+        STACK_BOUND_CHECK(p);                         \
+    } while(0)                                         
 
 #define POP_HOOK(p, hook_name)                                      \
     p->hook_name = (new_word_hook_t) amf_stack_pop(p->hooks_stack); \
@@ -189,6 +191,14 @@ static void definition_name_hook(parser_state_t* p) {
     strcpy(p->custom_word_name, p->buffer);
     p->new_word_buffer[0] = 0;
     p->new_word_hook = in_def_hook;
+}
+
+// Same as definition_name_hook but prepare waiting until ";"
+// This is needed to ensure compile time words are not executed in the macro
+// definition.
+static void definition_macro_name_hook(parser_state_t* p) {
+    definition_name_hook(p);
+    p->wait_until = ';';
 }
 
 // This hook is meant to read name of a variable or constant
@@ -239,11 +249,19 @@ static void register_def_hook(parser_state_t* p) {
 }
 
 // Register a macro
-static void register_macro_hook(parser_state_t* p) {
-    char* payload = malloc(strlen(p->new_word_buffer)+1);
-    strcpy(payload, p->new_word_buffer);
+static void _register_macro_hook(parser_state_t* p) {
+    char* payload = malloc(strlen(p->buffer)+1);
+    strcpy(payload, p->buffer);
     debug_msg("macroing '%s' as '%s'\n", payload, p->custom_word_name);
     amf_register_compile_time_word(p, p->custom_word_name, macro, payload);
+    p->pnt = 0;
+}
+
+// Register a :macro
+static void register_macro_hook(parser_state_t* p) {
+    _register_macro_hook(p);
+    POP_HOOK(p, new_word_hook);
+    POP_HOOK(p, end_block_hook);
 }
 
 // Register a string-macro
@@ -251,11 +269,10 @@ static void string_macro_hook(parser_state_t* p) {
     strcpy(p->custom_word_name, p->buffer);
     size_t macro_size = amf_pop_data(p->fs);
     const char* macro_content = (const char*) amf_pop_data(p->fs);
-    memcpy(p->new_word_buffer, macro_content, macro_size);
-    p->new_word_buffer[macro_size] = 0;
-    register_macro_hook(p);
+    memcpy(p->buffer, macro_content, macro_size);
+    p->buffer[macro_size] = 0;
+    _register_macro_hook(p);
     POP_HOOK(p, new_word_hook);
-    p->pnt = 0;
 }
 
 // Get the first character of the next word and use it instead as a raw word
@@ -313,10 +330,10 @@ static void colon(parser_state_t* p, const char* payload) {
 static void colon_macro(parser_state_t* p, const char* payload) {
     UNUSED(payload);
     NOT_IN_DEF(p, ":macro");
-    p->in_def = true;
     p->pnt = 0;
-    p->new_word_hook = definition_name_hook;
     PUSH_HOOK(p, end_block_hook);
+    PUSH_HOOK(p, new_word_hook);
+    p->new_word_hook = definition_macro_name_hook;
     p->end_block_hook = register_macro_hook;
 }
 

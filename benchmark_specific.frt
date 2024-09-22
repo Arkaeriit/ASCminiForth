@@ -25,7 +25,8 @@ S" content in the file" drop constant _cif
 
 ( macro )
 s" 1 is_true cr ;" macro-string end-word
-:macro test.macro ." Testing macros: " end-word
+:macro (test.macro) ." Testing macros: " end-word ;
+: test.macro (test.macro)
 
 ( stack manipulation )
 : test.tuck ." Testing tuck " 1 2 3 tuck 3 = >r 2 = >r 3 = >r 1 = r> r> r> and and and is_true cr ;
