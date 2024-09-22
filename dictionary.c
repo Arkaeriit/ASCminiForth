@@ -54,7 +54,6 @@ static void free_word(entry_t e) {
             break;
         case constant:
         case C_word:
-        case variable:
             break;
     }
 }
@@ -103,9 +102,6 @@ void amf_display_dictionary(forth_dictionary_t* dic) {
                 break;
             case constant:
                 type = "constant";
-                break;
-            case variable:
-                type = "variable";
                 break;
             case string:
                 type = "string";
@@ -257,9 +253,6 @@ error amf_call_func(forth_state_t* fs, hash_t hash) {
             break;
         case constant:
             amf_push_data(fs, e.func.constant);
-            break;
-        case variable:
-            amf_push_data(fs, (amf_int_t) e.func.variable);
             break;
         case compile_word:
             error_msg("compile_word not used yet.\n");

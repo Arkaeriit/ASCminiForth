@@ -175,18 +175,12 @@ void amf_clean_user_word(user_amf_int_t* w) {
     free(w);
 }
 
-// This function registers a new constant or variable
-error amf_compile_constant_or_variable(const char* name, forth_state_t* fs, bool is_constant) {
+// This function registers a new constant
+error amf_compile_constant(const char* name, forth_state_t* fs) {
     entry_t e;
     e.hash = amf_hash(name);
-    if (is_constant) {
-        e.type = constant;
-        e.func.constant = amf_pop_data(fs);
-    } else {
-        e.type = variable;
-        e.func.variable = (amf_int_t*) (fs->forth_memory + fs->forth_memory_index);
-        amf_allot(fs, sizeof(amf_int_t));
-    }
+    e.type = constant;
+    e.func.constant = amf_pop_data(fs);
 #if AMF_STORE_NAME
     e.name = malloc(strlen(name) + 1);
     strcpy(e.name, name);

@@ -50,4 +50,5 @@
 : 2r@ r> r> 2dup >r >r swap ;
 :macro again 0 until ;
 : false 0 ;
+:macro variable align here 1 cells allot constant ;
 

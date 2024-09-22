@@ -8,7 +8,6 @@ enum entry_type {
     FORTH_word,                 // Words defined in Forth
     compile_word,               // Words that have effect at compile time (such as : or ;)
     constant,                   // Words that are just putting a constant on the stack
-    variable,                   // Words that are aliased to a memory address
     string,                     // Strings stored in the dictionary 
 };
 
@@ -22,7 +21,6 @@ typedef struct {
             char* payload; // Extra argument to the compile func, should be freeable
         } compile_func;
         amf_int_t constant;                 // Value written in hard
-        amf_int_t* variable;                // Data on the Forth memory
         struct {                            // Strings stored in the dictionary
             char* data;
             size_t size;

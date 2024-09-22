@@ -16,7 +16,6 @@ typedef struct parser_state_s {
     bool in_word;                   // Are we writing a word or whitespace
     bool in_def;                    // Are we writing a definition
     char wait_until;                // Char we wait until to process a word. Set to 0 during interpretation
-    bool in_defining_constant;      // If needed, define a constant instead of a variable
 } parser_state_t;
 
 parser_state_t* amf_init_parser(void);

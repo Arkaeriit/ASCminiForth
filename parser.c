@@ -201,10 +201,10 @@ static void definition_macro_name_hook(parser_state_t* p) {
     p->wait_until = ';';
 }
 
-// This hook is meant to read name of a variable or constant
-static void var_const_hook(parser_state_t* p) {
+// This hook is meant to read name of a constant
+static void const_hook(parser_state_t* p) {
     p->pnt = 0;
-    amf_compile_constant_or_variable(p->buffer, p->fs, p->in_defining_constant);
+    amf_compile_constant(p->buffer, p->fs);
     p->new_word_hook = run_next_word_hook;
 }
 
@@ -356,17 +356,7 @@ static void semi_colon(parser_state_t* p, const char* payload) {
 static void _constant(parser_state_t* p, const char* payload) {
     UNUSED(payload);
     NOT_IN_DEF(p, "constant");
-    p->in_defining_constant = true;
-    p->new_word_hook = var_const_hook;
-    p->pnt = 0;
-}
-
-// variable
-static void _variable(parser_state_t* p, const char* payload) {
-    UNUSED(payload);
-    NOT_IN_DEF(p, "variable");
-    p->in_defining_constant = false;
-    p->new_word_hook = var_const_hook;
+    p->new_word_hook = const_hook;
     p->pnt = 0;
 }
 
@@ -408,7 +398,6 @@ static void backslash(parser_state_t* p, const char* payload) {
 static void macro_string(parser_state_t* p, const char* payload) {
     UNUSED(payload);
     NOT_IN_DEF(p, "macro-string");
-    p->in_defining_constant = false;
     p->pnt = 0;
     PUSH_HOOK(p, new_word_hook);
     p->new_word_hook = string_macro_hook;
@@ -456,7 +445,6 @@ struct compile_func_s all_default_compile_words[] = {
     {":macro", colon_macro},
     {";", semi_colon},
     {"constant", _constant},
-    {"variable", _variable},
     {"'", single_quote},
     {"s\"", any_string},
     {".\"", any_string},
