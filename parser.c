@@ -220,7 +220,8 @@ static void get_exec_token_hook(parser_state_t* p) {
 
 // Register a string
 static void register_string_hook(parser_state_t* p) {
-    const char* str = p->buffer + 2; // As of now, the string always start 3 chars after the initializing word. But the first whitespace have been ignored.
+    const char* str = p->buffer;
+    while (*str++ != '"');
     size_t size = strlen(str);
     hash_t str_id = amf_register_string(p->fs->dic, str, size);
     char string_type = p->buffer[0];
@@ -235,6 +236,15 @@ static void register_string_hook(parser_state_t* p) {
             break;
         case '.':
             snprintf(p->buffer, strlen("type")+1, "type");
+            p->new_word_hook(p);
+            break;
+        case 'a': // For abort"
+        case 'A':
+            snprintf(p->buffer, strlen("type")+1, "type");
+            p->new_word_hook(p);
+            snprintf(p->buffer, strlen("cr")+1, "cr");
+            p->new_word_hook(p);
+            snprintf(p->buffer, strlen("abort")+1, "abort");
             p->new_word_hook(p);
             break;
         default:
@@ -369,7 +379,7 @@ static void single_quote(parser_state_t* p, const char* payload) {
     p->pnt = 0;
 }
 
-// ." s"
+// ." s" abort"
 static void any_string(parser_state_t* p, const char* payload) {
     UNUSED(payload);
     p->wait_until = '"';
@@ -448,6 +458,7 @@ struct compile_func_s all_default_compile_words[] = {
     {"'", single_quote},
     {"s\"", any_string},
     {".\"", any_string},
+    {"abort\"", any_string},
     {"\\", backslash},
     {"macro-string", macro_string},
     {"char", _char},
