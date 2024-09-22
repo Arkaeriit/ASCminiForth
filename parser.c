@@ -247,6 +247,17 @@ static void register_string_hook(parser_state_t* p) {
             snprintf(p->buffer, strlen("abort")+1, "abort");
             p->new_word_hook(p);
             break;
+        case 'c':
+        case 'C':
+            snprintf(p->buffer, strlen("drop")+1, "drop");
+            p->new_word_hook(p); // For counted string, we drop the length value
+            {
+                entry_t e;
+                amf_find(p->fs->dic, &e, NULL, str_id);
+                char* string_in_memory = e.func.string.data;
+                memmove(string_in_memory+1, string_in_memory, size); // We move all characters by one. As the string is null-terminated, there is no overflow. The counted string is not null terminated, but as they are cursed, it's not the worst thing about them.
+                *string_in_memory = (char) size;
+            } break;
         default:
             error_msg("Unknown string type %c\n", string_type);
     }
@@ -457,6 +468,7 @@ struct compile_func_s all_default_compile_words[] = {
     {"constant", _constant},
     {"'", single_quote},
     {"s\"", any_string},
+    {"c\"", any_string},
     {".\"", any_string},
     {"abort\"", any_string},
     {"\\", backslash},
