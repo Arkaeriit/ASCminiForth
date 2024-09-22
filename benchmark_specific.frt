@@ -35,6 +35,8 @@ s" 1 is_true cr ;" macro-string end-word
 : test.(evaluate) ." Testing (evaluate) " s" 7" (evaluate) s" 5" (evaluate) s" 6" (evaluate) s"  " (evaluate) 756 = is_true cr ;
 
 
+: test.quit ." Testing quit: OK." cr quit ." Not OK at all!!!" cr bye ;
+test.quit
 : benchmark 11 22 33
 test.arg
 test.compare test.holds test.string-size-with-new-lines

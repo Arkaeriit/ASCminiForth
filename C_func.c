@@ -674,11 +674,6 @@ static void exit_word(forth_state_t* fs) {
     amf_exit(fs);
 }
 
-// abort
-static void abort_word(forth_state_t* fs) {
-    fs->running = false;
-}
-
 // CR
 static void cr(forth_state_t* fs) {
     UNUSED(fs);
@@ -812,7 +807,8 @@ struct c_func_s all_default_c_func[] = {
     {"emit", emit},
     {"key", key},
     {"exit", exit_word},
-    {"abort", abort_word},
+    {"abort", amf_abort},
+    {"quit", amf_quit},
     {"cr", cr},
     {"base", base},
     {"execute", execute},

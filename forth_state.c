@@ -37,29 +37,29 @@ void amf_clean_state(forth_state_t* fs) {
     free(fs);
 }
 
-// Puts the state back in an idle state, with all stacks empty and no word
-// being executed.
-static void __attribute__((unused)) idle_state(forth_state_t* fs) {
+// Puts the state back in an idle state, with all stacks but the data stack
+// empty and no word being executed.
+void amf_quit(forth_state_t* fs) {
     fs->pos.current_word = IDLE_CURRENT_WORD;
     fs->pos.pos_in_word = IDLE_POS_IN_WORD;
-    fs->data->stack_pointer = 0;
     fs->code->stack_pointer = 0;
     fs->loop_control->stack_pointer = 0;
 }
 
-// Do what we want when encoutering an error and return to the idle state.
-static void __attribute__((unused)) recover_from_error(forth_state_t* fs) {
+// Like quit but also reset the data stack. Display the stack trace if needed.
+void amf_abort(forth_state_t* fs) {
 #if AMF_STACK_TRACE
     amf_stack_trace(fs);
 #endif
-    idle_state(fs);
+    amf_quit(fs);
+    fs->data->stack_pointer = 0;
 }
 
 #if AMF_STACK_BOUND_CHECKS
 #define STACK_BOUND_CHECK(fs, stack_name)                                      \
     if (!amf_state_state_valid(fs->stack_name)) {                              \
         error_msg("Stack '%s' out of bound. Resetting state.\n", #stack_name); \
-        recover_from_error(fs);                                                \
+        amf_abort(fs);                                                         \
     }                                                                           
 #else
 #define STACK_BOUND_CHECK(x...)
@@ -203,7 +203,7 @@ error amf_executes_node(forth_state_t* fs, struct word_node_s* node) {
     error_msg("The word causing issue is %s\n", e.name);
 
 #endif
-        recover_from_error(fs);
+        amf_abort(fs);
         ret = segfault;
     }
 

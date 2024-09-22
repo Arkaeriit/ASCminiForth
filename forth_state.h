@@ -83,6 +83,8 @@ amf_int_t amf_pop_code(forth_state_t* fs);
 void amf_push_loop(forth_state_t* fs, amf_int_t w);
 amf_int_t amf_pop_loop(forth_state_t* fs);
 amf_int_t amf_peek_loop(forth_state_t* fs, int loop_depth);
+void amf_quit(forth_state_t* fs);
+void amf_abort(forth_state_t* fs);
 
 bool amf_run_step(forth_state_t* fs);
 error amf_executes_node(forth_state_t* fs, struct word_node_s* node);
