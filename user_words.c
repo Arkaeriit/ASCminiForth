@@ -158,6 +158,9 @@ static bool str_to_num(const char* str, amf_int_t* num, int base) {
     if ((size_t) (end - str) == strlen(str)) {
         return true;
     }
+    if ((size_t) (end - str) == strlen(str) - 1 && str[strlen(str)-1] == '.' && strlen(str) != 1) {
+        return true;
+    }
     return false;
 }
 

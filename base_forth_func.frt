@@ -59,4 +59,6 @@ key dup 10 = if drop nip nip exit then
 swap >r swap >r over c! 1+ r> r> 1+
 ( addr n1 n2 )
 2dup = if nip nip exit then repeat ;
+:macro s>d ;
+:macro d>s ;
 
