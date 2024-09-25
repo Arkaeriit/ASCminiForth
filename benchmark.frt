@@ -101,7 +101,7 @@ VARIABLE g44xt
 : TEST.COUNT ." Testing count " S" abc" DROP COUNT 97 = is_true COUNT 98 = is_true COUNT 99 = is_true DROP CR ;
 : TEST.CHAR ." Testing [char] " [CHAR] a S" a" DROP C@ = is_true CR ;
 : .. <# #s #> type space ;
-: TEST.NUMERIC_CONVERSION ." Printing 7865: " 7865 .. CR ;
+: TEST.NUMERIC_CONVERSION ." Printing 7865: " 7865. .. CR ;
 : TEST.COMPILE-TIME-PRINT .( Testing .(: OK.) ; CR
 
 
@@ -118,5 +118,5 @@ TEST.EXECUTE TEST.EVALUATE
 TEST.TYPE TEST.CMOVE TEST.STRING-SIZE TEST.STRING-BASE TEST.COUNT TEST.CHAR TEST.NUMERIC_CONVERSION
 ." Testing stack state: " 33 = is_true CR ;
 
-BENCHMARK 
+BENCHMARK BYE
 
