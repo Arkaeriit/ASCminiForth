@@ -108,38 +108,37 @@ static void sub(forth_state_t* fs) {
     amf_push_data(fs, w2 - w1);
 }
 
+// SM/REM
+static void sm_slash_rem(forth_state_t* fs) {
+    // C gives symetric division
+    amf_int_t w1 = amf_pop_data(fs);
+    amf_int_t w2 = amf_pop_data(fs);
+    amf_int_t quotient = w2 / w1;
+    amf_int_t rem = w2 % w1;
+    amf_push_data(fs, rem);
+    amf_push_data(fs, quotient);
+}
+
+// FM/MOD
+static void fm_slash_mod(forth_state_t* fs) {
+    amf_int_t w1 = amf_pop_data(fs);
+    amf_int_t w2 = amf_pop_data(fs);
+    amf_int_t quotient = w2 / w1;
+    amf_int_t rem = w2 % w1;
+    if (w1 * w2 < 0 && rem != 0) {
+        rem *= -1;
+        rem += rem >= 0 ? 1 : -1;
+        quotient += quotient >= 0 ? 1 : -1;
+    }
+    amf_push_data(fs, rem);
+    amf_push_data(fs, quotient);
+}
+
 // *
 static void mult(forth_state_t* fs) {
     amf_int_t w1 = amf_pop_data(fs);
     amf_int_t w2 = amf_pop_data(fs);
     amf_push_data(fs, w1 * w2);
-}
-
-// */
-static void multDiv(forth_state_t* fs) {
-    amf_int_t w1 = amf_pop_data(fs);
-    amf_int_t w2 = amf_pop_data(fs);
-    amf_int_t d3 = amf_pop_data(fs);
-    amf_int_t tmp = d3 * w2;
-    amf_push_data(fs, tmp / w1);
-}
-
-// */MOD
-static void multDivMod(forth_state_t* fs) {
-    amf_int_t w1 = amf_pop_data(fs);
-    amf_int_t w2 = amf_pop_data(fs);
-    amf_int_t d3 = amf_pop_data(fs);
-    amf_int_t tmp = d3 * w2;
-    amf_push_data(fs, tmp % w1);
-    amf_push_data(fs, tmp / w1);
-}
-
-// /MOD
-static void divMod(forth_state_t* fs) {
-    amf_int_t w1 = amf_pop_data(fs);
-    amf_int_t w2 = amf_pop_data(fs);
-    amf_push_data(fs, w2 % w1);
-    amf_push_data(fs, w2 / w1);
 }
 
 // abs
@@ -736,9 +735,8 @@ struct c_func_s all_default_c_func[] = {
     {"+", add},
     {"-", sub},
     {"*", mult},
-    {"*/", multDiv},
-    {"*/mod", multDivMod},
-    {"/mod", divMod},
+    {"sm/rem", sm_slash_rem},
+    {"fm/mod", fm_slash_mod},
     {"abs", abs_word},
     {"<", less_than},
     // Boolean logic

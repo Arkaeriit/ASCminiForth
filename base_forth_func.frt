@@ -12,8 +12,11 @@
 : char+ 1+ ;
 : chars ;
 : max 2dup < if swap then drop ;
+: /mod sm/rem ;
 : mod /mod drop ;
 : / /mod swap drop ;
+: */mod >r * r> /mod ;
+: */ >r * r> / ;
 : negate -1 * ;
 : min 2dup max negate + + ;
 : nip swap drop ;

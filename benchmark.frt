@@ -55,6 +55,29 @@
 : TEST.MIN ." Testing min " 4 5 MIN 4 = 88 66 MIN 66 = AND is_true CR ;
 : TEST.NEGATE ." Testing negate " 0 NEGATE 0 = 5 NEGATE -5 = -88 NEGATE 88 = AND AND is_true CR ;
 : TEST.+! ." Testing +! " HERE 1 CELLS ALLOT DUP DUP 55 SWAP ! 45 SWAP +! @ 100 = is_true CR ;
+: TEST.SM/REM ." Testing sm/rem "
+     10.  7 SM/REM  1 = is_true  3 = is_true
+    -10.  7 SM/REM -1 = is_true -3 = is_true
+     10. -7 SM/REM -1 = is_true  3 = is_true
+    -10. -7 SM/REM  1 = is_true -3 = is_true CR ;
+: TEST.FM/MOD ." Testing fm/mod "
+     0.  1 FM/MOD  0 = is_true  0 = is_true
+     1.  1 FM/MOD  1 = is_true  0 = is_true
+     2.  1 FM/MOD  2 = is_true  0 = is_true
+    -1.  1 FM/MOD -1 = is_true  0 = is_true
+    -2.  1 FM/MOD -2 = is_true  0 = is_true
+     0. -1 FM/MOD  0 = is_true  0 = is_true
+     1. -1 FM/MOD -1 = is_true  0 = is_true
+     2. -1 FM/MOD -2 = is_true  0 = is_true
+    -1. -1 FM/MOD  1 = is_true  0 = is_true
+    -2. -1 FM/MOD  2 = is_true  0 = is_true
+     2.  2 FM/MOD  1 = is_true  0 = is_true
+    -1. -1 FM/MOD  1 = is_true  0 = is_true
+    -2. -2 FM/MOD  1 = is_true  0 = is_true
+     7.  3 FM/MOD  2 = is_true  1 = is_true
+     7. -3 FM/MOD -3 = is_true -2 = is_true
+    -7.  3 FM/MOD -3 = is_true  2 = is_true
+    -7. -3 FM/MOD  2 = is_true -1 = is_true CR ;
 
 ( MEMORY MANAGEMENT )
 : TEST.MEM ." Testing memory management " HERE 1 CELLS ALLOT DUP 5456 SWAP ! @ 5456 = is_true CR ;
@@ -109,7 +132,7 @@ VARIABLE g44xt
 TEST.IF TEST.BEGIN.LOOP TEST.NESTED.IF TEST.COMPLEX.IF TEST.NESTED.LOOP TEST.+LOOP TEST.LEAVE TEST.WHILE TEST.PACKED.ELSE TEST.PACKED.IF
 TEST.0= TEST.0< TEST.= TEST.AND TEST.OR TEST.XOR TEST.INVERT
 TEST.DROP TEST.SWAP TEST.ROT TEST.DUP TEST.2D TEST.R TEST.NIP TEST.OVER TEST.?DUP TEST.2OVER TEST.2SWAP TEST.DEPTH
-TEST.+ TEST.* TEST.*/ TEST.*/MOD TEST./ TEST./MOD TEST.< TEST.> TEST.MAX TEST.MIN TEST.NEGATE TEST.+!
+TEST.+ TEST.* TEST.*/ TEST.*/MOD TEST./ TEST./MOD TEST.< TEST.> TEST.MAX TEST.MIN TEST.NEGATE TEST.+! TEST.SM/REM TEST.FM/MOD
 TEST.MEM TEST.CMEM TEST., TEST.C, TEST.ALIGN
 TEST.BASE_RECORD TEST.BASE_PRINT
 TEST.EMIT TEST.BL
