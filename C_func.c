@@ -134,6 +134,16 @@ static void fm_slash_mod(forth_state_t* fs) {
     amf_push_data(fs, quotient);
 }
 
+// U/MOD
+static void u_slash_mod(forth_state_t* fs) {
+    amf_unsigned_t w1 = (amf_unsigned_t) amf_pop_data(fs);
+    amf_unsigned_t w2 = (amf_unsigned_t) amf_pop_data(fs);
+    amf_unsigned_t quotient = w2 / w1;
+    amf_unsigned_t rem = w2 % w1;
+    amf_push_data(fs, (amf_int_t) rem);
+    amf_push_data(fs, (amf_int_t) quotient);
+}
+
 // *
 static void mult(forth_state_t* fs) {
     amf_int_t w1 = amf_pop_data(fs);
@@ -744,6 +754,7 @@ struct c_func_s all_default_c_func[] = {
     {"*", mult},
     {"sm/rem", sm_slash_rem},
     {"fm/mod", fm_slash_mod},
+    {"u/mod", u_slash_mod},
     {"abs", abs_word},
     {"<", less_than},
     {"u<", u_less_than},
