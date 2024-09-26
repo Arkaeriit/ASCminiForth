@@ -664,15 +664,6 @@ static void words(forth_state_t* fs) {
 
 // Misc
 
-// .
-static void printNum(forth_state_t* fs) {
-    amf_int_t w1 = amf_pop_data(fs);
-    char buff[AMF_MAX_NUMBER_DIGIT];
-    char* str = amf_base_format(w1, buff, fs->base);
-    amf_print_string(str);
-    amf_print_string(" ");
-}
-
 // emit
 static void emit(forth_state_t* fs) {
     amf_int_t w = amf_pop_data(fs);
@@ -820,7 +811,6 @@ struct c_func_s all_default_c_func[] = {
     {"words", words},
 #endif
     // Misc
-    {".", printNum},
     {"emit", emit},
     {"key", key},
     {"exit", exit_word},
