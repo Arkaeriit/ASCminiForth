@@ -84,9 +84,9 @@ void amf_display_dictionary(forth_dictionary_t* dic) {
     for (size_t i=0; i<dic->n_entries; i++) {
         char buff[200];
 #if AMF_STORE_NAME
-        snprintf(buff, 199, "Entry %zu/%zu %s:\n", i+1, dic->n_entries+1, dic->entries[i].name);
+        snprintf(buff, 199, "Entry %zu/%zu %s:\n", i+1, dic->n_entries, dic->entries[i].name);
 #else
-        snprintf(buff, 199, "Entry %zu/%zu:\n", i+1, dic->n_entries+1);
+        snprintf(buff, 199, "Entry %zu/%zu:\n", i+1, dic->n_entries);
 #endif
         amf_print_string(buff);
         const char* type;
