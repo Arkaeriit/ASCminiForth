@@ -64,4 +64,5 @@ swap >r swap >r over c! 1+ r> r> 1+
 2dup = if nip nip exit then repeat ;
 :macro s>d ;
 :macro d>s ;
+: u> 2dup u< 0= rot rot <> and ;
 

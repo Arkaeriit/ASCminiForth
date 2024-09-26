@@ -155,6 +155,13 @@ static void less_than(forth_state_t* fs) {
     amf_push_data(fs, w2 < w1);
 }
 
+// U<
+static void u_less_than(forth_state_t* fs) {
+    amf_unsigned_t w1 = (amf_unsigned_t) amf_pop_data(fs);
+    amf_unsigned_t w2 = (amf_unsigned_t) amf_pop_data(fs);
+    amf_push_data(fs, w2 < w1);
+}
+
 // Boolean logic
 
 // 0<
@@ -739,6 +746,7 @@ struct c_func_s all_default_c_func[] = {
     {"fm/mod", fm_slash_mod},
     {"abs", abs_word},
     {"<", less_than},
+    {"u<", u_less_than},
     // Boolean logic
     {"0<", less0},
     {"0=", eq0},
