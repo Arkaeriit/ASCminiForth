@@ -31,7 +31,7 @@ all : $(TARGET).bin
 %.c : %.frt
 	name=$$(echo $< | sed s:.frt*::); \
 		 echo "const char* $$name = " > $@
-	cat $< | sed 's:\\ .*::;  s:":\\":g; s:^:":; s:$$:\\n":'  >> $@
+	cat $< | sed 's:( [^)]*): :g; s:\s\+\([^"]\): \1:g; s:\\ .*::;  s:":\\":g; s:^:":; s:$$:\\n":;' | grep -v '" \?\\n"'  >> $@
 	echo ';' >> $@
 
 $(TARGET).bin : $(EXEC_OBJS) lib$(TARGET).a
