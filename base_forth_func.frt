@@ -65,4 +65,5 @@ swap >r swap >r over c! 1+ r> r> 1+
 :macro s>d ;
 :macro d>s ;
 : u> 2dup u< 0= rot rot <> and ;
+: within ( test low high -- flag ) over - >r - r> u< ;
 
