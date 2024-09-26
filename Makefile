@@ -3,7 +3,7 @@ CFLAGS ?= -Wall -Wextra -g -Wno-error=cpp
 
 # Files lists
 C_SRC := hash.c dictionary.c forth_state.c C_func.c user_words.c parser.c utils.c amf_stack.c
-FRT_SRC := base_forth_func.frt file_forth_func.frt string_forth_func.frt programming_forth_func.frt numeric_conversion.frt
+FRT_SRC := base_forth_func.frt file_forth_func.frt string_forth_func.frt programming_forth_func.frt
 C_HEADER := amf_config.h amf_io.h ASCminiForth.h C_func.h dictionary.h errors.h forth_state.h hash.h parser.h user_words.h utils.h amf_debug.h
 TARGET := amforth
 C_AUTO_SRC := $(FRT_SRC:%.frt=%.c)

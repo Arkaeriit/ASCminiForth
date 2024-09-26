@@ -1,2 +1,2 @@
-:macro shift-args ;
-: (bye) exit-code ! bye ;
+:macro shift-args ( -- ) ;
+: (bye) ( n -- ) exit-code ! bye ;

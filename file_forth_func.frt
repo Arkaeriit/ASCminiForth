@@ -1,2 +1,2 @@
-: bin ;
+: bin ( fam -- fam ) ;
 
