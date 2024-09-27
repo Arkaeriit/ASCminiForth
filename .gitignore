@@ -5,3 +5,5 @@ base_forth_func.c
 file_forth_func.c
 string_forth_func.c
 programming_forth_func.c
+non-regression-tests/score
+non-regression-tests/test.txt

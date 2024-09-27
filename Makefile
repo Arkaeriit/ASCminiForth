@@ -55,7 +55,7 @@ clean :
 	$(RM) test.txt
 
 test : $(TARGET).bin
-	@./$(TARGET).bin benchmark.frt
-	@./$(TARGET).bin benchmark_specific.frt
-	@$(RM) test.txt
+	cd ./non-regression-tests && \
+		./run-test.sh && \
+		rm -f test.txt
 
