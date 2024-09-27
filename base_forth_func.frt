@@ -104,7 +104,13 @@ variable <#-cnt
 : sign ( n -- ) 0 < if char - hold then ;
 : # ( u -- u ) base @ u/mod swap (#) hold ;
 : #s ( u -- u ) begin # dup 0= until ;
-: #> ( u -- ) drop <#-addr <#-cnt @ ;
-: . ( n -- ) <# dup abs #s swap sign #> type space ;
+: #n ( n -- u ) dup abs #s swap sign ;
+: #> ( u -- addr n ) drop <#-addr <#-cnt @ ;
+: . ( n -- ) <# #n #> type space ;
 : u. ( u -- ) <# #s #> type space ;
+: (x.r) ( n -- addr n ) <#-cnt @ - dup 0 > if
+    0 do bl hold loop 0
+    then #> ;
+: u.r swap <# #s #> 2drop (x.r) type space ;
+: .r swap <# #n #> 2drop (x.r) type space ;
 
