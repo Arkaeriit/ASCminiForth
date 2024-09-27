@@ -5,6 +5,8 @@
 #include "utils.h"
 
 #define UNUSED(x) (void)(x)
+#define FORTH_TRUE ((amf_int_t) ~0)
+#define FORTH_BOOL(x) ((x) ? FORTH_TRUE : 0)
 
 // Functions used to manipulate C_fun
 
@@ -162,31 +164,31 @@ static void abs_word(forth_state_t* fs) {
 static void less_than(forth_state_t* fs) {
     amf_int_t w1 = amf_pop_data(fs);
     amf_int_t w2 = amf_pop_data(fs);
-    amf_push_data(fs, w2 < w1);
+    amf_push_data(fs, FORTH_BOOL(w2 < w1));
 }
 
 // U<
 static void u_less_than(forth_state_t* fs) {
     amf_unsigned_t w1 = (amf_unsigned_t) amf_pop_data(fs);
     amf_unsigned_t w2 = (amf_unsigned_t) amf_pop_data(fs);
-    amf_push_data(fs, w2 < w1);
+    amf_push_data(fs, FORTH_BOOL(w2 < w1));
 }
 
 // Boolean logic
 
 // 0<
 static void less0(forth_state_t* fs) {
-    amf_push_data(fs, amf_pop_data(fs) < 0);
+    amf_push_data(fs, FORTH_BOOL(amf_pop_data(fs) < 0));
 }
 
 // 0= 
 static void eq0(forth_state_t* fs) {
-    amf_push_data(fs, amf_pop_data(fs) == 0);
+    amf_push_data(fs, FORTH_BOOL(amf_pop_data(fs) == 0));
 }
 
 // = 
 static void eq(forth_state_t* fs) {
-    amf_push_data(fs, amf_pop_data(fs) == amf_pop_data(fs));
+    amf_push_data(fs, FORTH_BOOL(amf_pop_data(fs) == amf_pop_data(fs)));
 }
 
 // and
@@ -613,7 +615,7 @@ endloop:
     amf_push_data(fs, dest_index);
     if (dest_index == 0 && eof) { // Bad, no char were written; flag = false, ior = ~0
         amf_push_data(fs, 0);
-        amf_push_data(fs, ~0);
+        amf_push_data(fs, FORTH_TRUE);
     } else { // Good: flag true, ior = 0
         amf_push_data(fs, 1);
         amf_push_data(fs, 0);
