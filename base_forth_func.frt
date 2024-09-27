@@ -39,10 +39,15 @@
 : +! ( n addr -- ) dup @ rot + swap ! ;
 : 2* ( n -- n ) 2 * ;
 : 2/ ( n -- n ) 2 / ;
-:macro s>d ( n1 -- n1 ) ;
-:macro d>s ( n1 -- n1 ) ;
 : u> ( u u -- b ) 2dup u< 0= rot rot <> and ;
 : within ( test low high -- flag ) over - >r - r> u< ;
+
+( --------------------------- Double words emulation ------------------------- )
+
+:macro s>d ( n1 -- n1 ) ;
+:macro d>s ( n1 -- n1 ) ;
+:macro um* ( u u -- u ) * ;
+:macro  m* ( u u -- u ) * ;
 
 ( ----------------------------- Memory management ---------------------------- )
 
