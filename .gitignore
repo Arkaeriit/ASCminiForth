@@ -1,0 +1,7 @@
+*.bin
+*.a
+*.o
+base_forth_func.c
+file_forth_func.c
+string_forth_func.c
+programming_forth_func.c
