@@ -12,6 +12,10 @@
 " swap drop 2 = S" \ " swap drop 2 = is_true is_true is_true cr ;
 : test.holds ." Testing " <# 10 hold s" OK." holds s" holds: " holds 0 #> type ;
 
+( C strings )
+: test-strlen ." Testing strlen: " s" 123456789ABC" drop strlen 12 = is_true cr ;
+: test-print ." Testing print: " s" OK" drop print cr ;
+
 ( Programming tools )
 : test.bye ." Testing bye: " 1 is_true CR bye ." Not Okay at all, abbort everything.!!!" CR ;
 
@@ -39,6 +43,7 @@ s" 1 is_true cr ;" macro-string end-word
 test.quit
 : benchmark 11 22 33
 test.arg
+test-strlen test-print
 test.compare test.holds test.string-size-with-new-lines
 test.write test.read
 test.macro
