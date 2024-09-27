@@ -54,6 +54,7 @@ static void free_word(entry_t e) {
             break;
         case constant:
         case C_word:
+        case alias:
             break;
     }
 }
@@ -66,6 +67,9 @@ forth_dictionary_t* amf_init_dic(void) {
     ret->entries = malloc(sizeof(entry_t));
     ret->max = 1;
     ret->n_entries = 0;
+#if AMF_CASE_INSENSITIVE == 0
+    ret->case_insensitive = true;
+#endif
     return ret;
 }
 
@@ -93,6 +97,9 @@ void amf_display_dictionary(forth_dictionary_t* dic) {
         switch (dic->entries[i].type) {
             case C_word:
                 type = "C word";
+                break;
+            case alias:
+                type = "alias";
                 break;
             case FORTH_word:
                 type = "Forth word";
@@ -189,14 +196,14 @@ hash_t amf_register_string(forth_dictionary_t* fd, const char* str, size_t size)
 #endif
     memcpy(e.func.string.data, str, size);
     e.func.string.data[size] = 0; // Null terminating
-    amf_add_elem(fd, e);
+    amf_add_elem(fd, e, "");
     return e.hash;
 }
 
 // This function adds a new element to the dictionary.
 // The size is extended if needed and the dictionary is left sorted
 // If an element in the array got a similar hash, it is overwritten
-error amf_add_elem(forth_dictionary_t* fd, entry_t e) {
+error amf_add_elem(forth_dictionary_t* fd, entry_t e, const char* name) {
     size_t index;
     entry_t old_entry;
     if (amf_find(fd, &old_entry, &index, e.hash) == not_found) {  // We need to add a new element
@@ -209,7 +216,6 @@ error amf_add_elem(forth_dictionary_t* fd, entry_t e) {
         fd->entries[fd->n_entries] = e;
         fd->n_entries++;
         sort_dic(fd);
-        return OK;
     } else {    // We need to overwrite an element
 #ifdef AMF_STORE_NAME
         warn_msg("Overwriting the word with hash %"PRIx32" named %s.\n", e.hash, old_entry.name);
@@ -222,8 +228,33 @@ error amf_add_elem(forth_dictionary_t* fd, entry_t e) {
         entry_t old = fd->entries[index];
         free_word(old);
         fd->entries[index] = e;
-        return OK;
     }
+#if AMF_CASE_INSENSITIVE == 0   // Register upper case version of the name as well.
+    if (fd->case_insensitive) {
+        char name_upper[strlen(name) + 1];
+        for (size_t j = 0; j <= strlen(name); j++) {
+            if ('a' <= name[j] && name[j] <= 'z') {
+                name_upper[j] = name[j] - ('a' - 'A');
+            } else {
+                name_upper[j] = name[j];
+            }
+        }
+        if (strcmp(name_upper, name)) {
+            entry_t new_entry;
+            new_entry.hash = amf_hash(name_upper);
+            new_entry.type = alias;
+            new_entry.func.alias_to = e.hash;
+#if AMF_STORE_NAME
+            new_entry.name = malloc(strlen(name_upper) + 1);
+            strcpy(new_entry.name, name_upper);
+#endif
+            return amf_add_elem(fd, new_entry, name_upper);
+        }
+    }
+#else
+    (void) name;
+#endif
+    return OK;
 }
 
 // This function calls a known function from the dictionary, the effect will
@@ -251,6 +282,8 @@ error amf_call_func(forth_state_t* fs, hash_t hash) {
             amf_push_code(fs, amf_code_pointer_to_int(&old_pos));
             }
             break;
+        case alias:
+            return amf_call_func(fs, e.func.alias_to);
         case constant:
             amf_push_data(fs, e.func.constant);
             break;

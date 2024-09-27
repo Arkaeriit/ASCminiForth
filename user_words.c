@@ -37,7 +37,7 @@ error amf_compile_user_word(forth_dictionary_t* fd, const char* name, size_t sub
     e.name = malloc(strlen(name) + 1);
     strcpy(e.name, name);
 #endif
-    return amf_add_elem(fd, e);
+    return amf_add_elem(fd, e, name);
 }
 
 word_node_t amf_compile_node(const char* str, int base) {
@@ -188,6 +188,6 @@ error amf_compile_constant(const char* name, forth_state_t* fs) {
     e.name = malloc(strlen(name) + 1);
     strcpy(e.name, name);
 #endif
-    return amf_add_elem(fs->dic, e);
+    return amf_add_elem(fs->dic, e, name);
 }
 

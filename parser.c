@@ -39,7 +39,9 @@ parser_state_t* amf_init_parser(void) {
     extern const char* programming_forth_func;
     amf_parse_string(ret, programming_forth_func); 
 #endif
-    //amf_display_dictionary(ret->fs->dic);
+#if AMF_CASE_INSENSITIVE == 0
+    ret->fs->dic->case_insensitive = false;
+#endif
     return ret;
 }
 
@@ -73,6 +75,12 @@ void amf_parse_char(parser_state_t* parse, char ch) {
         parse->buffer[parse->pnt] = 0;
         entry_t compile_time_entry;
         if (amf_find(parse->fs->dic, &compile_time_entry, NULL, amf_hash(parse->buffer)) == OK) {
+            while (compile_time_entry.type == alias) {
+                error find_rc = amf_find(parse->fs->dic, &compile_time_entry, NULL, compile_time_entry.func.alias_to);
+                if (find_rc != OK) {
+                    break;
+                }
+            }
             if (compile_time_entry.type == compile_word) {
                 compile_time_entry.func.compile_func.func(parse, compile_time_entry.func.compile_func.payload);
                 return;
@@ -450,7 +458,7 @@ void amf_register_compile_time_word(parser_state_t* p, const char* name, compile
     e.name = malloc(strlen(name) + 1);
     strcpy(e.name, name);
 #endif
-    amf_add_elem(p->fs->dic, e);
+    amf_add_elem(p->fs->dic, e, name);
 }
 
 struct compile_func_s {
@@ -480,17 +488,6 @@ static void register_compile_time_words_list(parser_state_t* p) {
     for (size_t i = 0; i < sizeof(all_default_compile_words) / sizeof(struct compile_func_s); i++) {
         const char* name = all_default_compile_words[i].name;
         amf_register_compile_time_word(p, name, all_default_compile_words[i].func, NULL);
-#if AMF_CASE_INSENSITIVE == 0   // Register upper case version of the name as well.
-        char name_upper[strlen(name) + 1];
-        for (size_t j = 0; j <= strlen(name); j++) {
-            if ('a' <= name[j] && name[j] <= 'z') {
-                name_upper[j] = name[j] - ('a' - 'A');
-            } else {
-                name_upper[j] = name[j];
-            }
-        }
-        amf_register_compile_time_word(p, name_upper, all_default_compile_words[i].func);
-#endif
     }
 }
 

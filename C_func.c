@@ -18,7 +18,7 @@ void amf_register_cfunc(forth_state_t* fs, const char* name, C_callback_t func) 
     e.name = malloc(strlen(name) + 1);
     strcpy(e.name, name);
 #endif
-    amf_add_elem(fs->dic, e);
+    amf_add_elem(fs->dic, e, name);
 }
 
 // List of default C_func
@@ -827,17 +827,6 @@ void amf_register_default_C_func(forth_state_t* fs) {
     for (size_t i = 0; i < sizeof(all_default_c_func) / sizeof(struct c_func_s); i++) {
         const char* name = all_default_c_func[i].name;
         amf_register_cfunc(fs, name, all_default_c_func[i].func);
-#if AMF_CASE_INSENSITIVE == 0   // Register upper case version of the name as well.
-        char name_upper[strlen(name) + 1];
-        for (size_t j = 0; j <= strlen(name); j++) {
-            if ('a' <= name[j] && name[j] <= 'z') {
-                name_upper[j] = name[j] - ('a' - 'A');
-            } else {
-                name_upper[j] = name[j];
-            }
-        }
-        amf_register_cfunc(fs, name_upper, all_default_c_func[i].func);
-#endif
     }
 }
 

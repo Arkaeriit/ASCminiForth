@@ -9,6 +9,7 @@ enum entry_type {
     compile_word,               // Words that have effect at compile time (such as : or ;)
     constant,                   // Words that are just putting a constant on the stack
     string,                     // Strings stored in the dictionary 
+    alias,                      // Alias to an other word
 };
 
 // This structure represent the entries in the dictionary
@@ -25,6 +26,7 @@ typedef struct {
             char* data;
             size_t size;
         } string;
+        hash_t alias_to;
     } func;
     enum entry_type type;
     hash_t hash;
@@ -38,13 +40,16 @@ typedef struct forth_dictionary_s {
     entry_t* entries;
     size_t n_entries;
     size_t max;
+#if AMF_CASE_INSENSITIVE == 0
+    bool case_insensitive;
+#endif
 } forth_dictionary_t;
 
 forth_dictionary_t* amf_init_dic(void);
 void amf_display_dictionary(forth_dictionary_t* dic);
 void amf_clean_dic(forth_dictionary_t* fd);
 error amf_find(forth_dictionary_t* fd, entry_t* e, size_t* index, hash_t hash);
-error amf_add_elem(forth_dictionary_t* fd, entry_t e);
+error amf_add_elem(forth_dictionary_t* fd, entry_t e, const char* name);
 hash_t amf_unused_special_hash(forth_dictionary_t* fd);
 hash_t amf_register_string(forth_dictionary_t* fd, const char* str, size_t size);
 
