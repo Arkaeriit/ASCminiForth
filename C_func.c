@@ -453,6 +453,11 @@ static void cstore(forth_state_t* fs) {
     *addr = (char) data;
 }
 
+// unused
+static void unused(forth_state_t* fs) {
+    amf_push_data(fs, FORTH_MEMORY_SIZE - fs->forth_memory_index);
+}
+
 
 // C strings
 
@@ -779,6 +784,7 @@ struct c_func_s all_default_c_func[] = {
     {"!", store},
     {"c@", cfetch},
     {"c!", cstore},
+    {"unused", unused},
     // C strings
     {"print", put_str},
     {"strlen", str_len},
