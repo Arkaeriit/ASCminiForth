@@ -11,6 +11,9 @@
 : test.string-size-with-new-lines ." Testing string size " S" 123 " 4 = swap drop S" 1
 " swap drop 2 = S" \ " swap drop 2 = is_true is_true is_true cr ;
 : test.holds ." Testing " <# 10 hold s" OK." holds s" holds: " holds 0 #> type ;
+hex
+: test.escaped-s s\" Testing s\\\" assuming 32 bit or 64 bit little endian: " type s\" \a\e\\\xfc\z\z\z\z" drop @ fc5c1b07 = is_true s\" \n" type ;
+decimal
 
 ( C strings )
 : test-strlen ." Testing strlen: " s" 123456789ABC" drop strlen 12 = is_true cr ;
@@ -44,7 +47,7 @@ test.quit
 : benchmark 11 22 33
 test.arg
 test-strlen test-print
-test.compare test.holds test.string-size-with-new-lines
+test.compare test.holds test.escaped-s test.string-size-with-new-lines
 test.write test.read
 test.macro
 test.tuck

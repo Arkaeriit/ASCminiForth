@@ -270,6 +270,107 @@ static void register_string_hook(parser_state_t* p) {
     POP_HOOK(p, end_block_hook);
 }
 
+// Return the numeric value of the ASCII hex digit c
+char hex_digit(char c) {
+    if ('0' <= c && c <= '9') {
+        return c - '0';
+    } else if ('a' <= c && c <= 'f') {
+        return c - 'a' + 10;
+    } else if ('A' <= c && c <= 'F') {
+        return c - 'A' + 10;
+    } else {
+        error_msg("%c is not a valid hex digit!.", c);
+        return 0;
+    }
+}
+
+// Process escaped characters in s\"
+static void escape_s_blackslash_quote(char* str) {
+    char* write = str;
+    char* read = str;
+    bool escaping = false;
+    char c;
+    while ((c = *read++)) {
+        if (escaping) {
+            escaping = false;
+            switch (c) {
+                case 'a':
+                    c = '\a';
+                    break;
+                case 'b':
+                    c = '\b';
+                    break;
+                case 'e':
+                    c = 27;
+                    break;
+                case 'f':
+                    c = '\f';
+                    break;
+                case 'l':
+                    c = 10;
+                    break;
+                case 'm':
+                    *write++ = 13;
+                    c = 10;
+                    break;
+                case 'n':
+                    c = '\n';
+                    break;
+                case 'q':
+                    c = '"';
+                    break;
+                case 'r':
+                    c = '\r';
+                    break;
+                case 't':
+                    c = '\t';
+                    break;
+                case 'v':
+                    c = '\v';
+                    break;
+                case 'z':
+                    c = '\0';
+                    break;
+                case '"':
+                    c = '"';
+                    break;
+                case 'x': {
+                    c = *read++;
+                    char d1 = hex_digit(c);
+                    c = *read++;
+                    char d2 = hex_digit(c);
+                    c = (d1 << 4) | d2;
+                    } break;
+                case '\\':
+                default:
+                    // In both cases, keep the char as-is.
+                    break;
+            }
+            *write++ = c;
+        } else if (c == '\\') {
+            escaping = true;
+        } else {
+            *write++ = c;
+        }
+    }
+    *write = 0;
+}
+static void register_escaped_string_hook(parser_state_t* p) {
+    char* str = p->buffer;
+    size_t size = strlen(str);
+    if (str[size-1] == '\\') {
+        // In that case, it means the buffer ends with a backslash. This happen if there was a \" in the string.
+        // In that case, we want to do as we werent interrupted, and keep going with the reading of the string.
+        str[size] = '"';
+        str[size+1] = 0;
+        p->wait_until = '"';
+        p->pnt++;
+    } else {
+        escape_s_blackslash_quote(str);
+        register_string_hook(p);
+    }
+}
+
 // Register a normal word definition
 static void register_def_hook(parser_state_t* p) {
     amf_compile_string(p->fs->dic, p->custom_word_name, p->new_word_buffer, p->fs->base);
@@ -404,6 +505,14 @@ static void any_string(parser_state_t* p, const char* payload) {
     p->end_block_hook = register_string_hook;
 }
 
+// s\"
+static void escaped_string(parser_state_t* p, const char* payload) {
+    UNUSED(payload);
+    p->wait_until = '"';
+    PUSH_HOOK(p, end_block_hook);
+    p->end_block_hook = register_escaped_string_hook;
+}
+
 // .(
 static void compile_time_print(parser_state_t* p, const char* payload) {
     UNUSED(payload);
@@ -477,6 +586,7 @@ struct compile_func_s all_default_compile_words[] = {
     {"c\"", any_string},
     {".\"", any_string},
     {"abort\"", any_string},
+    {"s\\\"", escaped_string},
     {"\\", backslash},
     {"macro-string", macro_string},
     {"char", _char},
