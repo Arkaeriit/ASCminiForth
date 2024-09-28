@@ -341,17 +341,17 @@ static void plus_loop(forth_state_t* fs) {
         amf_push_code(fs, current_index);
         // Jumping to the corresponding do
         hash_t do_hash = amf_hash("do");
-        hash_t loop_hash = amf_hash("loop");
+        hash_t q_do_hash = amf_hash("?do");
         hash_t plus_loop_hash = amf_hash("+loop");
         hash_t DO_hash = amf_hash("DO");
-        hash_t LOOP_hash = amf_hash("LOOP");
+        hash_t Q_DO_hash = amf_hash("?DO");
         hash_t plus_LOOP_hash = amf_hash("+LOOP");
         size_t i = fs->pos.pos_in_word - 2;
         int loop_depth = 1;
         while (loop_depth) {    // Note: if no matching do is found, there is a fault
-            if (CHECK_AGAINST_HASH(fs, i, do_hash, DO_hash)) {
+            if (CHECK_AGAINST_HASH(fs, i, do_hash, DO_hash) || CHECK_AGAINST_HASH(fs, i, q_do_hash, Q_DO_hash)) {
                 loop_depth--;
-            } else if (CHECK_AGAINST_HASH(fs, i, loop_hash, LOOP_hash) || CHECK_AGAINST_HASH(fs, i, plus_loop_hash, plus_LOOP_hash)) {
+            } else if (CHECK_AGAINST_HASH(fs, i, plus_loop_hash, plus_LOOP_hash)) {
                 loop_depth++;
             }
             i--;
@@ -370,23 +370,39 @@ static void unloop(forth_state_t* fs) {
 static void leave(forth_state_t* fs) {
     unloop(fs);
     hash_t do_hash = amf_hash("do");
-    hash_t loop_hash = amf_hash("loop");
+    hash_t q_do_hash = amf_hash("?do");
     hash_t plus_loop_hash = amf_hash("+loop");
     hash_t DO_hash = amf_hash("DO");
-    hash_t LOOP_hash = amf_hash("LOOP");
+    hash_t Q_DO_hash = amf_hash("?DO");
     hash_t plus_LOOP_hash = amf_hash("+LOOP");
     size_t i = fs->pos.pos_in_word;
     int loop_depth = 1;
     while (loop_depth) {
-        if (CHECK_AGAINST_HASH(fs, i, do_hash, DO_hash)) {
+        if (CHECK_AGAINST_HASH(fs, i, do_hash, DO_hash) || CHECK_AGAINST_HASH(fs, i, q_do_hash, Q_DO_hash)) {
             loop_depth++;
-        } else if (CHECK_AGAINST_HASH(fs, i, loop_hash, LOOP_hash) || CHECK_AGAINST_HASH(fs, i, plus_loop_hash, plus_LOOP_hash)) {
+        } else if (CHECK_AGAINST_HASH(fs, i, plus_loop_hash, plus_LOOP_hash)) {
             loop_depth--;
         }
         i++;
     }
     fs->pos.pos_in_word = i;
 }
+
+// ?do
+static void question_do(forth_state_t* fs) {
+    amf_int_t w1 = amf_pop_data(fs);
+    amf_int_t w2 = amf_pop_data(fs);
+    if (w1 == w2) {
+        amf_push_code(fs, w2);
+        amf_push_code(fs, w1);
+        leave(fs);
+    } else {
+        amf_push_data(fs, w2);
+        amf_push_data(fs, w1);
+        DO(fs);
+    }
+}
+
 
 // Memory management
 
@@ -775,6 +791,7 @@ struct c_func_s all_default_c_func[] = {
     {"+loop", plus_loop},
     {"unloop", unloop},
     {"leave", leave},
+    {"?do", question_do},
     // Memory management
     {"allot", allot},
     {"cells", cells},
