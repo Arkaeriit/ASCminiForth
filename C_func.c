@@ -751,6 +751,12 @@ static void recurse(forth_state_t* fs) {
     amf_call_func(fs, fs->pos.current_word);
 }
 
+// pad
+static void pad(forth_state_t* fs) {
+    amf_push_data(fs, (amf_int_t) fs->pad);
+}
+
+
 struct c_func_s {
     const char* name;
     void (*func)(forth_state_t*);
@@ -851,6 +857,7 @@ struct c_func_s all_default_c_func[] = {
     {"execute", execute},
     {"(evaluate)", evaluate},
     {"recurse", recurse},
+    {"pad", pad},
 };
 
 // Register all the default C_func

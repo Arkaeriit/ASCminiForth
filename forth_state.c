@@ -10,6 +10,7 @@ forth_state_t* amf_init_state(struct parser_state_s* parser) {
     ret->code = amf_stack_init(CODE_STACK_SIZE);
     ret->forth_memory = malloc(FORTH_MEMORY_SIZE);
     ret->forth_memory_index = 0;
+    ret->pad = malloc(PAD_SIZE);
     ret->dic = amf_init_dic();
     amf_register_default_C_func(ret);
     ret->pos.current_word = IDLE_CURRENT_WORD;
@@ -29,6 +30,7 @@ forth_state_t* amf_init_state(struct parser_state_s* parser) {
 // Clean the code used by the dictionary
 void amf_clean_state(forth_state_t* fs) {
     amf_clean_dic(fs->dic);
+    free(fs->pad);
     free(fs->forth_memory);
     amf_stack_free(fs->code);
     amf_stack_free(fs->data);

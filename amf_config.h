@@ -36,6 +36,7 @@ typedef uintptr_t amf_unsigned_t;
 #define DATA_STACK_SIZE 1000
 #define COMPILATION_STACK_SIZE 100
 #define FORTH_MEMORY_SIZE 1000000
+#define PAD_SIZE 100
 
 // Parser configuration
 #define PARSER_BUFFER_SIZE 1000

@@ -52,6 +52,7 @@ typedef struct {
     // The forth memory used for allot and variables
     char* forth_memory;
     size_t forth_memory_index;
+    char* pad;
     // The dictionary
     struct forth_dictionary_s* dic;
     // A copy of the word being processed, to ensure fast access
