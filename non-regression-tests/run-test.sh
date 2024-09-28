@@ -3,12 +3,12 @@
 # Run the command given as input and return the number of "OK"
 # If the exit code is not 0 or if there is a "Failed", reuturn 0.
 count_ok () {
-    if ! $1 > /dev/null
+    if ! $1 2> /dev/null > /dev/null
     then
         printf 0
         return
     fi
-    if $1 | grep Failed 2> /dev/null
+    if $1 | grep Failed 2> /dev/null > /dev/null
     then
         printf 0
         return
