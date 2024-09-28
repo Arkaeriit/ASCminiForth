@@ -17,7 +17,8 @@
 : 2>r ( x1 x2 -- ) ( -- x1 x2 ) swap >r >r ;
 : 2r> ( -- x1 x2 ) ( x1 x2 -- ) r> r> swap ;
 : ?dup ( n1 -- n1 | [n1 n1] )dup if dup then ;
-: 2r@ ( -- x1 x2 ) ( x1 x2 -- x1 x2 ) r> r> 2dup >r >r swap ;
+:macro 2r@ ( -- x1 x2 ) ( x1 x2 -- x1 x2 ) r> r> 2dup >r >r swap ;
+:macro r@ ( -- x1 ) ( x1 -- x1 ) r> dup r> ;
 
 ( ----------------------------------- Math ----------------------------------- )
 
