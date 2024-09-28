@@ -312,8 +312,8 @@ static void DO(forth_state_t* fs) {
     CHECK_BEING_IN_WORD(fs);
     amf_int_t start_index = amf_pop_data(fs);
     amf_int_t end_index = amf_pop_data(fs);
-    amf_push_loop(fs, end_index);
-    amf_push_loop(fs, start_index);
+    amf_push_code(fs, end_index);
+    amf_push_code(fs, start_index);
 }
 
 // I
@@ -331,14 +331,14 @@ static void J(forth_state_t* fs) {
 // +loop
 static void plus_loop(forth_state_t* fs) {
     CHECK_BEING_IN_WORD(fs);
-    amf_int_t current_index = amf_pop_loop(fs);
-    amf_int_t end_index = amf_pop_loop(fs);
+    amf_int_t current_index = amf_pop_code(fs);
+    amf_int_t end_index = amf_pop_code(fs);
     amf_int_t increment = amf_pop_data(fs);
     debug_msg("loop % 4li % 4li % 4li % 4zi.\n", current_index, end_index, increment, fs->loop_control->stack_pointer);
     current_index += increment;
     if ( ((increment >= 0) && (current_index < end_index)) || ((increment < 0) && (current_index >= end_index)) ) { // Increment of 0 should do an infinite loop
-        amf_push_loop(fs, end_index);
-        amf_push_loop(fs, current_index);
+        amf_push_code(fs, end_index);
+        amf_push_code(fs, current_index);
         // Jumping to the corresponding do
         hash_t do_hash = amf_hash("do");
         hash_t loop_hash = amf_hash("loop");
@@ -362,8 +362,8 @@ static void plus_loop(forth_state_t* fs) {
 
 // unloop
 static void unloop(forth_state_t* fs) {
-    amf_pop_loop(fs);
-    amf_pop_loop(fs);
+    amf_pop_code(fs);
+    amf_pop_code(fs);
 }
 
 // leave

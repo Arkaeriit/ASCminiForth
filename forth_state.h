@@ -49,8 +49,6 @@ typedef struct {
     // The two stack used by the interpreter
     amf_stack_t* data;
     amf_stack_t* code;
-    // A special stack used for loop control flow
-    amf_stack_t* loop_control;
     // The forth memory used for allot and variables
     char* forth_memory;
     size_t forth_memory_index;
@@ -80,8 +78,6 @@ amf_int_t amf_pop_data(forth_state_t* fs);
 void amf_push_data(forth_state_t* fs, amf_int_t w);
 void amf_push_code(forth_state_t* fs, amf_int_t p);
 amf_int_t amf_pop_code(forth_state_t* fs);
-void amf_push_loop(forth_state_t* fs, amf_int_t w);
-amf_int_t amf_pop_loop(forth_state_t* fs);
 amf_int_t amf_peek_loop(forth_state_t* fs, int loop_depth);
 void amf_quit(forth_state_t* fs);
 void amf_abort(forth_state_t* fs);

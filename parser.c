@@ -19,7 +19,7 @@ parser_state_t* amf_init_parser(void) {
     ret->custom_word_name = malloc(PARSER_CUSTOM_NAME_SIZE);
     ret->new_word_hook = run_next_word_hook;
     ret->end_block_hook = invalid_hook;
-    ret->hooks_stack = amf_stack_init(LOOP_STACK_SIZE);
+    ret->hooks_stack = amf_stack_init(COMPILATION_STACK_SIZE);
     ret->pnt = 0;
     ret->in_word = false;
     ret->in_def = false;

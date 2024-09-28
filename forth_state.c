@@ -8,7 +8,6 @@ forth_state_t* amf_init_state(struct parser_state_s* parser) {
     ret->parser = parser;
     ret->data = amf_stack_init(DATA_STACK_SIZE);
     ret->code = amf_stack_init(CODE_STACK_SIZE);
-    ret->loop_control = amf_stack_init(LOOP_STACK_SIZE);
     ret->forth_memory = malloc(FORTH_MEMORY_SIZE);
     ret->forth_memory_index = 0;
     ret->dic = amf_init_dic();
@@ -31,7 +30,6 @@ forth_state_t* amf_init_state(struct parser_state_s* parser) {
 void amf_clean_state(forth_state_t* fs) {
     amf_clean_dic(fs->dic);
     free(fs->forth_memory);
-    amf_stack_free(fs->loop_control);
     amf_stack_free(fs->code);
     amf_stack_free(fs->data);
     free(fs);
@@ -43,7 +41,6 @@ void amf_quit(forth_state_t* fs) {
     fs->pos.current_word = IDLE_CURRENT_WORD;
     fs->pos.pos_in_word = IDLE_POS_IN_WORD;
     fs->code->stack_pointer = 0;
-    fs->loop_control->stack_pointer = 0;
 }
 
 // Like quit but also reset the data stack. Display the stack trace if needed.
@@ -101,19 +98,9 @@ amf_int_t amf_pop_code(forth_state_t* fs) {
     return STACK_POP(fs, code);
 }
 
-// Push a new element in the loop stack
-void amf_push_loop(forth_state_t* fs, amf_int_t w) {
-    STACK_PUSH(fs, loop_control, w);
-}
-
-// Pops the last element from the loop stack
-amf_int_t amf_pop_loop(forth_state_t* fs) {
-    return STACK_POP(fs, loop_control);
-}
-
 // Look at the last element from the loop stack
 amf_int_t amf_peek_loop(forth_state_t* fs, int loop_depth) {
-    return amf_stack_peek(fs->loop_control, loop_depth * 2);
+    return amf_stack_peek(fs->code, loop_depth * 2);
 }
 
 // Return from a word_call

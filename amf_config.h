@@ -34,7 +34,7 @@ typedef uintptr_t amf_unsigned_t;
 // Depth of the memory blocks
 #define CODE_STACK_SIZE 1000
 #define DATA_STACK_SIZE 1000
-#define LOOP_STACK_SIZE 100
+#define COMPILATION_STACK_SIZE 100
 #define FORTH_MEMORY_SIZE 1000000
 
 // Parser configuration
