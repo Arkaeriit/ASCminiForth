@@ -41,6 +41,8 @@
 : 2/ ( n -- n ) 2 / ;
 : u> ( u u -- b ) 2dup u< 0= rot rot <> and ;
 : within ( test low high -- flag ) over - >r - r> u< ;
+: lshift ( x u -- x ) 0 ?do 2* loop ;
+: rshift ( x u -- x ) 0 ?do 2/ loop ;
 
 ( --------------------------- Double words emulation ------------------------- )
 
