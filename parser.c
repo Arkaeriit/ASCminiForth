@@ -2,6 +2,7 @@
 #include "utils.h"
 #include "parser.h"
 #include "stdio.h"
+#include "stddef.h"
 #include "string.h"
 #include "assert.h"
 
@@ -227,8 +228,10 @@ static void get_exec_token_hook(parser_state_t* p) {
 // Register a string
 static void register_string_hook(parser_state_t* p) {
     const char* str = p->buffer;
-    while (*str++ != '"');
-    size_t size = strlen(str);
+    size_t size = p->pnt - 1;
+    while (*str++ != '"') {
+        size--;
+    }
     hash_t str_id = amf_register_string(p->fs->dic, str, size);
     char string_type = p->buffer[0];
     char tmp[AMF_MAX_NUMBER_DIGIT];
@@ -285,7 +288,7 @@ char hex_digit(char c) {
 }
 
 // Process escaped characters in s\"
-static void escape_s_blackslash_quote(char* str) {
+static ptrdiff_t escape_s_blackslash_quote(char* str) {
     char* write = str;
     char* read = str;
     bool escaping = false;
@@ -354,6 +357,8 @@ static void escape_s_blackslash_quote(char* str) {
         }
     }
     *write = 0;
+    ptrdiff_t removed_chars = read - write - 1;
+    return removed_chars;
 }
 static void register_escaped_string_hook(parser_state_t* p) {
     char* str = p->buffer;
@@ -366,7 +371,8 @@ static void register_escaped_string_hook(parser_state_t* p) {
         p->wait_until = '"';
         p->pnt++;
     } else {
-        escape_s_blackslash_quote(str);
+        ptrdiff_t removed_chars = escape_s_blackslash_quote(str);
+        p->pnt -= removed_chars;
         register_string_hook(p);
     }
 }

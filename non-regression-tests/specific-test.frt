@@ -12,7 +12,7 @@
 " swap drop 2 = S" \ " swap drop 2 = is_true is_true is_true cr ;
 : test.holds ." Testing " <# 10 hold s" OK." holds s" holds: " holds 0 #> type ;
 hex
-: test.escaped-s s\" Testing s\\\" assuming 32 bit or 64 bit little endian: " type s\" \a\e\\\xfc\z\z\z\z" drop @ fc5c1b07 = is_true s\" \n" type ;
+: test.escaped-s s\" Testing s\\\" assuming 32 bit or 64 bit little endian: " type s\" \a\e\\\xfc\z\z\z\z" drop @ fc5c1b07 = is_true s\" \x66\z\na" nip 4 = is_true s\" \n" type ;
 decimal
 
 ( C strings )
