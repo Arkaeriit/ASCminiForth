@@ -228,7 +228,7 @@ static void display_element_in_stack_trace(forth_state_t* fs, code_pointer_t cod
 #if AMF_STORE_NAME
         error_msg(" * %s\n", e.name);
 #else
-        error_msg(" * %"PRIxPTR"\n", hash); 
+        error_msg(" * %"PRIxPTR"\n", e.hash);
 #endif
     } else {
         error_msg(" * ???\n");
