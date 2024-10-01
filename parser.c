@@ -379,7 +379,7 @@ static void register_escaped_string_hook(parser_state_t* p) {
 
 // Register a normal word definition
 static void register_def_hook(parser_state_t* p) {
-    amf_compile_string(p->fs->dic, p->custom_word_name, p->new_word_buffer, p->fs->base);
+    amf_compile_string(p->fs->dic, p->custom_word_name, p->new_word_buffer, p->fs->base, 0);
 }
 
 // Register a macro

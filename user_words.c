@@ -9,7 +9,9 @@ static bool str_to_num(const char* str, amf_int_t* num, int base);
 // This function compiles a new user words in the given dictionary
 // subword_n is the number of words in our definition
 // subwords is the list of the subwords
-error amf_compile_user_word(forth_dictionary_t* fd, const char* name, size_t subword_n, char** subwords, int base) {
+// force_hash can be set to a non 0 value to force the use of the given hash
+// instead of `name`'s hash.
+error amf_compile_user_word(forth_dictionary_t* fd, const char* name, size_t subword_n, char** subwords, int base, hash_t force_hash) {
     user_amf_int_t* def = malloc(sizeof(user_amf_int_t));
     def->size = subword_n;
     if (def->size >= (1 << AMF_WORD_CONTENT_SIZE_BITS)) {
@@ -30,7 +32,7 @@ error amf_compile_user_word(forth_dictionary_t* fd, const char* name, size_t sub
 #endif
     }
     entry_t e;
-    e.hash = amf_hash(name);
+    e.hash = force_hash ? force_hash : amf_hash(name);
     e.type = FORTH_word;
     e.func.F_word = def;
 #if AMF_STORE_NAME
@@ -59,11 +61,11 @@ word_node_t amf_compile_node(const char* str, int base) {
 static const char* word_delimiters = " \t\n\r";
 // This functions takes a string such as "1 1 + ." and compiles it
 // as a C word
-error amf_compile_string(forth_dictionary_t* fd, const char* name, const char* str, int base) {
+error amf_compile_string(forth_dictionary_t* fd, const char* name, const char* str, int base, hash_t force_hash) {
     size_t nwords;
     char** subwords = cut_string(str, &nwords);
     debug_msg("There is %i words in the definition of %s [%s].\n", nwords, name, str);
-    error rc = amf_compile_user_word(fd, name, nwords, subwords, base);
+    error rc = amf_compile_user_word(fd, name, nwords, subwords, base, force_hash);
     for (size_t i = 0; i < nwords; i++) {
         free(subwords[i]);
     }
