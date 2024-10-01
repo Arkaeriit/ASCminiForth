@@ -433,6 +433,14 @@ static void defer_hook(parser_state_t* p) {
     amf_register_defer(p->buffer, p->fs);
 }
 
+// Set the name in the buffer to be a defered word
+static void is_hook(parser_state_t* p) {
+    p->pnt = 0;
+    POP_HOOK(p, new_word_hook);
+    hash_t alias_to = (hash_t) amf_pop_data(p->fs);
+    amf_set_alias(p->fs->dic, p->buffer, alias_to);
+}
+
 // Ignore the buffer
 static void end_of_comment_hook(parser_state_t* p) {
     POP_HOOK(p, end_block_hook);
@@ -588,6 +596,14 @@ static void defer(parser_state_t* p, const char* payload) {
     p->new_word_hook = defer_hook;
 }
 
+// is
+static void is(parser_state_t* p, const char* payload) {
+    UNUSED(payload);
+    p->pnt = 0;
+    PUSH_HOOK(p, new_word_hook);
+    p->new_word_hook = is_hook;
+}
+
 // Generic word used by macros
 static void macro(parser_state_t* p, const char* payload) {
     p->pnt = 0;
@@ -634,6 +650,7 @@ struct compile_func_s all_default_compile_words[] = {
     {"char", _char},
     {".(", compile_time_print},
     {"defer", defer},
+    {"is", is},
 };
 
 // Register the previously defined words

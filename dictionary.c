@@ -246,15 +246,7 @@ error amf_add_elem(forth_dictionary_t* fd, entry_t e, const char* name) {
             }
         }
         if (strcmp(name_upper, name)) {
-            entry_t new_entry;
-            new_entry.hash = amf_hash(name_upper);
-            new_entry.type = alias;
-            new_entry.func.alias_to = e.hash;
-#if AMF_STORE_NAME
-            new_entry.name = malloc(strlen(name_upper) + 1);
-            strcpy(new_entry.name, name_upper);
-#endif
-            return amf_add_elem(fd, new_entry, name_upper);
+            return amf_set_alias(fd, name_upper, e.hash);
         }
     }
 #else
@@ -262,6 +254,20 @@ error amf_add_elem(forth_dictionary_t* fd, entry_t e, const char* name) {
 #endif
     return OK;
 }
+
+// This function sets the first hash to be an alias to the second.
+error amf_set_alias(forth_dictionary_t* fd, const char* name, hash_t alias_to) {
+    entry_t new_entry;
+    new_entry.hash = amf_hash(name);
+    new_entry.type = alias;
+    new_entry.func.alias_to = alias_to;
+#if AMF_STORE_NAME
+    new_entry.name = malloc(strlen(name) + 1);
+    strcpy(new_entry.name, name);
+#endif
+    return amf_add_elem(fd, new_entry, name);
+}
+
 
 // This function calls a known function from the dictionary, the effect will
 // vary depending on the type of the function. The function is id by its hash
