@@ -382,6 +382,13 @@ static void register_def_hook(parser_state_t* p) {
     amf_compile_string(p->fs->dic, p->custom_word_name, p->new_word_buffer, p->fs->base, 0);
 }
 
+// Register an unamed word
+static void register_noname_hook(parser_state_t* p) {
+    hash_t noname_hash = amf_unused_special_hash(p->fs->dic);
+    amf_compile_string(p->fs->dic, "noname", p->new_word_buffer, p->fs->base, noname_hash);
+    amf_push_data(p->fs, (amf_int_t) noname_hash);
+}
+
 // Register a macro
 static void _register_macro_hook(parser_state_t* p) {
     char* payload = malloc(strlen(p->buffer)+1);
@@ -469,6 +476,18 @@ static void colon_macro(parser_state_t* p, const char* payload) {
     PUSH_HOOK(p, new_word_hook);
     p->new_word_hook = definition_macro_name_hook;
     p->end_block_hook = register_macro_hook;
+}
+
+// :noname
+static void colon_noname(parser_state_t* p, const char* payload) {
+    UNUSED(payload);
+    NOT_IN_DEF(p, ":noname");
+    p->in_def = true;
+    p->pnt = 0;
+    p->new_word_buffer[0] = 0;
+    p->new_word_hook = in_def_hook;
+    PUSH_HOOK(p, end_block_hook);
+    p->end_block_hook = register_noname_hook;
 }
 
 // ;
@@ -585,6 +604,7 @@ struct compile_func_s all_default_compile_words[] = {
     {"(", open_par},
     {":", colon},
     {":macro", colon_macro},
+    {":noname", colon_noname},
     {";", semi_colon},
     {"constant", _constant},
     {"'", single_quote},
