@@ -18,6 +18,7 @@ bool amf_is_delimiter(char ch);
 void amf_clean_user_word(user_amf_int_t * w);
 
 error amf_compile_constant(const char* name, forth_state_t* fs);
+error amf_register_defer(const char* name, forth_state_t* fs);
 
 #endif
 

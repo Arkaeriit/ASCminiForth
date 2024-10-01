@@ -10,6 +10,7 @@ enum entry_type {
     constant,                   // Words that are just putting a constant on the stack
     string,                     // Strings stored in the dictionary 
     alias,                      // Alias to an other word
+    defered,                    // Word defined with "defer", waiting for content
 };
 
 // This structure represent the entries in the dictionary

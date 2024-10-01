@@ -193,3 +193,14 @@ error amf_compile_constant(const char* name, forth_state_t* fs) {
     return amf_add_elem(fs->dic, e, name);
 }
 
+error amf_register_defer(const char* name, forth_state_t* fs) {
+    entry_t e;
+    e.hash = amf_hash(name);
+    e.type = defered;
+#if AMF_STORE_NAME
+    e.name = malloc(strlen(name) + 1);
+    strcpy(e.name, name);
+#endif
+    return amf_add_elem(fs->dic, e, name);
+}
+

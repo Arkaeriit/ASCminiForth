@@ -53,6 +53,7 @@ static void free_word(entry_t e) {
             free(e.func.compile_func.payload);
             break;
         case constant:
+        case defered:
         case C_word:
         case alias:
             break;
@@ -112,6 +113,9 @@ void amf_display_dictionary(forth_dictionary_t* dic) {
                 break;
             case string:
                 type = "string";
+                break;
+            case defered:
+                type = "defered word";
                 break;
             default:
                 type = "!! INVALID TYPE !!";
@@ -217,14 +221,16 @@ error amf_add_elem(forth_dictionary_t* fd, entry_t e, const char* name) {
         fd->n_entries++;
         sort_dic(fd);
     } else {    // We need to overwrite an element
+        if (old_entry.type != defered) { // Devered words should be replaceble with no warnings
 #if AMF_STORE_NAME
-        warn_msg("Overwriting the word with hash %"PRIx32" named %s.\n", e.hash, old_entry.name);
-        if (strcmp(old_entry.name, e.name)) {
-            error_msg("New entry named %s have the same name as old entry named %s. Hash algorithm should be changed.\n", old_entry.name, e.name);
-        }
+                warn_msg("Overwriting the word with hash %"PRIx32" named %s.\n", e.hash, old_entry.name);
+                if (strcmp(old_entry.name, e.name)) {
+                    error_msg("New entry named %s have the same name as old entry named %s. Hash algorithm should be changed.\n", old_entry.name, e.name);
+                }
 #else
-        warn_msg("Overwriting the word with hash %"PRIx32".\n", e.hash);
+                warn_msg("Overwriting the word with hash %"PRIx32".\n", e.hash);
 #endif
+        }
         entry_t old = fd->entries[index];
         free_word(old);
         fd->entries[index] = e;
@@ -287,6 +293,15 @@ error amf_call_func(forth_state_t* fs, hash_t hash) {
         case constant:
             amf_push_data(fs, e.func.constant);
             break;
+        case defered:
+            error_msg("Calling word %s%s%swhich is defered but not defined.\n",
+#if AMF_STORE_NAME
+                    "\"", e.name, "\" "
+#else
+                    "", "", ""
+#endif
+                    );
+            return not_found;
         case compile_word:
             error_msg("compile_word not used yet.\n");
             return impossible_error;
