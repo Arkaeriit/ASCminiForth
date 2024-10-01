@@ -164,20 +164,21 @@ error amf_executes_node(forth_state_t* fs, struct word_node_s* node) {
 #include <signal.h>
 #define UNUSED(x) (void)(x)
 
+static sigjmp_buf point;
+static void segfault_handler(int sig, siginfo_t *dont_care, void *dont_care_either) {
+    UNUSED(sig);
+    UNUSED(dont_care);
+    UNUSED(dont_care_either);
+    longjmp(point, 1);
+}
+
 error amf_executes_node(forth_state_t* fs, struct word_node_s* node) {
     // Prepare catching of segfaults
-    static sigjmp_buf point;
-    void handler(int sig, siginfo_t *dont_care, void *dont_care_either) {
-        UNUSED(sig);    
-        UNUSED(dont_care);    
-        UNUSED(dont_care_either);    
-        longjmp(point, 1);
-    }
     struct sigaction sa;
     memset(&sa, 0, sizeof(sigaction));
     sigemptyset(&sa.sa_mask);
     sa.sa_flags     = SA_NODEFER;
-    sa.sa_sigaction = handler;
+    sa.sa_sigaction = segfault_handler;
     sigaction(SIGSEGV, &sa, NULL);
 
     // Execute the risky code

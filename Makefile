@@ -18,7 +18,18 @@ TARGET_DIR_BIN := /usr/local/bin
 TARGET_BIN := $(TARGET_DIR_BIN)/$(TARGET)
 
 # Commands
-CC := gcc
+HASGCC := $(shell command -v $(CROSS_COMPILE)gcc 2> /dev/null)
+ifdef HASGCC
+	CC := $(CROSS_COMPILE)gcc
+else
+	HASCLANG := $(shell command -v $(CROSS_COMPILE)clang 2> /dev/null)
+	ifdef HASCLANG
+		CC := $(CROSS_COMPILE)clang
+	else
+		CC := $(CROSS_COMPILE)cc
+	endif
+endif
+AR := $(CROSS_COMPILE)ar
 CP := cp -f
 RM := rm -rf
 
@@ -38,7 +49,7 @@ $(TARGET).bin : $(EXEC_OBJS) lib$(TARGET).a
 	$(CC) $(EXEC_OBJS) -L. -l$(TARGET) $(CFLAGS) -o $@
 
 lib$(TARGET).a : $(C_OBJS)
-	ar -rcs $@ $^
+	$(AR) -rcs $@ $^
 install :
 	mkdir -p $(TARGET_DIR_BIN)
 	$(CP) $(TARGET).bin $(TARGET_BIN)
@@ -48,6 +59,7 @@ uninstall :
 
 clean : 
 	$(RM) *.bin
+	$(RM) *.bin.*
 	$(RM) *.a
 	$(RM) $(C_OBJS)
 	$(RM) $(EXEC_OBJS)

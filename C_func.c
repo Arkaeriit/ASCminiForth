@@ -46,7 +46,7 @@ static void rot(forth_state_t* fs) {
 }
 
 // dup
-static void dup(forth_state_t* fs) {
+static void DUP(forth_state_t* fs) {
     amf_int_t w1 = amf_pop_data(fs);
     amf_push_data(fs, w1);
     amf_push_data(fs, w1);
@@ -722,23 +722,22 @@ static void execute(forth_state_t* fs) {
     amf_call_func(fs, exec_tocken);
 }
 
+// Parse a word and ensure that the execution will stop right after it.
+// This is needed to ensure correct behavior when using evaluate recursively.
+static void extra_safe_parse(forth_state_t* fs, char c) {
+    code_pointer_t pos_copy = fs->pos;
+    fs->pos.current_word = IDLE_CURRENT_WORD;
+    fs->pos.pos_in_word = IDLE_POS_IN_WORD;
+    struct user_word_s* current_word_copy = fs->current_word_copy;
+
+    amf_parse_char(fs->parser, c);
+
+    fs->pos = pos_copy;
+    fs->current_word_copy = current_word_copy;
+}
+
 // evaluate
 static void evaluate(forth_state_t* fs) {
-
-    // Parse a word and ensure that the execution will stop right after it.
-    // This is needed to ensure correct behavior when using evaluate recursively.
-    void extra_safe_parse(forth_state_t* fs, char c) {
-        code_pointer_t pos_copy = fs->pos;
-        fs->pos.current_word = IDLE_CURRENT_WORD;
-        fs->pos.pos_in_word = IDLE_POS_IN_WORD;
-        struct user_word_s* current_word_copy = fs->current_word_copy;
-
-        amf_parse_char(fs->parser, c);
-
-        fs->pos = pos_copy;
-        fs->current_word_copy = current_word_copy;
-    }
-
     size_t len = (size_t) amf_pop_data(fs);
     const char* str = (const char *) amf_pop_data(fs);
     for (size_t i=0; i<len; i++) {
@@ -766,7 +765,7 @@ struct c_func_s all_default_c_func[] = {
     // Stack manipulation
     {"swap", swap},
     {"rot", rot},
-    {"dup", dup},
+    {"dup", DUP},
     {"drop", drop},
     {">r", to_r},
     {"r>", r_from},
