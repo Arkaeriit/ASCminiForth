@@ -441,6 +441,22 @@ static void is_hook(parser_state_t* p) {
     amf_set_alias(p->fs->dic, amf_hash(p->buffer), alias_to, p->buffer);
 }
 
+// Set the name in the buffer to be a defered word
+static void action_of_hook(parser_state_t* p) {
+    p->pnt = 0;
+    POP_HOOK(p, new_word_hook);
+    entry_t entry;
+    if (amf_find(p->fs->dic, &entry, NULL, amf_hash(p->buffer)) != OK || !(entry.type == alias || entry.type == defered)) {
+        error_msg("Using action-of on invalid values.");
+    }
+    hash_t word_hash = amf_hash(p->buffer);
+    char tmp[AMF_MAX_NUMBER_DIGIT];
+    snprintf(p->buffer, PARSER_BUFFER_SIZE, "%s", amf_base_format(word_hash, tmp, p->fs->base));
+    p->new_word_hook(p);
+    snprintf(p->buffer, strlen("defer@")+1, "defer@");
+    p->new_word_hook(p);
+}
+
 // Ignore the buffer
 static void end_of_comment_hook(parser_state_t* p) {
     POP_HOOK(p, end_block_hook);
@@ -604,6 +620,14 @@ static void is(parser_state_t* p, const char* payload) {
     p->new_word_hook = is_hook;
 }
 
+// action-of
+static void action_of(parser_state_t* p, const char* payload) {
+    UNUSED(payload);
+    p->pnt = 0;
+    PUSH_HOOK(p, new_word_hook);
+    p->new_word_hook = action_of_hook;
+}
+
 // Generic word used by macros
 static void macro(parser_state_t* p, const char* payload) {
     p->pnt = 0;
@@ -651,6 +675,7 @@ struct compile_func_s all_default_compile_words[] = {
     {".(", compile_time_print},
     {"defer", defer},
     {"is", is},
+    {"action-of", action_of},
 };
 
 // Register the previously defined words
