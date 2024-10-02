@@ -766,6 +766,15 @@ static void defer_fetch(forth_state_t* fs) {
     amf_push_data(fs, (amf_int_t) entry.func.alias_to);
 }
 
+// defer!
+static void defer_store(forth_state_t* fs) {
+    hash_t alias_token = (hash_t) amf_pop_data(fs);
+    hash_t alias_to_token = (hash_t) amf_pop_data(fs);
+    if (amf_set_alias(fs->dic, alias_token, alias_to_token, "from defer!") != OK) {
+        error_msg("Using defer! on invalid values.");
+    }
+}
+
 
 struct c_func_s {
     const char* name;
@@ -869,6 +878,7 @@ struct c_func_s all_default_c_func[] = {
     {"recurse", recurse},
     {"pad", pad},
     {"defer@", defer_fetch},
+    {"defer!", defer_store},
 };
 
 // Register all the default C_func

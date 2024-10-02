@@ -438,7 +438,7 @@ static void is_hook(parser_state_t* p) {
     p->pnt = 0;
     POP_HOOK(p, new_word_hook);
     hash_t alias_to = (hash_t) amf_pop_data(p->fs);
-    amf_set_alias(p->fs->dic, p->buffer, alias_to);
+    amf_set_alias(p->fs->dic, amf_hash(p->buffer), alias_to, p->buffer);
 }
 
 // Ignore the buffer

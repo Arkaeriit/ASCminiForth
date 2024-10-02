@@ -126,6 +126,8 @@ DEFER TEST.DEFER-AND-IS
 : (defered-okay) 1 is_true CR ;
 ' (defered-okay) IS defered-okay
 : TEST.DEFER@ ." Testing defer@ " ['] (defered-okay) ['] defered-okay DEFER@ = is_true CR ;
+DEFER defered-defered-okay
+: TEST.DEFER! ." Testing defer! " ['] defered-okay ['] defered-defered-okay DEFER! defered-defered-okay ;
 
 ( EVALUATION )
 : p33-def s" : p33 33 ;" ;
@@ -154,7 +156,7 @@ TEST.MEM TEST.CMEM TEST., TEST.C, TEST.ALIGN TEST.UNUSED
 TEST.BASE_RECORD TEST.BASE_PRINT
 TEST.EMIT TEST.BL
 TEST.CONSTANT TEST.VARIABLE
-TEST.EXECUTE TEST.EVALUATE TEST.RECURSE TEST.NONAME TEST.DEFER-AND-IS TEST.DEFER@
+TEST.EXECUTE TEST.EVALUATE TEST.RECURSE TEST.NONAME TEST.DEFER-AND-IS TEST.DEFER@ TEST.DEFER!
 TEST.TYPE TEST.CMOVE TEST.STRING-SIZE TEST.STRING-BASE TEST.COUNT TEST.CHAR TEST.NUMERIC_CONVERSION
 ." Testing stack state: " 33 = is_true CR ;
 

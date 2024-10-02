@@ -246,7 +246,7 @@ error amf_add_elem(forth_dictionary_t* fd, entry_t e, const char* name) {
             }
         }
         if (strcmp(name_upper, name)) {
-            return amf_set_alias(fd, name_upper, e.hash);
+            return amf_set_alias(fd, amf_hash(name_upper), e.hash, name_upper);
         }
     }
 #else
@@ -256,9 +256,9 @@ error amf_add_elem(forth_dictionary_t* fd, entry_t e, const char* name) {
 }
 
 // This function sets the first hash to be an alias to the second.
-error amf_set_alias(forth_dictionary_t* fd, const char* name, hash_t alias_to) {
+error amf_set_alias(forth_dictionary_t* fd, hash_t word_hash, hash_t alias_to, const char* name) {
     entry_t new_entry;
-    new_entry.hash = amf_hash(name);
+    new_entry.hash = word_hash;
     new_entry.type = alias;
     new_entry.func.alias_to = alias_to;
 #if AMF_STORE_NAME
