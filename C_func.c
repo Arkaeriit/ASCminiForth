@@ -755,6 +755,17 @@ static void pad(forth_state_t* fs) {
     amf_push_data(fs, (amf_int_t) fs->pad);
 }
 
+// defer@
+static void defer_fetch(forth_state_t* fs) {
+    hash_t exec_tocken = (hash_t) amf_pop_data(fs);
+    entry_t entry;
+    if (amf_find(fs->dic, &entry, NULL, exec_tocken) != OK || entry.type != alias) {
+        error_msg("Using defer@ on invalid value.");
+        amf_abort(fs);
+    }
+    amf_push_data(fs, (amf_int_t) entry.func.alias_to);
+}
+
 
 struct c_func_s {
     const char* name;
@@ -857,6 +868,7 @@ struct c_func_s all_default_c_func[] = {
     {"(evaluate)", evaluate},
     {"recurse", recurse},
     {"pad", pad},
+    {"defer@", defer_fetch},
 };
 
 // Register all the default C_func
