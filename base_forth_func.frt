@@ -131,3 +131,17 @@ variable <#-cnt
 : u.r swap <# #s #> 2drop (x.r) type space ;
 : .r swap <# #n #> 2drop (x.r) type space ;
 
+: (to-digit) ( c -- n )
+    dup char a < 0= if 10 + char a - exit then
+    dup char A < 0= if 10 + char A - exit then
+    dup char 9 >  if drop -1       exit then
+                            char 0 - ;
+: (is-digit?) ( c -- b ) (to-digit) dup 0 < 0= swap base @ < and ;
+: >number ( ud1 c-addr1 u1 -- ud2 c-addr2 u2 ) dup 0 do
+    over c@ (is-digit?) 0= if leave then
+    1- rot rot dup c@ swap char+ swap
+    ( u1- ud1 ca+ char )
+    (to-digit) rot base @ * +
+    ( u1- ca+ ud1+ )
+    swap rot loop ;
+
