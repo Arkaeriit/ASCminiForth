@@ -74,6 +74,7 @@
     swap 2dup c! 1+ swap
 loop 2drop ;
 : erase ( addr u -- ) 0 fill ;
+: move ( addr addr u -- ) 0 ?do over c@ over c! 1+ swap 1+ swap loop 2drop ;
 
 ( ---------------------------------- Display --------------------------------- )
 
