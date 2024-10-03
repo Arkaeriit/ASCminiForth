@@ -331,8 +331,8 @@ static void J(forth_state_t* fs) {
 // +loop
 static void plus_loop(forth_state_t* fs) {
     CHECK_BEING_IN_WORD(fs);
-    amf_int_t current_index = amf_pop_code(fs);
-    amf_int_t end_index = amf_pop_code(fs);
+    amf_unsigned_t current_index = amf_pop_code(fs);
+    amf_unsigned_t end_index = amf_pop_code(fs);
     amf_int_t increment = amf_pop_data(fs);
     debug_msg("loop % 4li % 4li % 4li % 4zi.\n", current_index, end_index, increment, fs->loop_control->stack_pointer);
     current_index += increment;
