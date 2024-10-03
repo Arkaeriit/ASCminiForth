@@ -14,8 +14,8 @@
 : tuck ( x1 x2 -- x2 x1 x2 ) dup rot swap ;
 : 2over ( x1 x2 x3 x4 -- x1 x2 x3 x4 x1 x2 ) 3 pick 3 pick ;
 : 2swap ( x1 x2 x3 x4 -- x3 x4 x1 x2) rot >r rot r> ;
-: 2>r ( x1 x2 -- ) ( -- x1 x2 ) swap >r >r ;
-: 2r> ( -- x1 x2 ) ( x1 x2 -- ) r> r> swap ;
+:macro 2>r ( x1 x2 -- ) ( -- x1 x2 ) swap >r >r ;
+:macro 2r> ( -- x1 x2 ) ( x1 x2 -- ) r> r> swap ;
 : ?dup ( n1 -- n1 | [n1 n1] )dup if dup then ;
 :macro 2r@ ( -- x1 x2 ) ( x1 x2 -- x1 x2 ) r> r> 2dup >r >r swap ;
 :macro r@ ( -- x1 ) ( x1 -- x1 ) r> dup r> ;
