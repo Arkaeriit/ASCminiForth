@@ -334,7 +334,7 @@ static void plus_loop(forth_state_t* fs) {
     amf_unsigned_t current_index = amf_pop_code(fs);
     amf_unsigned_t end_index = amf_pop_code(fs);
     amf_int_t increment = amf_pop_data(fs);
-    debug_msg("loop % 4li % 4li % 4li % 4zi.\n", current_index, end_index, increment, fs->loop_control->stack_pointer);
+    debug_msg("loop % 4li % 4li % 4li % 4zi.\n", current_index, end_index, increment, fs->code->stack_pointer);
     current_index += increment;
     if ( ((increment >= 0) && (current_index < end_index)) || ((increment < 0) && (current_index >= end_index)) ) { // Increment of 0 should do an infinite loop
         amf_push_code(fs, end_index);
