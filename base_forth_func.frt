@@ -68,6 +68,13 @@
 :macro buffer: ( n -- ) ( consume a name ) align here swap allot constant ;
 :macro variable ( -- ) ( consume a name ) cell buffer: ;
 
+( ---------------------------- Memory manipulation --------------------------- )
+
+: fill ( addr u c -- ) swap 0 ?do
+    swap 2dup c! 1+ swap
+loop 2drop ;
+: erase ( addr u -- ) 0 fill ;
+
 ( ---------------------------------- Display --------------------------------- )
 
 : decimal ( -- ) 10 base ! ;
