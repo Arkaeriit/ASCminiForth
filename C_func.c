@@ -775,6 +775,52 @@ static void defer_store(forth_state_t* fs) {
     }
 }
 
+// Given a string, return true if i's a valid query for environment?
+// Also put in the return pointer the constant to put on the stack.
+static bool environment_reply(const char* query, size_t size, amf_int_t* ret) {
+    if (!strncmp(query, "/COUNTED-STRING", size)) {
+        *ret = 0xFF;
+    } else if (!strncmp(query, "/HOLD", size)) {
+#warning "Use a constant"
+        *ret = 64;
+    } else if (!strncmp(query, "/PAD", size)) {
+        *ret = PAD_SIZE;
+    } else if (!strncmp(query, "ADDRESS-UNIT-BITS", size)) {
+        *ret = sizeof(char) * 8;
+    } else if (!strncmp(query, "FLOORED", size)) {
+        *ret = false; // We use sm/rem to define other math functions
+    } else if (!strncmp(query, "MAX-CHAR", size)) {
+        *ret = 0xFF;
+    } else if (!strncmp(query, "MAX-D", size)) {
+        *ret = ((amf_unsigned_t) ~0) >> 1;
+    } else if (!strncmp(query, "MAX-N", size)) {
+        *ret = ((amf_unsigned_t) ~0) >> 1;
+    } else if (!strncmp(query, "MAX-U", size)) {
+        *ret = ~0;
+    } else if (!strncmp(query, "MAX-UD", size)) {
+        *ret = ~0;
+    } else if (!strncmp(query, "RETURN-STACK-CELLS", size)) {
+        *ret = CODE_STACK_SIZE;
+    } else if (!strncmp(query, "STACK-CELLS", size)) {
+        *ret = DATA_STACK_SIZE;
+    } else {
+        return false;
+    }
+    return true;
+}
+
+// environment?
+static void environment_query(forth_state_t* fs) {
+    size_t size = (size_t) amf_pop_data(fs);
+    const char* str = (const char*) amf_pop_data(fs);
+    amf_int_t ret;
+    bool query_ret = environment_reply(str, size, &ret);
+    amf_push_data(fs, FORTH_BOOL(query_ret));
+    if (query_ret) {
+        amf_push_data(fs, ret);
+    }
+}
+
 
 struct c_func_s {
     const char* name;
@@ -879,6 +925,7 @@ struct c_func_s all_default_c_func[] = {
     {"pad", pad},
     {"defer@", defer_fetch},
     {"defer!", defer_store},
+    {"environment?", environment_query},
 };
 
 // Register all the default C_func
