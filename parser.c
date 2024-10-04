@@ -626,6 +626,29 @@ static void action_of(parser_state_t* p, const char* payload) {
     p->new_word_hook = action_of_hook;
 }
 
+// literal
+static void literal(parser_state_t* p, const char* payload) {
+    UNUSED(payload);
+    amf_int_t value = amf_pop_data(p->fs);
+    hook_number(p, value);
+}
+
+// [
+static void left_bracket(parser_state_t* p, const char* payload) {
+    UNUSED(payload);
+    p->pnt = 0;
+    PUSH_HOOK(p, new_word_hook);
+    p->new_word_hook = run_next_word_hook;
+}
+
+// ]
+static void right_bracket(parser_state_t* p, const char* payload) {
+    UNUSED(payload);
+    p->pnt = 0;
+    POP_HOOK(p, new_word_hook);
+}
+
+
 // Generic word used by macros
 static void macro(parser_state_t* p, const char* payload) {
     p->pnt = 0;
@@ -674,6 +697,9 @@ struct compile_func_s all_default_compile_words[] = {
     {"defer", defer},
     {"is", is},
     {"action-of", action_of},
+    {"literal", literal},
+    {"[", left_bracket},
+    {"]", right_bracket},
 };
 
 // Register the previously defined words
