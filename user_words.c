@@ -51,7 +51,7 @@ word_node_t amf_compile_node(const char* str, int base) {
         ret.content.value = num;
         // Checking if it is a raw string
     } else {
-        debug_msg("Registering word %s with hash %" AMF_INT_PRINT ".\n", str, amf_hash(str));
+        debug_msg("Registering word %s with hash %" AMF_HASH_PRINT ".\n", str, amf_hash(str));
         ret.type = normal_word;
         ret.content.hash = amf_hash(str);
     }

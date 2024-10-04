@@ -7,7 +7,6 @@
 // Typedef of the number used everywhere
 typedef intptr_t amf_int_t;
 typedef uintptr_t amf_unsigned_t;
-#define AMF_INT_PRINT PRIdPTR
 
 // Size used to encode the word identifier and the index of each subword in a word
 #define AMF_HASH_SIZE_BITS         24

@@ -276,7 +276,7 @@ error amf_call_func(forth_state_t* fs, hash_t hash) {
     entry_t e;
     error find_rc = amf_find(fs->dic, &e, NULL, hash);
     if (find_rc != OK) {
-        error_msg("Unable to find desired function with hash %" AMF_INT_PRINT ".\n", hash);
+        error_msg("Unable to find desired function with hash %" AMF_HASH_PRINT ".\n", hash);
         return find_rc;
     }
 #if AMF_STORE_NAME

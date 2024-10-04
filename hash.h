@@ -11,6 +11,7 @@
 typedef uint32_t hash_t;
 #define AMF_HASH_MASK     ((1 << (AMF_HASH_SIZE_BITS)) - 1)
 #define AMF_RAW_HASH_MASK (AMF_HASH_MASK >> 1)
+#define AMF_HASH_PRINT PRIx32
 #define IDLE_CURRENT_WORD (hash_t) (~0 & AMF_HASH_MASK)
 
 
