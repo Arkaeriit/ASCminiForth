@@ -165,6 +165,19 @@ error amf_register_file(parser_state_t* p, const char* filemane) {
 
 #define UNUSED(x) (void)(x)
 
+// Run in the new word hook a number
+static void hook_number(parser_state_t* p, amf_int_t number) {
+    char tmp[AMF_MAX_NUMBER_DIGIT];
+    snprintf(p->buffer, PARSER_BUFFER_SIZE, "%s", amf_base_format(number, tmp, p->fs->base));
+    p->new_word_hook(p);
+}
+
+// Run the string in the new word hook
+static void hook_str(parser_state_t* p, const char* str) {
+    snprintf(p->buffer, PARSER_BUFFER_SIZE, "%s", str);
+    p->new_word_hook(p);
+}
+
 // Error when no hooks registered
 static void invalid_hook(parser_state_t* p) {
     UNUSED(p);
@@ -218,11 +231,8 @@ static void const_hook(parser_state_t* p) {
 // Replace the new word with its exec token
 static void get_exec_token_hook(parser_state_t* p) {
     hash_t hash = amf_hash(p->buffer);
-    char buffer[64];
-    char* hash_as_string = amf_base_format(hash, buffer, p->fs->base);
-    strcpy(p->buffer, hash_as_string);
     POP_HOOK(p, new_word_hook);
-    p->new_word_hook(p);
+    hook_number(p, hash);
 }
 
 // Register a string
@@ -234,31 +244,24 @@ static void register_string_hook(parser_state_t* p) {
     }
     hash_t str_id = amf_register_string(p->fs->dic, str, size);
     char string_type = p->buffer[0];
-    char tmp[AMF_MAX_NUMBER_DIGIT];
-    snprintf(p->buffer, PARSER_BUFFER_SIZE, "%s", amf_base_format(str_id, tmp, p->fs->base));
-    p->new_word_hook(p);
-    snprintf(p->buffer, strlen("execute")+1, "execute");
-    p->new_word_hook(p);
+    hook_number(p, str_id);
+    hook_str(p, "execute");
     switch (string_type) {
         case 's':
         case 'S':
             break;
         case '.':
-            snprintf(p->buffer, strlen("type")+1, "type");
-            p->new_word_hook(p);
+            hook_str(p, "type");
             break;
         case 'a': // For abort"
         case 'A':
-            snprintf(p->buffer, strlen("type")+1, "type");
-            p->new_word_hook(p);
-            snprintf(p->buffer, strlen("cr")+1, "cr");
-            p->new_word_hook(p);
-            snprintf(p->buffer, strlen("abort")+1, "abort");
-            p->new_word_hook(p);
+            hook_str(p, "type");
+            hook_str(p, "cr");
+            hook_str(p, "abort");
             break;
         case 'c':
         case 'C':
-            snprintf(p->buffer, strlen("drop")+1, "drop");
+            hook_str(p, "drop");
             p->new_word_hook(p); // For counted string, we drop the length value
             {
                 entry_t e;
@@ -420,10 +423,8 @@ static void string_macro_hook(parser_state_t* p) {
 static void char_hook(parser_state_t* p) {
     POP_HOOK(p, new_word_hook);
     size_t old_ptn = amf_stack_pop(p->hooks_stack);
-    char tmp[AMF_MAX_NUMBER_DIGIT];
     char letter = p->buffer[old_ptn];
-    snprintf(p->buffer, PARSER_BUFFER_SIZE, "%s", amf_base_format(letter, tmp, p->fs->base));
-    p->new_word_hook(p);
+    hook_number(p, letter);
 }
 
 // Set the name in the buffer to be a defered word
@@ -450,11 +451,8 @@ static void action_of_hook(parser_state_t* p) {
         error_msg("Using action-of on invalid values.");
     }
     hash_t word_hash = amf_hash(p->buffer);
-    char tmp[AMF_MAX_NUMBER_DIGIT];
-    snprintf(p->buffer, PARSER_BUFFER_SIZE, "%s", amf_base_format(word_hash, tmp, p->fs->base));
-    p->new_word_hook(p);
-    snprintf(p->buffer, strlen("defer@")+1, "defer@");
-    p->new_word_hook(p);
+    hook_number(p, word_hash);
+    hook_str(p, "defer@");
 }
 
 // Ignore the buffer
