@@ -5,6 +5,9 @@
 :macro loop ( -- ) 1 +loop ;
 :macro again ( -- ) 0 until ;
 
+: case ( -- ) ;
+: endcase ( x -- ) drop ;
+
 ( ---------------------------- Stack manipulation ---------------------------- )
 
 : 2dup ( x1 x2 -- x1 x2 x1 x2 )swap dup rot dup rot swap ;

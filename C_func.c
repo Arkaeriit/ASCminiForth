@@ -403,6 +403,50 @@ static void question_do(forth_state_t* fs) {
     }
 }
 
+// of
+static void of(forth_state_t* fs) {
+    amf_int_t test_case = amf_pop_data(fs);
+    amf_int_t value = amf_pop_data(fs);
+    if (test_case != value) {
+        hash_t endof_hash = amf_hash("endof");
+        hash_t ENDOF_hash = amf_hash("ENDOF");
+        hash_t endcase_hash = amf_hash("endcase");
+        hash_t ENDCASE_hash = amf_hash("ENDCASE");
+        hash_t case_hash = amf_hash("case");
+        hash_t CASE_hash = amf_hash("CASE");
+        int case_depth = 0;
+        size_t i = fs->pos.pos_in_word;
+        while ((!CHECK_AGAINST_HASH(fs, i, endof_hash, ENDOF_hash)) || (case_depth > 0)) {
+            if (CHECK_AGAINST_HASH(fs, i, case_hash, CASE_hash)) {
+                case_depth++;
+            } else if (CHECK_AGAINST_HASH(fs, i, endcase_hash, ENDCASE_hash)) {
+                case_depth--;
+            }
+            i++;
+        }
+        fs->pos.pos_in_word = i+1;
+        amf_push_data(fs, value);
+    }
+}
+
+// endof
+static void endof(forth_state_t* fs) {
+    hash_t endcase_hash = amf_hash("endcase");
+    hash_t ENDCASE_hash = amf_hash("ENDCASE");
+    hash_t case_hash = amf_hash("case");
+    hash_t CASE_hash = amf_hash("CASE");
+    int case_depth = 1;
+    size_t i = fs->pos.pos_in_word;
+    while (case_depth) {
+        if (CHECK_AGAINST_HASH(fs, i, case_hash, CASE_hash)) {
+            case_depth++;
+        } else if (CHECK_AGAINST_HASH(fs, i, endcase_hash, ENDCASE_hash)) {
+            case_depth--;
+        }
+        i++;
+    }
+    fs->pos.pos_in_word = i;
+}
 
 // Memory management
 
@@ -868,6 +912,8 @@ struct c_func_s all_default_c_func[] = {
     {"unloop", unloop},
     {"leave", leave},
     {"?do", question_do},
+    {"of", of},
+    {"endof", endof},
     // Memory management
     {"allot", allot},
     {"cells", cells},
