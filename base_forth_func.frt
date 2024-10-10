@@ -131,8 +131,8 @@ variable <#-cnt
 : (x.r) ( n -- addr n ) <#-cnt @ - dup 0 > if
     0 do bl hold loop 0
     then #> ;
-: u.r swap <# #s #> 2drop (x.r) type space ;
-: .r swap <# #n #> 2drop (x.r) type space ;
+: u.r swap <# #s #> 2drop (x.r) type ;
+: .r swap <# #n #> 2drop (x.r) type ;
 
 : (to-digit) ( c -- n )
     dup char a < 0= if 10 + char a - exit then
