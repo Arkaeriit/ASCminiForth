@@ -26,7 +26,7 @@ amf_int_t amf_stack_pop(amf_stack_t* stack) {
 #if AMF_STACK_BOUND_CHECKS
     if (stack->stack_pointer == 0) {
         stack->overflowed = 1;
-        return;
+        return 0;
     }
 #endif
     amf_int_t ret = stack->stack[stack->stack_pointer - 1];
