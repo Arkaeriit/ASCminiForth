@@ -4,6 +4,7 @@
 // Format a number in any base. Assumes that the size given for the string is
 // large enough. The string that should be used is made with the memory from
 // `out`.
+// TODO: replace it with the use of >number
 char* amf_base_format(amf_int_t i, char* out, int base) {
     bool negative = i < 0;
     i = (negative ? -i : i);
