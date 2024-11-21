@@ -215,7 +215,7 @@ static void xor(forth_state_t* fs) {
 // Flow control
 
 #define CHECK_BEING_IN_WORD(fs)                                             \
-    if (fs->pos.current_word == IDLE_CURRENT_WORD) {                        \
+    if (fs->pos.current_word == SEF_IDLE_CURRENT_WORD) {                    \
         error_msg("Control flow impossible outside of word definition.\n"); \
         return;                                                             \
     }                                                                        
@@ -719,8 +719,8 @@ static void exit_code(forth_state_t* fs) {
 // bye
 static void bye(forth_state_t* fs) {
     fs->running = false;
-    fs->pos.pos_in_word = IDLE_POS_IN_WORD;
-    fs->pos.current_word = IDLE_CURRENT_WORD;
+    fs->pos.pos_in_word = SEF_IDLE_POS_IN_WORD;
+    fs->pos.current_word = SEF_IDLE_CURRENT_WORD;
 }
 
 // words
@@ -770,9 +770,9 @@ static void execute(forth_state_t* fs) {
 // This is needed to ensure correct behavior when using evaluate recursively.
 static void extra_safe_parse(forth_state_t* fs, char c) {
     code_pointer_t pos_copy = fs->pos;
-    fs->pos.current_word = IDLE_CURRENT_WORD;
-    fs->pos.pos_in_word = IDLE_POS_IN_WORD;
-    struct user_word_s* current_word_copy = fs->current_word_copy;
+    fs->pos.current_word = SEF_IDLE_CURRENT_WORD;
+    fs->pos.pos_in_word = SEF_IDLE_POS_IN_WORD;
+    struct sef_compiled_forth_word_s* current_word_copy = fs->current_word_copy;
 
     sef_parse_char(fs->parser, c);
 
@@ -828,7 +828,7 @@ static bool environment_reply(const char* query, size_t size, sef_int_t* ret) {
 #warning "Use a constant"
         *ret = 64;
     } else if (!strncmp(query, "/PAD", size)) {
-        *ret = PAD_SIZE;
+        *ret = SEF_PAD_SIZE;
     } else if (!strncmp(query, "ADDRESS-UNIT-BITS", size)) {
         *ret = sizeof(char) * 8;
     } else if (!strncmp(query, "FLOORED", size)) {
@@ -844,9 +844,9 @@ static bool environment_reply(const char* query, size_t size, sef_int_t* ret) {
     } else if (!strncmp(query, "MAX-UD", size)) {
         *ret = ~0;
     } else if (!strncmp(query, "RETURN-STACK-CELLS", size)) {
-        *ret = CODE_STACK_SIZE;
+        *ret = SEF_CODE_STACK_SIZE;
     } else if (!strncmp(query, "STACK-CELLS", size)) {
-        *ret = DATA_STACK_SIZE;
+        *ret = SEF_DATA_STACK_SIZE;
     } else {
         return false;
     }

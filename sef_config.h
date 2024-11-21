@@ -31,15 +31,15 @@ typedef uintptr_t sef_unsigned_t;
 #define SEF_PROGRAMMING_TOOLS 1
 
 // Depth of the memory blocks
-#define CODE_STACK_SIZE 1000
-#define DATA_STACK_SIZE 1000
-#define COMPILATION_STACK_SIZE 100
+#define SEF_CODE_STACK_SIZE 1000
+#define SEF_DATA_STACK_SIZE 1000
+#define SEF_COMPILATION_STACK_SIZE 100
 #define FORTH_MEMORY_SIZE 1000000
-#define PAD_SIZE 100
+#define SEF_PAD_SIZE 100
 
 // Parser configuration
-#define PARSER_BUFFER_SIZE 1000
-#define PARSER_CUSTOM_NAME_SIZE 50
+#define SEF_PARSER_BUFFER_SIZE 1000
+#define SEF_PARSER_CUSTOM_NAME_SIZE 50
 
 // Case-sensitivity
 #define SEF_CASE_INSENSITIVE 1

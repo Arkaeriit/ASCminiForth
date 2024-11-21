@@ -12,7 +12,7 @@ typedef uint32_t hash_t;
 #define SEF_HASH_MASK     ((1 << (SEF_HASH_SIZE_BITS)) - 1)
 #define SEF_RAW_HASH_MASK (SEF_HASH_MASK >> 1)
 #define SEF_HASH_PRINT PRIx32
-#define IDLE_CURRENT_WORD (hash_t) (~0 & SEF_HASH_MASK)
+#define SEF_IDLE_CURRENT_WORD (hash_t) (~0 & SEF_HASH_MASK)
 
 
 #include "SEForth.h"

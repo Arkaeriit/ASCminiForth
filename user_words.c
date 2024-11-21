@@ -12,7 +12,7 @@ static bool str_to_num(const char* str, sef_int_t* num, int base);
 // force_hash can be set to a non 0 value to force the use of the given hash
 // instead of `name`'s hash.
 error sef_compile_user_word(forth_dictionary_t* fd, const char* name, size_t subword_n, char** subwords, int base, hash_t force_hash) {
-    user_sef_int_t* def = malloc(sizeof(user_sef_int_t));
+    sef_compiled_forth_word_t* def = malloc(sizeof(sef_compiled_forth_word_t));
     def->size = subword_n;
     if (def->size >= (1 << SEF_WORD_CONTENT_SIZE_BITS)) {
         free(def);
@@ -167,7 +167,7 @@ static bool str_to_num(const char* str, sef_int_t* num, int base) {
 }
 
 // This functions frees the memory used in an user word
-void sef_clean_user_word(user_sef_int_t* w) {
+void sef_clean_user_word(sef_compiled_forth_word_t* w) {
     for (size_t i = 0; i < w->size; i++) {
         word_node_t n = w->content[i];
         switch (n.type) {

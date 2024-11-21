@@ -15,12 +15,12 @@ parser_state_t* sef_init_parser(void) {
     parser_state_t* ret = malloc(sizeof(parser_state_t));
     ret->fs = sef_init_state(ret);
     register_compile_time_words_list(ret);
-    ret->buffer = malloc(PARSER_BUFFER_SIZE);
-    ret->new_word_buffer = malloc(PARSER_BUFFER_SIZE);
-    ret->custom_word_name = malloc(PARSER_CUSTOM_NAME_SIZE);
+    ret->buffer = malloc(SEF_PARSER_BUFFER_SIZE);
+    ret->new_word_buffer = malloc(SEF_PARSER_BUFFER_SIZE);
+    ret->custom_word_name = malloc(SEF_PARSER_CUSTOM_NAME_SIZE);
     ret->new_word_hook = run_next_word_hook;
     ret->end_block_hook = invalid_hook;
-    ret->hooks_stack = sef_stack_init(COMPILATION_STACK_SIZE);
+    ret->hooks_stack = sef_stack_init(SEF_COMPILATION_STACK_SIZE);
     ret->pnt = 0;
     ret->in_word = false;
     ret->in_def = false;
@@ -168,13 +168,13 @@ error sef_register_file(parser_state_t* p, const char* filemane) {
 // Run in the new word hook a number
 static void hook_number(parser_state_t* p, sef_int_t number) {
     char tmp[SEF_MAX_NUMBER_DIGIT];
-    snprintf(p->buffer, PARSER_BUFFER_SIZE, "%s", sef_base_format(number, tmp, p->fs->base));
+    snprintf(p->buffer, SEF_PARSER_BUFFER_SIZE, "%s", sef_base_format(number, tmp, p->fs->base));
     p->new_word_hook(p);
 }
 
 // Run the string in the new word hook
 static void hook_str(parser_state_t* p, const char* str) {
-    snprintf(p->buffer, PARSER_BUFFER_SIZE, "%s", str);
+    snprintf(p->buffer, SEF_PARSER_BUFFER_SIZE, "%s", str);
     p->new_word_hook(p);
 }
 

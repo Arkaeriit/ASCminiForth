@@ -17,10 +17,10 @@ enum entry_type {
 typedef struct {
     union {
         C_callback_t C_func;                // To define
-        user_sef_int_t* F_word;             // Content of words defined in Forth
+        sef_compiled_forth_word_t* F_word;  // Content of words defined in Forth
         struct {                            // Function to call on the parser
             compile_callback_t func;
-            char* payload; // Extra argument to the compile func, should be freeable
+            char* payload;                  // Extra argument to the compile func, should be freeable
         } compile_func;
         sef_int_t constant;                 // Value written in hard
         struct {                            // Strings stored in the dictionary

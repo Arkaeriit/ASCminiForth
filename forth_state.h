@@ -26,7 +26,7 @@ typedef struct {
 } code_pointer_t;
 
 #define SEF_POS_IN_WORD_MASK ((1 << SEF_WORD_CONTENT_SIZE_BITS) - 1)
-#define IDLE_POS_IN_WORD     (size_t) (~0 & SEF_POS_IN_WORD_MASK)
+#define SEF_IDLE_POS_IN_WORD (size_t) (~0 & SEF_POS_IN_WORD_MASK)
 
 static inline code_pointer_t sef_int_to_code_pointer(sef_int_t i) {
     code_pointer_t ret;
@@ -56,7 +56,7 @@ typedef struct {
     // The dictionary
     struct forth_dictionary_s* dic;
     // A copy of the word being processed, to ensure fast access
-    struct user_word_s* current_word_copy;
+    struct sef_compiled_forth_word_s* current_word_copy;
     // The current word being processed, its hash and the position in it
     code_pointer_t pos;
     // The base internal variable used by words such as . and when inputing numbers

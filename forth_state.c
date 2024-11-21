@@ -6,15 +6,15 @@
 forth_state_t* sef_init_state(struct parser_state_s* parser) {
     forth_state_t* ret = malloc(sizeof(forth_state_t));
     ret->parser = parser;
-    ret->data = sef_stack_init(DATA_STACK_SIZE);
-    ret->code = sef_stack_init(CODE_STACK_SIZE);
+    ret->data = sef_stack_init(SEF_DATA_STACK_SIZE);
+    ret->code = sef_stack_init(SEF_CODE_STACK_SIZE);
     ret->forth_memory = malloc(FORTH_MEMORY_SIZE);
     ret->forth_memory_index = 0;
-    ret->pad = malloc(PAD_SIZE);
+    ret->pad = malloc(SEF_PAD_SIZE);
     ret->dic = sef_init_dic();
     sef_register_default_C_func(ret);
-    ret->pos.current_word = IDLE_CURRENT_WORD;
-    ret->pos.pos_in_word = IDLE_POS_IN_WORD;
+    ret->pos.current_word = SEF_IDLE_CURRENT_WORD;
+    ret->pos.pos_in_word = SEF_IDLE_POS_IN_WORD;
     ret->base = 10;
     ret->running = true;
 #if SEF_CLI_ARGS
@@ -40,8 +40,8 @@ void sef_clean_state(forth_state_t* fs) {
 // Puts the state back in an idle state, with all stacks but the data stack
 // empty and no word being executed.
 void sef_quit(forth_state_t* fs) {
-    fs->pos.current_word = IDLE_CURRENT_WORD;
-    fs->pos.pos_in_word = IDLE_POS_IN_WORD;
+    fs->pos.current_word = SEF_IDLE_CURRENT_WORD;
+    fs->pos.pos_in_word = SEF_IDLE_POS_IN_WORD;
     fs->code->stack_pointer = 0;
 }
 
@@ -124,8 +124,8 @@ void sef_exit(forth_state_t* fs) {
 // Return false if there is nothing to do
 // Return true if there is something to do
 bool sef_run_step(forth_state_t* fs) {
-    if (fs->pos.current_word == IDLE_CURRENT_WORD &&   // Nothing to do, we are not executing code
-        fs->pos.pos_in_word == IDLE_POS_IN_WORD) {
+    if (fs->pos.current_word == SEF_IDLE_CURRENT_WORD &&   // Nothing to do, we are not executing code
+        fs->pos.pos_in_word == SEF_IDLE_POS_IN_WORD) {
         debug_msg("Nothing to do, idleing.\n");
         return false;
     }
