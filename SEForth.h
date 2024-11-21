@@ -4,8 +4,8 @@
 |to fix this order in a single file.                               |
 \-----------------------------------------------------------------*/
 
-#ifndef ASC_MINI_FORTH_H
-#define ASC_MINI_FORTH_H
+#ifndef SEFORTH_H
+#define SEFORTH_H
 
 #include "stdlib.h"
 #include "amf_config.h"

@@ -1,7 +1,7 @@
 #ifndef AMF_IO_H
 #define AMF_IO_H
 
-#include "ASCminiForth.h"
+#include "SEForth.h"
 
 char amf_input(void);
 void amf_output(char ch);

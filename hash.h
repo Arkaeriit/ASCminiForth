@@ -15,7 +15,7 @@ typedef uint32_t hash_t;
 #define IDLE_CURRENT_WORD (hash_t) (~0 & AMF_HASH_MASK)
 
 
-#include "ASCminiForth.h"
+#include "SEForth.h"
 
 static_assert((sizeof(hash_t) * 8) >= AMF_HASH_SIZE_BITS, "hash_t should be able to contain enough bytes.");
 

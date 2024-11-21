@@ -1,4 +1,4 @@
-#include "ASCminiForth.h"
+#include "SEForth.h"
 #ifndef FORTH_STATE_H
 #define FORTH_STATE_H
 

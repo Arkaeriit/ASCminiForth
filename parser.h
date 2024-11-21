@@ -1,4 +1,4 @@
-#include "ASCminiForth.h"
+#include "SEForth.h"
 #ifndef AMF_SHELL_H
 #define AMF_SHELL_H
 

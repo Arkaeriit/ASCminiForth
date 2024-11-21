@@ -1,4 +1,4 @@
-#include "ASCminiForth.h"
+#include "SEForth.h"
 #ifndef DICTIONARY_H
 #define DICTIONARY_H
 

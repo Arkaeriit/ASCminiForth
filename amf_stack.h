@@ -1,4 +1,4 @@
-#include "ASCminiForth.h"
+#include "SEForth.h"
 #ifndef AMF_STACK_H
 #define AMF_STACK_H
 

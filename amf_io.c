@@ -2,7 +2,7 @@
 
 // Implementation specifics functions
 // Might need to be changed deppendin on where
-// ASC mini Forth is ment to be embedded
+// SEForth is ment to be embedded
 
 // amf_input: this function returns a char entered by the input. The char should be echoed
 // amf_output: print a char to the user

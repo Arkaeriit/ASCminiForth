@@ -1,4 +1,4 @@
-#include "ASCminiForth.h"
+#include "SEForth.h"
 #ifndef C_FUNC_H
 #define C_FUNC_H
 

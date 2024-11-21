@@ -1,4 +1,4 @@
-# ASC miniForth
+# SEForth
 
 A simple Forth implementation. Aimed at being embedded in other projects or in embedded systemps.
 
@@ -16,7 +16,7 @@ To make the language easier, only one type of number is supported. There is no n
 
 ### Case
 
-By default, ASCminiForth is case-insensitive. You can enable case-sensitivity in `amf_config.h`. If the case-sensitivity is enabled, the default Forth words can be both upper or lower case.
+By default, SEForth is case-insensitive. You can enable case-sensitivity in `amf_config.h`. If the case-sensitivity is enabled, the default Forth words can be both upper or lower case.
 
 ### Strings
 
