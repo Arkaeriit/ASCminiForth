@@ -8,9 +8,9 @@
 #define SEFORTH_H
 
 #include "stdlib.h"
-#include "amf_config.h"
-#include "amf_stack.h"
-#include "amf_io.h"
+#include "sef_config.h"
+#include "sef_stack.h"
+#include "sef_io.h"
 #include "hash.h"
 #include "errors.h"
 #include "forth_state.h"

@@ -1,4 +1,4 @@
-#include "amf_debug.h"
+#include "sef_debug.h"
 #include "utils.h"
 #include "parser.h"
 #include "stdio.h"
@@ -11,52 +11,52 @@ static void invalid_hook(parser_state_t* p);
 static void register_compile_time_words_list(parser_state_t* p);
 static void macro(parser_state_t* p, const char* payload);
 
-parser_state_t* amf_init_parser(void) {
+parser_state_t* sef_init_parser(void) {
     parser_state_t* ret = malloc(sizeof(parser_state_t));
-    ret->fs = amf_init_state(ret);
+    ret->fs = sef_init_state(ret);
     register_compile_time_words_list(ret);
     ret->buffer = malloc(PARSER_BUFFER_SIZE);
     ret->new_word_buffer = malloc(PARSER_BUFFER_SIZE);
     ret->custom_word_name = malloc(PARSER_CUSTOM_NAME_SIZE);
     ret->new_word_hook = run_next_word_hook;
     ret->end_block_hook = invalid_hook;
-    ret->hooks_stack = amf_stack_init(COMPILATION_STACK_SIZE);
+    ret->hooks_stack = sef_stack_init(COMPILATION_STACK_SIZE);
     ret->pnt = 0;
     ret->in_word = false;
     ret->in_def = false;
     ret->wait_until = 0;
-    amf_init_io();
+    sef_init_io();
     extern const char* base_forth_func;
-    amf_parse_string(ret, base_forth_func);
-#if AMF_FILE
+    sef_parse_string(ret, base_forth_func);
+#if SEF_FILE
     extern const char* file_forth_func;
-    amf_parse_string(ret, file_forth_func);
+    sef_parse_string(ret, file_forth_func);
 #endif
-#if AMF_STRING
+#if SEF_STRING
     extern const char* string_forth_func;
-    amf_parse_string(ret, string_forth_func);
+    sef_parse_string(ret, string_forth_func);
 #endif
-#if AMF_PROGRAMMING_TOOLS
+#if SEF_PROGRAMMING_TOOLS
     extern const char* programming_forth_func;
-    amf_parse_string(ret, programming_forth_func); 
+    sef_parse_string(ret, programming_forth_func); 
 #endif
-#if AMF_CASE_INSENSITIVE == 0
+#if SEF_CASE_INSENSITIVE == 0
     ret->fs->dic->case_insensitive = false;
 #endif
     return ret;
 }
 
-void amf_clean_parser(parser_state_t* parse) {
-    amf_clean_io();
-    amf_stack_free(parse->hooks_stack);
+void sef_clean_parser(parser_state_t* parse) {
+    sef_clean_io();
+    sef_stack_free(parse->hooks_stack);
     free(parse->custom_word_name);
     free(parse->new_word_buffer);
     free(parse->buffer);
-    amf_clean_state(parse->fs);
+    sef_clean_state(parse->fs);
     free(parse);
 }
 
-void amf_parse_char(parser_state_t* parse, char ch) {
+void sef_parse_char(parser_state_t* parse, char ch) {
     if (parse->wait_until != 0) {
         if (parse->wait_until == ch) {
             parse->buffer[parse->pnt] = 0;
@@ -68,16 +68,16 @@ void amf_parse_char(parser_state_t* parse, char ch) {
         }
         return;
     }
-    if (amf_is_delimiter(ch)) {
+    if (sef_is_delimiter(ch)) {
         if (!parse->in_word) {
             return;
         }
         parse->in_word = false;
         parse->buffer[parse->pnt] = 0;
         entry_t compile_time_entry;
-        if (amf_find(parse->fs->dic, &compile_time_entry, NULL, amf_hash(parse->buffer)) == OK) {
+        if (sef_find(parse->fs->dic, &compile_time_entry, NULL, sef_hash(parse->buffer)) == OK) {
             while (compile_time_entry.type == alias) {
-                error find_rc = amf_find(parse->fs->dic, &compile_time_entry, NULL, compile_time_entry.func.alias_to);
+                error find_rc = sef_find(parse->fs->dic, &compile_time_entry, NULL, compile_time_entry.func.alias_to);
                 if (find_rc != OK) {
                     break;
                 }
@@ -95,42 +95,42 @@ void amf_parse_char(parser_state_t* parse, char ch) {
     }
 }
 
-void amf_parse_string(parser_state_t* parse, const char* s) {
+void sef_parse_string(parser_state_t* parse, const char* s) {
     for (size_t i=0; i<strlen(s); i++) {
-        amf_parse_char(parse, s[i]);
+        sef_parse_char(parse, s[i]);
     }
 }
 
-int amf_shell(void) {
-    amf_print_string("Starting the ASCminiForth shell.\n");
-    parser_state_t* parse = amf_init_parser();
+int sef_shell(void) {
+    sef_print_string("Starting the ASCminiForth shell.\n");
+    parser_state_t* parse = sef_init_parser();
     while (parse->fs->running) {
-        char ch = amf_input();
+        char ch = sef_input();
         if (ch == 4) { // End of transmission
             break;
         }
-        amf_parse_char(parse, ch);
+        sef_parse_char(parse, ch);
     }
     int rc = 0;
-#if AMF_PROGRAMMING_TOOLS
+#if SEF_PROGRAMMING_TOOLS
     rc = parse->fs->exit_code;
 #endif
-    amf_clean_parser(parse);
+    sef_clean_parser(parse);
     return rc;
 }
 
-#if AMF_USE_SOURCE_FILE
-error amf_register_file(parser_state_t* p, const char* filemane) {
+#if SEF_USE_SOURCE_FILE
+error sef_register_file(parser_state_t* p, const char* filemane) {
     FILE* f = fopen(filemane, "r");
     if (f == NULL) {
         return invalid_file;
     }
     int ch = fgetc(f);
     if (ch == '#') { // We ignore the starting shebang
-        amf_parse_string(p, "\\ ");
+        sef_parse_string(p, "\\ ");
     }
     while (ch != EOF) {
-        amf_parse_char(p, ch);
+        sef_parse_char(p, ch);
         if (!p->fs->running) {
             break;
         }
@@ -143,9 +143,9 @@ error amf_register_file(parser_state_t* p, const char* filemane) {
 
 /* ---------------------------- Next words hooks ---------------------------- */
 
-#if AMF_STACK_BOUND_CHECKS
+#if SEF_STACK_BOUND_CHECKS
 #define STACK_BOUND_CHECK(p)                      \
-    if (!amf_state_state_valid(p->hooks_stack)) { \
+    if (!sef_state_state_valid(p->hooks_stack)) { \
         error_msg("Hooks stack out of bound.\n"); \
     }                                              
 #else
@@ -154,21 +154,21 @@ error amf_register_file(parser_state_t* p, const char* filemane) {
 
 #define PUSH_HOOK(p, hook_name)                       \
     do {                                              \
-        amf_int_t to_push = (amf_int_t) p->hook_name; \
-        amf_stack_push(p->hooks_stack, to_push);      \
+        sef_int_t to_push = (sef_int_t) p->hook_name; \
+        sef_stack_push(p->hooks_stack, to_push);      \
         STACK_BOUND_CHECK(p);                         \
     } while(0)                                         
 
 #define POP_HOOK(p, hook_name)                                      \
-    p->hook_name = (new_word_hook_t) amf_stack_pop(p->hooks_stack); \
+    p->hook_name = (new_word_hook_t) sef_stack_pop(p->hooks_stack); \
     STACK_BOUND_CHECK(p)                                             
 
 #define UNUSED(x) (void)(x)
 
 // Run in the new word hook a number
-static void hook_number(parser_state_t* p, amf_int_t number) {
-    char tmp[AMF_MAX_NUMBER_DIGIT];
-    snprintf(p->buffer, PARSER_BUFFER_SIZE, "%s", amf_base_format(number, tmp, p->fs->base));
+static void hook_number(parser_state_t* p, sef_int_t number) {
+    char tmp[SEF_MAX_NUMBER_DIGIT];
+    snprintf(p->buffer, PARSER_BUFFER_SIZE, "%s", sef_base_format(number, tmp, p->fs->base));
     p->new_word_hook(p);
 }
 
@@ -187,14 +187,14 @@ static void invalid_hook(parser_state_t* p) {
 // This hook is the parser's default one, it tries to run the buffer
 static void run_next_word_hook(parser_state_t* p) {
     p->pnt = 0;
-    word_node_t node_to_exe = amf_compile_node(p->buffer, p->fs->base);
-    error execute_rc = amf_executes_node(p->fs, &node_to_exe);
+    word_node_t node_to_exe = sef_compile_node(p->buffer, p->fs->base);
+    error execute_rc = sef_executes_node(p->fs, &node_to_exe);
     if (execute_rc == not_found) {
         error_msg("Calling word %s which is not defined.\n", p->buffer);
     } else if (execute_rc != OK) {
         warn_msg("Error n°%i when calling word %s\n", execute_rc, p->buffer);
     }
-    amf_run(p->fs);
+    sef_run(p->fs);
 }
 
 // This hook is the one to use during a definition, add whitespace between words
@@ -224,13 +224,13 @@ static void definition_macro_name_hook(parser_state_t* p) {
 // This hook is meant to read name of a constant
 static void const_hook(parser_state_t* p) {
     p->pnt = 0;
-    amf_compile_constant(p->buffer, p->fs);
+    sef_compile_constant(p->buffer, p->fs);
     p->new_word_hook = run_next_word_hook;
 }
 
 // Replace the new word with its exec token
 static void get_exec_token_hook(parser_state_t* p) {
-    hash_t hash = amf_hash(p->buffer);
+    hash_t hash = sef_hash(p->buffer);
     POP_HOOK(p, new_word_hook);
     hook_number(p, hash);
 }
@@ -242,7 +242,7 @@ static void register_string_hook(parser_state_t* p) {
     while (*str++ != '"') {
         size--;
     }
-    hash_t str_id = amf_register_string(p->fs->dic, str, size);
+    hash_t str_id = sef_register_string(p->fs->dic, str, size);
     char string_type = p->buffer[0];
     hook_number(p, str_id);
     hook_str(p, "execute");
@@ -265,7 +265,7 @@ static void register_string_hook(parser_state_t* p) {
             p->new_word_hook(p); // For counted string, we drop the length value
             {
                 entry_t e;
-                amf_find(p->fs->dic, &e, NULL, str_id);
+                sef_find(p->fs->dic, &e, NULL, str_id);
                 char* string_in_memory = e.func.string.data;
                 memmove(string_in_memory+1, string_in_memory, size); // We move all characters by one. As the string is null-terminated, there is no overflow. The counted string is not null terminated, but as they are cursed, it's not the worst thing about them.
                 *string_in_memory = (char) size;
@@ -382,14 +382,14 @@ static void register_escaped_string_hook(parser_state_t* p) {
 
 // Register a normal word definition
 static void register_def_hook(parser_state_t* p) {
-    amf_compile_string(p->fs->dic, p->custom_word_name, p->new_word_buffer, p->fs->base, 0);
+    sef_compile_string(p->fs->dic, p->custom_word_name, p->new_word_buffer, p->fs->base, 0);
 }
 
 // Register an unamed word
 static void register_noname_hook(parser_state_t* p) {
-    hash_t noname_hash = amf_unused_special_hash(p->fs->dic);
-    amf_compile_string(p->fs->dic, "noname", p->new_word_buffer, p->fs->base, noname_hash);
-    amf_push_data(p->fs, (amf_int_t) noname_hash);
+    hash_t noname_hash = sef_unused_special_hash(p->fs->dic);
+    sef_compile_string(p->fs->dic, "noname", p->new_word_buffer, p->fs->base, noname_hash);
+    sef_push_data(p->fs, (sef_int_t) noname_hash);
 }
 
 // Register a macro
@@ -397,7 +397,7 @@ static void _register_macro_hook(parser_state_t* p) {
     char* payload = malloc(strlen(p->buffer)+1);
     strcpy(payload, p->buffer);
     debug_msg("macroing '%s' as '%s'\n", payload, p->custom_word_name);
-    amf_register_compile_time_word(p, p->custom_word_name, macro, payload);
+    sef_register_compile_time_word(p, p->custom_word_name, macro, payload);
     p->pnt = 0;
 }
 
@@ -411,8 +411,8 @@ static void register_macro_hook(parser_state_t* p) {
 // Register a string-macro
 static void string_macro_hook(parser_state_t* p) {
     strcpy(p->custom_word_name, p->buffer);
-    size_t macro_size = amf_pop_data(p->fs);
-    const char* macro_content = (const char*) amf_pop_data(p->fs);
+    size_t macro_size = sef_pop_data(p->fs);
+    const char* macro_content = (const char*) sef_pop_data(p->fs);
     memcpy(p->buffer, macro_content, macro_size);
     p->buffer[macro_size] = 0;
     _register_macro_hook(p);
@@ -422,7 +422,7 @@ static void string_macro_hook(parser_state_t* p) {
 // Get the first character of the next word and use it instead as a raw word
 static void char_hook(parser_state_t* p) {
     POP_HOOK(p, new_word_hook);
-    size_t old_ptn = amf_stack_pop(p->hooks_stack);
+    size_t old_ptn = sef_stack_pop(p->hooks_stack);
     char letter = p->buffer[old_ptn];
     hook_number(p, letter);
 }
@@ -431,15 +431,15 @@ static void char_hook(parser_state_t* p) {
 static void defer_hook(parser_state_t* p) {
     p->pnt = 0;
     POP_HOOK(p, new_word_hook);
-    amf_register_defer(p->buffer, p->fs);
+    sef_register_defer(p->buffer, p->fs);
 }
 
 // Set the name in the buffer to be a defered word
 static void is_hook(parser_state_t* p) {
     p->pnt = 0;
     POP_HOOK(p, new_word_hook);
-    hash_t alias_to = (hash_t) amf_pop_data(p->fs);
-    amf_set_alias(p->fs->dic, amf_hash(p->buffer), alias_to, p->buffer);
+    hash_t alias_to = (hash_t) sef_pop_data(p->fs);
+    sef_set_alias(p->fs->dic, sef_hash(p->buffer), alias_to, p->buffer);
 }
 
 // Set the name in the buffer to be a defered word
@@ -447,10 +447,10 @@ static void action_of_hook(parser_state_t* p) {
     p->pnt = 0;
     POP_HOOK(p, new_word_hook);
     entry_t entry;
-    if (amf_find(p->fs->dic, &entry, NULL, amf_hash(p->buffer)) != OK || !(entry.type == alias || entry.type == defered)) {
+    if (sef_find(p->fs->dic, &entry, NULL, sef_hash(p->buffer)) != OK || !(entry.type == alias || entry.type == defered)) {
         error_msg("Using action-of on invalid values.");
     }
-    hash_t word_hash = amf_hash(p->buffer);
+    hash_t word_hash = sef_hash(p->buffer);
     hook_number(p, word_hash);
     hook_str(p, "defer@");
 }
@@ -463,7 +463,7 @@ static void end_of_comment_hook(parser_state_t* p) {
 
 // Print the buffer
 static void compile_time_print_hook(parser_state_t* p) {
-    amf_print_string(p->buffer);
+    sef_print_string(p->buffer);
     POP_HOOK(p, end_block_hook);
     p->pnt = 0;
 }
@@ -543,7 +543,7 @@ static void _constant(parser_state_t* p, const char* payload) {
 }
 
 // '
-static_assert(sizeof(hash_t) <= sizeof(amf_int_t), "To handle execution tokens, hashes should fit in a cell.");
+static_assert(sizeof(hash_t) <= sizeof(sef_int_t), "To handle execution tokens, hashes should fit in a cell.");
 static void single_quote(parser_state_t* p, const char* payload) {
     UNUSED(payload);
     PUSH_HOOK(p, new_word_hook);
@@ -596,7 +596,7 @@ static void macro_string(parser_state_t* p, const char* payload) {
 // char
 static void _char(parser_state_t* p, const char* payload) {
     UNUSED(payload);
-    amf_stack_push(p->hooks_stack, (amf_int_t) p->pnt);
+    sef_stack_push(p->hooks_stack, (sef_int_t) p->pnt);
     PUSH_HOOK(p, new_word_hook);
     p->new_word_hook = char_hook;
 }
@@ -629,7 +629,7 @@ static void action_of(parser_state_t* p, const char* payload) {
 // literal
 static void literal(parser_state_t* p, const char* payload) {
     UNUSED(payload);
-    amf_int_t value = amf_pop_data(p->fs);
+    sef_int_t value = sef_pop_data(p->fs);
     hook_number(p, value);
 }
 
@@ -653,23 +653,23 @@ static void right_bracket(parser_state_t* p, const char* payload) {
 static void macro(parser_state_t* p, const char* payload) {
     p->pnt = 0;
     for (size_t i=0; i<strlen(payload); i++) {
-        amf_parse_char(p, payload[i]);
+        sef_parse_char(p, payload[i]);
     }
-    amf_parse_char(p, ' '); // If the macro doesn't end in whitespace and there is a single whitespace char between the macro and the next word, the last char of the macro would be concatenated with the following word. We add an extra space to ensure this can't happen.
+    sef_parse_char(p, ' '); // If the macro doesn't end in whitespace and there is a single whitespace char between the macro and the next word, the last char of the macro would be concatenated with the following word. We add an extra space to ensure this can't happen.
 }
 
 // Register a compile time word
-void amf_register_compile_time_word(parser_state_t* p, const char* name, compile_callback_t compile_func, char* payload) {
+void sef_register_compile_time_word(parser_state_t* p, const char* name, compile_callback_t compile_func, char* payload) {
     entry_t e;
     e.type = compile_word;
-    e.hash = amf_hash(name);
+    e.hash = sef_hash(name);
     e.func.compile_func.func = compile_func;
     e.func.compile_func.payload = payload;
-#if AMF_STORE_NAME
+#if SEF_STORE_NAME
     e.name = malloc(strlen(name) + 1);
     strcpy(e.name, name);
 #endif
-    amf_add_elem(p->fs->dic, e, name);
+    sef_add_elem(p->fs->dic, e, name);
 }
 
 struct compile_func_s {
@@ -706,7 +706,7 @@ struct compile_func_s all_default_compile_words[] = {
 static void register_compile_time_words_list(parser_state_t* p) {
     for (size_t i = 0; i < sizeof(all_default_compile_words) / sizeof(struct compile_func_s); i++) {
         const char* name = all_default_compile_words[i].name;
-        amf_register_compile_time_word(p, name, all_default_compile_words[i].func, NULL);
+        sef_register_compile_time_word(p, name, all_default_compile_words[i].func, NULL);
     }
 }
 

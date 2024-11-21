@@ -3,25 +3,25 @@
 
 int main(int argc, char** argv) {
     int rc = 0;
-#if AMF_USE_SOURCE_FILE
+#if SEF_USE_SOURCE_FILE
     if (argc > 1) {
-        parser_state_t* parse = amf_init_parser();
-#if AMF_CLI_ARGS
+        parser_state_t* parse = sef_init_parser();
+#if SEF_CLI_ARGS
         parse->fs->argc = argc - 1;
         parse->fs->argv = argv + 1;
 #endif
-        if (amf_register_file(parse, argv[1])) {
+        if (sef_register_file(parse, argv[1])) {
             fprintf(stderr, "Error, unable to read file %s.\n", argv[1]);
             return 1;
         }
-#if AMF_PROGRAMMING_TOOLS
+#if SEF_PROGRAMMING_TOOLS
         rc = parse->fs->exit_code;
 #endif
-        amf_clean_parser(parse);
+        sef_clean_parser(parse);
         return rc;
     }
 #endif
-    rc = amf_shell();
+    rc = sef_shell();
     return rc;
 }
 

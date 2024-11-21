@@ -1,14 +1,14 @@
-#include "amf_config.h"
+#include "sef_config.h"
 #include <stdbool.h>
 
 // Format a number in any base. Assumes that the size given for the string is
 // large enough. The string that should be used is made with the memory from
 // `out`.
 // TODO: replace it with the use of >number
-char* amf_base_format(amf_int_t i, char* out, int base) {
+char* sef_base_format(sef_int_t i, char* out, int base) {
     bool negative = i < 0;
     i = (negative ? -i : i);
-    char* p = out + AMF_MAX_NUMBER_DIGIT - 1;;
+    char* p = out + SEF_MAX_NUMBER_DIGIT - 1;;
     *p = 0;
     p--;
     do {

@@ -17,12 +17,12 @@ enum entry_type {
 typedef struct {
     union {
         C_callback_t C_func;                // To define
-        user_amf_int_t* F_word;             // Content of words defined in Forth
+        user_sef_int_t* F_word;             // Content of words defined in Forth
         struct {                            // Function to call on the parser
             compile_callback_t func;
             char* payload; // Extra argument to the compile func, should be freeable
         } compile_func;
-        amf_int_t constant;                 // Value written in hard
+        sef_int_t constant;                 // Value written in hard
         struct {                            // Strings stored in the dictionary
             char* data;
             size_t size;
@@ -31,7 +31,7 @@ typedef struct {
     } func;
     enum entry_type type;
     hash_t hash;
-#if AMF_STORE_NAME
+#if SEF_STORE_NAME
     char* name;
 #endif
 } entry_t;
@@ -41,22 +41,22 @@ typedef struct forth_dictionary_s {
     entry_t* entries;
     size_t n_entries;
     size_t max;
-#if AMF_CASE_INSENSITIVE == 0
+#if SEF_CASE_INSENSITIVE == 0
     bool case_insensitive;
 #endif
 } forth_dictionary_t;
 
-forth_dictionary_t* amf_init_dic(void);
-void amf_display_dictionary(forth_dictionary_t* dic);
-void amf_clean_dic(forth_dictionary_t* fd);
-error amf_find(forth_dictionary_t* fd, entry_t* e, size_t* index, hash_t hash);
-error amf_add_elem(forth_dictionary_t* fd, entry_t e, const char* name);
-error amf_set_alias(forth_dictionary_t* fd, hash_t word_hash, hash_t alias_to, const char* name);
-hash_t amf_unused_special_hash(forth_dictionary_t* fd);
-hash_t amf_register_string(forth_dictionary_t* fd, const char* str, size_t size);
+forth_dictionary_t* sef_init_dic(void);
+void sef_display_dictionary(forth_dictionary_t* dic);
+void sef_clean_dic(forth_dictionary_t* fd);
+error sef_find(forth_dictionary_t* fd, entry_t* e, size_t* index, hash_t hash);
+error sef_add_elem(forth_dictionary_t* fd, entry_t e, const char* name);
+error sef_set_alias(forth_dictionary_t* fd, hash_t word_hash, hash_t alias_to, const char* name);
+hash_t sef_unused_special_hash(forth_dictionary_t* fd);
+hash_t sef_register_string(forth_dictionary_t* fd, const char* str, size_t size);
 
-error amf_call_name(forth_state_t* fs, const char* name);
-error amf_call_func(forth_state_t* fs, hash_t hash);
+error sef_call_name(forth_state_t* fs, const char* name);
+error sef_call_func(forth_state_t* fs, hash_t hash);
 
 #endif
 
