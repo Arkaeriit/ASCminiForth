@@ -14,7 +14,10 @@ EXEC_SCR := sef_io.c main.c
 EXEC_OBJS := $(EXEC_SCR:%.c=%.o)
 
 # Install targets
-TARGET_DIR_BIN := /usr/local/bin
+PREFIX := /usr/local
+TARGET_DIR_BIN := $(PREFIX)/bin
+TARGET_DIR_LIB := $(PREFIX)/lib
+TARGET_DIR_INCLUDE := $(PREFIX)/include
 TARGET_BIN := $(TARGET_DIR_BIN)/$(TARGET)
 
 # Commands
@@ -56,9 +59,12 @@ $(TARGET).bin : $(EXEC_OBJS) lib$(TARGET).a
 
 lib$(TARGET).a : $(C_OBJS)
 	$(AR) -rcs $@ $^
-install :
+
+install : $(TARGET).bin lib$(TARGET).a SEForth.h
 	mkdir -p $(TARGET_DIR_BIN)
 	$(CP) $(TARGET).bin $(TARGET_BIN)
+	$(CP) lib$(TARGET).a $(TARGET_DIR_LIB)
+	$(CP) SEForth.h $(TARGET_DIR_INCLUDE)
 
 uninstall :
 	$(RM) $(TARGET_BIN)
