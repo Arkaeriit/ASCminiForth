@@ -1,4 +1,4 @@
-#include "SEForth.h"
+#include "private_api.h"
 #ifndef USER_WORDS_H
 #define USER_WORDS_H
 

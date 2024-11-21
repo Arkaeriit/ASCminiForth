@@ -1,4 +1,4 @@
-#include "sef_config.h"
+#include "private_api.h"
 #include <stdbool.h>
 
 // Format a number in any base. Assumes that the size given for the string is

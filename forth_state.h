@@ -1,4 +1,4 @@
-#include "SEForth.h"
+#include "private_api.h"
 #ifndef FORTH_STATE_H
 #define FORTH_STATE_H
 
@@ -43,7 +43,7 @@ static inline sef_int_t sef_code_pointer_to_int(code_pointer_t* code) {
 }
 
 // The interpreter's state
-typedef struct {
+typedef struct seforth_state_s {
     // A parser used for "evaluate" and the likes
     struct parser_state_s* parser;
     // The two stack used by the interpreter

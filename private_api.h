@@ -4,9 +4,10 @@
 |to fix this order in a single file.                               |
 \-----------------------------------------------------------------*/
 
-#ifndef SEFORTH_H
-#define SEFORTH_H
+#ifndef PRIVATE_API_H
+#define PRIVATE_API_H
 
+#include "SEForth.h"
 #include "stdlib.h"
 #include "sef_config.h"
 #include "sef_stack.h"

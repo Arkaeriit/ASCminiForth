@@ -1,4 +1,4 @@
-#include "SEForth.h"
+#include "private_api.h"
 #ifndef SEF_SHELL_H
 #define SEF_SHELL_H
 

@@ -15,7 +15,8 @@ typedef uint32_t hash_t;
 #define SEF_IDLE_CURRENT_WORD (hash_t) (~0 & SEF_HASH_MASK)
 
 
-#include "SEForth.h"
+#include "private_api.h"
+#include "assert.h"
 
 static_assert((sizeof(hash_t) * 8) >= SEF_HASH_SIZE_BITS, "hash_t should be able to contain enough bytes.");
 

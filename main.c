@@ -1,4 +1,4 @@
-#include "SEForth.h"
+#include "private_api.h"
 #include "stdio.h"
 
 int main(int argc, char** argv) {

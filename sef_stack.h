@@ -1,4 +1,4 @@
-#include "SEForth.h"
+#include "private_api.h"
 #ifndef SEF_STACK_H
 #define SEF_STACK_H
 

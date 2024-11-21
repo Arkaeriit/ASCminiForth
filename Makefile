@@ -4,7 +4,7 @@ CFLAGS ?= -Wall -Wextra -g -Wno-error=cpp
 # Files lists
 C_SRC := hash.c dictionary.c forth_state.c C_func.c user_words.c parser.c utils.c sef_stack.c
 FRT_SRC := base_forth_func.frt file_forth_func.frt string_forth_func.frt programming_forth_func.frt
-C_HEADER := sef_config.h sef_io.h SEForth.h C_func.h dictionary.h errors.h forth_state.h hash.h parser.h user_words.h utils.h sef_debug.h
+C_HEADER := sef_config.h sef_io.h SEForth.h C_func.h dictionary.h errors.h forth_state.h hash.h parser.h user_words.h utils.h sef_debug.h private_api.h
 TARGET := seforth
 C_AUTO_SRC := $(FRT_SRC:%.frt=%.c)
 C_SRC += $(C_AUTO_SRC)
@@ -45,6 +45,12 @@ all : $(TARGET).bin
 	cat $< | sed 's:( [^)]*): :g; s:\s\+\([^"]\): \1:g; s:\\ .*::;  s:":\\":g; s:^:":; s:$$:\\n":;' | grep -v '" \?\\n"'  >> $@
 	echo ';' >> $@
 
+SEForth_template.h.o: SEForth_template.h
+	gcc -o $@ -E $< $(CFLAGS)
+
+SEForth.h: SEForth_template.h.o
+	cat $< | sed 's:# .*::; s:£:#:g; s:__::g; s:>>://:' | uniq > $@
+
 $(TARGET).bin : $(EXEC_OBJS) lib$(TARGET).a
 	$(CC) $(EXEC_OBJS) -L. -l$(TARGET) $(CFLAGS) -o $@
 
@@ -65,6 +71,8 @@ clean :
 	$(RM) $(EXEC_OBJS)
 	$(RM) $(C_AUTO_SRC)
 	$(RM) test.txt
+	$(RM) SEForth.h
+	$(RM) *_template.h.o
 
 test : $(TARGET).bin
 	cd ./non-regression-tests && \

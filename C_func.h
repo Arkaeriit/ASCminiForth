@@ -1,4 +1,4 @@
-#include "SEForth.h"
+#include "private_api.h"
 #ifndef C_FUNC_H
 #define C_FUNC_H
 
