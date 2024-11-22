@@ -774,7 +774,7 @@ static void extra_safe_parse(forth_state_t* fs, char c) {
     fs->pos.pos_in_word = SEF_IDLE_POS_IN_WORD;
     struct sef_compiled_forth_word_s* current_word_copy = fs->current_word_copy;
 
-    sef_parse_char(fs->parser, c);
+    sef_parser_parse_char(fs->parser, c);
 
     fs->pos = pos_copy;
     fs->current_word_copy = current_word_copy;

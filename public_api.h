@@ -16,6 +16,8 @@ forth_state_t* sef_init(void);
 void sef_free(forth_state_t* state);
 
 sef_error sef_parse_file(forth_state_t* state, const char* filename);
+void sef_parse_string(forth_state_t* state, const char* s);
+void sef_parse_char(forth_state_t* state, char c);
 
 >> TODO: remove
 int sef_shell(void);

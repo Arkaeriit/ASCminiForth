@@ -20,8 +20,7 @@ typedef struct parser_state_s {
 
 parser_state_t* sef_init_parser(void);
 void sef_clean_parser(parser_state_t * parse);
-void sef_parse_char(parser_state_t * parse, char ch);
-void sef_parse_string(parser_state_t* parse, const char* s);
+void sef_parser_parse_char(parser_state_t * parse, char ch);
 int sef_shell(void);
 
 typedef void (*compile_callback_t)(parser_state_t*, const char*);

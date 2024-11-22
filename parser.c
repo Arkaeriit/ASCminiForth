@@ -27,18 +27,18 @@ parser_state_t* sef_init_parser(void) {
     ret->wait_until = 0;
     sef_init_io();
     extern const char* base_forth_func;
-    sef_parse_string(ret, base_forth_func);
+    sef_parse_string(ret->fs, base_forth_func);
 #if SEF_FILE
     extern const char* file_forth_func;
-    sef_parse_string(ret, file_forth_func);
+    sef_parse_string(ret->fs, file_forth_func);
 #endif
 #if SEF_STRING
     extern const char* string_forth_func;
-    sef_parse_string(ret, string_forth_func);
+    sef_parse_string(ret->fs, string_forth_func);
 #endif
 #if SEF_PROGRAMMING_TOOLS
     extern const char* programming_forth_func;
-    sef_parse_string(ret, programming_forth_func); 
+    sef_parse_string(ret->fs, programming_forth_func);
 #endif
 #if SEF_CASE_INSENSITIVE == 0
     ret->fs->dic->case_insensitive = false;
@@ -56,7 +56,7 @@ void sef_clean_parser(parser_state_t* parse) {
     free(parse);
 }
 
-void sef_parse_char(parser_state_t* parse, char ch) {
+void sef_parser_parse_char(parser_state_t* parse, char ch) {
     if (parse->wait_until != 0) {
         if (parse->wait_until == ch) {
             parse->buffer[parse->pnt] = 0;
@@ -95,12 +95,6 @@ void sef_parse_char(parser_state_t* parse, char ch) {
     }
 }
 
-void sef_parse_string(parser_state_t* parse, const char* s) {
-    for (size_t i=0; i<strlen(s); i++) {
-        sef_parse_char(parse, s[i]);
-    }
-}
-
 int sef_shell(void) {
     sef_print_string("Starting the ASCminiForth shell.\n");
     parser_state_t* parse = sef_init_parser();
@@ -109,7 +103,7 @@ int sef_shell(void) {
         if (ch == 4) { // End of transmission
             break;
         }
-        sef_parse_char(parse, ch);
+        sef_parser_parse_char(parse, ch);
     }
     int rc = 0;
 #if SEF_PROGRAMMING_TOOLS
@@ -127,10 +121,10 @@ sef_error sef_register_file(parser_state_t* p, const char* filemane) {
     }
     int ch = fgetc(f);
     if (ch == '#') { // We ignore the starting shebang
-        sef_parse_string(p, "\\ ");
+        sef_parse_string(p->fs, "\\ ");
     }
     while (ch != EOF) {
-        sef_parse_char(p, ch);
+        sef_parser_parse_char(p, ch);
         if (!p->fs->running) {
             break;
         }
@@ -653,9 +647,9 @@ static void right_bracket(parser_state_t* p, const char* payload) {
 static void macro(parser_state_t* p, const char* payload) {
     p->pnt = 0;
     for (size_t i=0; i<strlen(payload); i++) {
-        sef_parse_char(p, payload[i]);
+        sef_parser_parse_char(p, payload[i]);
     }
-    sef_parse_char(p, ' '); // If the macro doesn't end in whitespace and there is a single whitespace char between the macro and the next word, the last char of the macro would be concatenated with the following word. We add an extra space to ensure this can't happen.
+    sef_parser_parse_char(p, ' '); // If the macro doesn't end in whitespace and there is a single whitespace char between the macro and the next word, the last char of the macro would be concatenated with the following word. We add an extra space to ensure this can't happen.
 }
 
 // Register a compile time word
