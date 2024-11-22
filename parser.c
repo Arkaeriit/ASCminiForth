@@ -95,24 +95,6 @@ void sef_parser_parse_char(parser_state_t* parse, char ch) {
     }
 }
 
-int sef_shell(void) {
-    sef_print_string("Starting the ASCminiForth shell.\n");
-    parser_state_t* parse = sef_init_parser();
-    while (parse->fs->running) {
-        char ch = sef_input();
-        if (ch == 4) { // End of transmission
-            break;
-        }
-        sef_parser_parse_char(parse, ch);
-    }
-    int rc = 0;
-#if SEF_PROGRAMMING_TOOLS
-    rc = parse->fs->exit_code;
-#endif
-    sef_clean_parser(parse);
-    return rc;
-}
-
 #if SEF_USE_SOURCE_FILE
 sef_error sef_register_file(parser_state_t* p, const char* filemane) {
     FILE* f = fopen(filemane, "r");

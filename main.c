@@ -1,11 +1,13 @@
 #include "SEForth.h"
 #include "stdio.h"
 
+extern const char* shell;
+
 int main(int argc, char** argv) {
     int rc = 0;
+    forth_state_t* fs = sef_init();
 #if SEF_USE_SOURCE_FILE
     if (argc > 1) {
-        forth_state_t* fs = sef_init();
 #if SEF_CLI_ARGS
         sef_feed_arguments(fs, argc - 1, argv + 1);
 #endif
@@ -20,7 +22,13 @@ int main(int argc, char** argv) {
         return rc;
     }
 #endif
-    rc = sef_shell();
+    sef_parse_string(fs, shell);
+#if SEF_PROGRAMMING_TOOLS
+    rc = sef_exit_code(fs);
+#endif
+    sef_restart(fs);
+    sef_parse_string(fs, "(repl-buffer) 1- free ");
+    sef_free(fs);
     return rc;
 }
 
