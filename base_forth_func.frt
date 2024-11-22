@@ -97,7 +97,7 @@ loop 2drop ;
 ( ---------------------------------- Strings --------------------------------- )
 
 : count ( addr -- addr n ) dup char+ swap c@ ;
-: accept ( addr n -- n ) dup 0 > 0= if 2drop 0 exit then
+: accept ( addr n -- n ) 1- dup 0 > 0= if 2drop 0 exit then
 0 begin
 key dup 10 = if drop nip nip exit then
 ( addr n1 n2 c )
