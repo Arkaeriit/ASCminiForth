@@ -1,4 +1,5 @@
 #include "private_api.h"
+#include <string.h>
 
 forth_state_t* sef_init(void) {
     return sef_init_parser()->fs;
@@ -6,6 +7,14 @@ forth_state_t* sef_init(void) {
 
 void sef_free(forth_state_t* state) {
     sef_clean_parser(state->parser);
+}
+
+void sef_restart(forth_state_t* state) {
+    state->running = true;
+}
+
+bool sef_is_running(forth_state_t* state) {
+    return state->running;
 }
 
 sef_error sef_parse_file(forth_state_t* state, const char* filename) {

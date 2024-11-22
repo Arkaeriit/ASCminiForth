@@ -1,3 +1,5 @@
+£include <stdbool.h>
+
 >> This type defines the various errors we might encounter
 typedef enum {
     sef_OK = 0,
@@ -14,6 +16,9 @@ typedef struct seforth_state_s forth_state_t;
 
 forth_state_t* sef_init(void);
 void sef_free(forth_state_t* state);
+
+void sef_restart(forth_state_t* state);
+bool sef_is_running(forth_state_t* state);
 
 sef_error sef_parse_file(forth_state_t* state, const char* filename);
 void sef_parse_string(forth_state_t* state, const char* s);
