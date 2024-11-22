@@ -784,7 +784,8 @@ static void extra_safe_parse(forth_state_t* fs, char c) {
     fs->current_word_copy = current_word_copy;
 
     if (!fs->running) {
-        bye(fs);
+        fs->pos.pos_in_word = SEF_IDLE_POS_IN_WORD;
+        fs->pos.current_word = SEF_IDLE_CURRENT_WORD;
     }
 }
 

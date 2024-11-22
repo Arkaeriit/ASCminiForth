@@ -9,7 +9,6 @@
 
 #include "SEForth.h"
 #include "stdlib.h"
-#include "sef_config.h"
 #include "sef_stack.h"
 #include "sef_io.h"
 #include "hash.h"

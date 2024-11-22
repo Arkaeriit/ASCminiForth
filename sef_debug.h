@@ -1,7 +1,7 @@
 #ifndef SEF_DEBUG_H
 #define SEF_DEBUG_H
 
-#include "sef_config.h"
+#include "SEForth.h"
 
 #include "stdio.h"
 #include "string.h"

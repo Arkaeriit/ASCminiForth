@@ -20,9 +20,12 @@ void sef_free(forth_state_t* state);
 void sef_restart(forth_state_t* state);
 bool sef_is_running(forth_state_t* state);
 
-sef_error sef_parse_file(forth_state_t* state, const char* filename);
 void sef_parse_string(forth_state_t* state, const char* s);
 void sef_parse_char(forth_state_t* state, char c);
+
+#if SEF_USE_SOURCE_FILE
+sef_error sef_parse_file(forth_state_t* state, const char* filename);
+#endif
 
 #ifdef SEF_CLI_ARGS
 void sef_feed_arguments(forth_state_t* state, int argc, char** argv);
