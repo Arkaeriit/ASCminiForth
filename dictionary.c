@@ -121,7 +121,8 @@ void sef_display_dictionary(forth_dictionary_t* dic) {
                 type = "!! INVALID TYPE !!";
                 break;
         }
-        printf("type = %s, hash = %X\n\n", type, dic->entries[i].hash);
+        sprintf(buff, "type = %s, hash = %X\n\n", type, dic->entries[i].hash);
+        sef_print_string(buff);
     }
 }
 
