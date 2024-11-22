@@ -115,6 +115,10 @@ sef_error sef_register_file(parser_state_t* p, const char* filemane) {
 }
 #endif
 
+bool sef_parser_is_compiling(parser_state_t* parse) {
+    return parse->new_word_hook != run_next_word_hook;
+}
+
 /* ---------------------------- Next words hooks ---------------------------- */
 
 #if SEF_STACK_BOUND_CHECKS

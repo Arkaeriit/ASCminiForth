@@ -17,6 +17,10 @@ bool sef_is_running(forth_state_t* state) {
     return state->running;
 }
 
+bool sef_is_compiling(forth_state_t* state) {
+    return sef_parser_is_compiling(state->parser);
+}
+
 void sef_parse_string(forth_state_t* state, const char* s) {
     for (size_t i=0; i<strlen(s); i++) {
         sef_parse_char(state, s[i]);

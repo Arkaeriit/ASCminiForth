@@ -21,6 +21,7 @@ typedef struct parser_state_s {
 parser_state_t* sef_init_parser(void);
 void sef_clean_parser(parser_state_t * parse);
 void sef_parser_parse_char(parser_state_t * parse, char ch);
+bool sef_parser_is_compiling(parser_state_t* parse);
 
 typedef void (*compile_callback_t)(parser_state_t*, const char*);
 void sef_register_compile_time_word(parser_state_t* p, const char* name, compile_callback_t compile_func, char* payload);
