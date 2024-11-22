@@ -11,7 +11,7 @@ static bool str_to_num(const char* str, sef_int_t* num, int base);
 // subwords is the list of the subwords
 // force_hash can be set to a non 0 value to force the use of the given hash
 // instead of `name`'s hash.
-error sef_compile_user_word(forth_dictionary_t* fd, const char* name, size_t subword_n, char** subwords, int base, hash_t force_hash) {
+sef_error sef_compile_user_word(forth_dictionary_t* fd, const char* name, size_t subword_n, char** subwords, int base, hash_t force_hash) {
     sef_compiled_forth_word_t* def = malloc(sizeof(sef_compiled_forth_word_t));
     def->size = subword_n;
     if (def->size >= (1 << SEF_WORD_CONTENT_SIZE_BITS)) {
@@ -24,8 +24,8 @@ error sef_compile_user_word(forth_dictionary_t* fd, const char* name, size_t sub
         def->content[i] = sef_compile_node(subwords[i], base);
 #if SEF_LOG > 1
         if (def->content[i].type == normal_word) {
-            error find_rc = sef_find(fd, NULL, NULL, sef_hash(subwords[i]));
-            if (find_rc != OK) {
+            sef_error find_rc = sef_find(fd, NULL, NULL, sef_hash(subwords[i]));
+            if (find_rc != sef_OK) {
                 warn_msg("The word %s is needed but it is not in the dictionary.\n", subwords[i]);
             }
         }
@@ -61,11 +61,11 @@ word_node_t sef_compile_node(const char* str, int base) {
 static const char* word_delimiters = " \t\n\r";
 // This functions takes a string such as "1 1 + ." and compiles it
 // as a C word
-error sef_compile_string(forth_dictionary_t* fd, const char* name, const char* str, int base, hash_t force_hash) {
+sef_error sef_compile_string(forth_dictionary_t* fd, const char* name, const char* str, int base, hash_t force_hash) {
     size_t nwords;
     char** subwords = cut_string(str, &nwords);
     debug_msg("There is %i words in the definition of %s [%s].\n", nwords, name, str);
-    error rc = sef_compile_user_word(fd, name, nwords, subwords, base, force_hash);
+    sef_error rc = sef_compile_user_word(fd, name, nwords, subwords, base, force_hash);
     for (size_t i = 0; i < nwords; i++) {
         free(subwords[i]);
     }
@@ -181,7 +181,7 @@ void sef_clean_user_word(sef_compiled_forth_word_t* w) {
 }
 
 // This function registers a new constant
-error sef_compile_constant(const char* name, forth_state_t* fs) {
+sef_error sef_compile_constant(const char* name, forth_state_t* fs) {
     entry_t e;
     e.hash = sef_hash(name);
     e.type = constant;
@@ -193,7 +193,7 @@ error sef_compile_constant(const char* name, forth_state_t* fs) {
     return sef_add_elem(fs->dic, e, name);
 }
 
-error sef_register_defer(const char* name, forth_state_t* fs) {
+sef_error sef_register_defer(const char* name, forth_state_t* fs) {
     entry_t e;
     e.hash = sef_hash(name);
     e.type = defered;

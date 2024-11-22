@@ -803,7 +803,7 @@ static void pad(forth_state_t* fs) {
 static void defer_fetch(forth_state_t* fs) {
     hash_t exec_tocken = (hash_t) sef_pop_data(fs);
     entry_t entry;
-    if (sef_find(fs->dic, &entry, NULL, exec_tocken) != OK || entry.type != alias) {
+    if (sef_find(fs->dic, &entry, NULL, exec_tocken) != sef_OK || entry.type != alias) {
         error_msg("Using defer@ on invalid value.");
         sef_abort(fs);
     }
@@ -814,7 +814,7 @@ static void defer_fetch(forth_state_t* fs) {
 static void defer_store(forth_state_t* fs) {
     hash_t alias_token = (hash_t) sef_pop_data(fs);
     hash_t alias_to_token = (hash_t) sef_pop_data(fs);
-    if (sef_set_alias(fs->dic, alias_token, alias_to_token, "from defer!") != OK) {
+    if (sef_set_alias(fs->dic, alias_token, alias_to_token, "from defer!") != sef_OK) {
         error_msg("Using defer! on invalid values.");
     }
 }

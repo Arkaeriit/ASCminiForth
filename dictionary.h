@@ -49,14 +49,14 @@ typedef struct forth_dictionary_s {
 forth_dictionary_t* sef_init_dic(void);
 void sef_display_dictionary(forth_dictionary_t* dic);
 void sef_clean_dic(forth_dictionary_t* fd);
-error sef_find(forth_dictionary_t* fd, entry_t* e, size_t* index, hash_t hash);
-error sef_add_elem(forth_dictionary_t* fd, entry_t e, const char* name);
-error sef_set_alias(forth_dictionary_t* fd, hash_t word_hash, hash_t alias_to, const char* name);
+sef_error sef_find(forth_dictionary_t* fd, entry_t* e, size_t* index, hash_t hash);
+sef_error sef_add_elem(forth_dictionary_t* fd, entry_t e, const char* name);
+sef_error sef_set_alias(forth_dictionary_t* fd, hash_t word_hash, hash_t alias_to, const char* name);
 hash_t sef_unused_special_hash(forth_dictionary_t* fd);
 hash_t sef_register_string(forth_dictionary_t* fd, const char* str, size_t size);
 
-error sef_call_name(forth_state_t* fs, const char* name);
-error sef_call_func(forth_state_t* fs, hash_t hash);
+sef_error sef_call_name(forth_state_t* fs, const char* name);
+sef_error sef_call_func(forth_state_t* fs, hash_t hash);
 
 #endif
 

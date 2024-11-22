@@ -143,9 +143,9 @@ bool sef_run_step(forth_state_t* fs) {
 
 // Executes the content of a word_node
 #if SEF_CATCH_SEGFAULTS
-static error _sef_executes_node(forth_state_t* fs, struct word_node_s* node) {
+static sef_error _sef_executes_node(forth_state_t* fs, struct word_node_s* node) {
 #else
-error sef_executes_node(forth_state_t* fs, struct word_node_s* node) {
+sef_error sef_executes_node(forth_state_t* fs, struct word_node_s* node) {
 #endif
     switch (node->type) {
         case normal_word:
@@ -153,10 +153,10 @@ error sef_executes_node(forth_state_t* fs, struct word_node_s* node) {
             return sef_call_func(fs, node->content.hash);
         case raw_number:
             sef_push_data(fs, node->content.value);
-            return OK;
+            return sef_OK;
     }
     error_msg("Invalid node type.\n");
-    return impossible_error;
+    return sef_impossible_error;
 }
 
 #if SEF_CATCH_SEGFAULTS
@@ -172,7 +172,7 @@ static void segfault_handler(int sig, siginfo_t *dont_care, void *dont_care_eith
     longjmp(point, 1);
 }
 
-error sef_executes_node(forth_state_t* fs, struct word_node_s* node) {
+sef_error sef_executes_node(forth_state_t* fs, struct word_node_s* node) {
     // Prepare catching of segfaults
     struct sigaction sa;
     memset(&sa, 0, sizeof(sigaction));
@@ -182,7 +182,7 @@ error sef_executes_node(forth_state_t* fs, struct word_node_s* node) {
     sigaction(SIGSEGV, &sa, NULL);
 
     // Execute the risky code
-    error ret;
+    sef_error ret;
     if (setjmp(point) == 0) {
         ret = _sef_executes_node(fs, node);
     } else {
@@ -194,7 +194,7 @@ error sef_executes_node(forth_state_t* fs, struct word_node_s* node) {
 
 #endif
         sef_abort(fs);
-        ret = segfault;
+        ret = sef_segfault;
     }
 
     // Stop the fault catcher
@@ -224,7 +224,7 @@ void sef_allot(forth_state_t* fs, size_t byte_requested) {
 static void display_element_in_stack_trace(forth_state_t* fs, code_pointer_t code) {
     hash_t word_hash = code.current_word;
     entry_t e;
-    if (sef_find(fs->dic, &e, NULL, word_hash) == OK) {
+    if (sef_find(fs->dic, &e, NULL, word_hash) == sef_OK) {
 #if SEF_STORE_NAME
         error_msg(" * %s\n", e.name);
 #else

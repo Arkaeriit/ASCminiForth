@@ -28,7 +28,7 @@ typedef void (*compile_callback_t)(parser_state_t*, const char*);
 void sef_register_compile_time_word(parser_state_t* p, const char* name, compile_callback_t compile_func, char* payload);
 
 #if SEF_USE_SOURCE_FILE
-error sef_register_file(parser_state_t * p, const char* filemane);
+sef_error sef_register_file(parser_state_t * p, const char* filemane);
 #endif
 
 #endif

@@ -75,10 +75,10 @@ void sef_parse_char(parser_state_t* parse, char ch) {
         parse->in_word = false;
         parse->buffer[parse->pnt] = 0;
         entry_t compile_time_entry;
-        if (sef_find(parse->fs->dic, &compile_time_entry, NULL, sef_hash(parse->buffer)) == OK) {
+        if (sef_find(parse->fs->dic, &compile_time_entry, NULL, sef_hash(parse->buffer)) == sef_OK) {
             while (compile_time_entry.type == alias) {
-                error find_rc = sef_find(parse->fs->dic, &compile_time_entry, NULL, compile_time_entry.func.alias_to);
-                if (find_rc != OK) {
+                sef_error find_rc = sef_find(parse->fs->dic, &compile_time_entry, NULL, compile_time_entry.func.alias_to);
+                if (find_rc != sef_OK) {
                     break;
                 }
             }
@@ -120,10 +120,10 @@ int sef_shell(void) {
 }
 
 #if SEF_USE_SOURCE_FILE
-error sef_register_file(parser_state_t* p, const char* filemane) {
+sef_error sef_register_file(parser_state_t* p, const char* filemane) {
     FILE* f = fopen(filemane, "r");
     if (f == NULL) {
-        return invalid_file;
+        return sef_invalid_file;
     }
     int ch = fgetc(f);
     if (ch == '#') { // We ignore the starting shebang
@@ -137,7 +137,7 @@ error sef_register_file(parser_state_t* p, const char* filemane) {
         ch = fgetc(f);
     }
     fclose(f);
-    return OK;
+    return sef_OK;
 }
 #endif
 
@@ -188,10 +188,10 @@ static void invalid_hook(parser_state_t* p) {
 static void run_next_word_hook(parser_state_t* p) {
     p->pnt = 0;
     word_node_t node_to_exe = sef_compile_node(p->buffer, p->fs->base);
-    error execute_rc = sef_executes_node(p->fs, &node_to_exe);
-    if (execute_rc == not_found) {
+    sef_error execute_rc = sef_executes_node(p->fs, &node_to_exe);
+    if (execute_rc == sef_not_found) {
         error_msg("Calling word %s which is not defined.\n", p->buffer);
-    } else if (execute_rc != OK) {
+    } else if (execute_rc != sef_OK) {
         warn_msg("Error n°%i when calling word %s\n", execute_rc, p->buffer);
     }
     sef_run(p->fs);
@@ -447,7 +447,7 @@ static void action_of_hook(parser_state_t* p) {
     p->pnt = 0;
     POP_HOOK(p, new_word_hook);
     entry_t entry;
-    if (sef_find(p->fs->dic, &entry, NULL, sef_hash(p->buffer)) != OK || !(entry.type == alias || entry.type == defered)) {
+    if (sef_find(p->fs->dic, &entry, NULL, sef_hash(p->buffer)) != sef_OK || !(entry.type == alias || entry.type == defered)) {
         error_msg("Using action-of on invalid values.");
     }
     hash_t word_hash = sef_hash(p->buffer);

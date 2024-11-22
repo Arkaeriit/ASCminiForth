@@ -84,7 +84,7 @@ void sef_quit(forth_state_t* fs);
 void sef_abort(forth_state_t* fs);
 
 bool sef_run_step(forth_state_t* fs);
-error sef_executes_node(forth_state_t* fs, struct word_node_s* node);
+sef_error sef_executes_node(forth_state_t* fs, struct word_node_s* node);
 void sef_run(forth_state_t* fs);
 void sef_exit(forth_state_t* fs);
 

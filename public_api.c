@@ -8,7 +8,7 @@ void sef_free(forth_state_t* state) {
     sef_clean_parser(state->parser);
 }
 
-error sef_parse_file(forth_state_t* state, const char* filename) {
+sef_error sef_parse_file(forth_state_t* state, const char* filename) {
     return sef_register_file(state->parser, filename);
 }
 
