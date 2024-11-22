@@ -5,8 +5,6 @@
 
 char sef_input(void);
 void sef_output(char ch);
-void sef_init_io(void);
-void sef_clean_io(void);
 
 void sef_print_string(const char* str);
 

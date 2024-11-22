@@ -25,7 +25,6 @@ parser_state_t* sef_init_parser(void) {
     ret->in_word = false;
     ret->in_def = false;
     ret->wait_until = 0;
-    sef_init_io();
     extern const char* base_forth_func;
     sef_parse_string(ret->fs, base_forth_func);
 #if SEF_FILE
@@ -47,7 +46,6 @@ parser_state_t* sef_init_parser(void) {
 }
 
 void sef_clean_parser(parser_state_t* parse) {
-    sef_clean_io();
     sef_stack_free(parse->hooks_stack);
     free(parse->custom_word_name);
     free(parse->new_word_buffer);

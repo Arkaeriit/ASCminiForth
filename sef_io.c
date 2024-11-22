@@ -6,11 +6,9 @@
 
 // sef_input: this function returns a char entered by the input. The char should be echoed
 // sef_output: print a char to the user
-// sef_init_io: ran once when starting a shell, used to init what is needed by sef_input and sef_output
-// sef_clean_io: clean memory used by sef_init_io
 
 #include "stdio.h"
-char sef_input(void) {
+char __attribute__((weak)) sef_input(void) {
     int ret = getchar();
     if (ret != -1) {    // Check for unexpected char that could do bad things to  the rest of the parser
         return ret;
@@ -19,13 +17,8 @@ char sef_input(void) {
     }
 }
 
-void sef_output(char ch) {
+void __attribute__((weak)) sef_output(char ch) {
     putchar(ch);
-}
-
-void sef_init_io(void) {
-}
-void sef_clean_io(void) {
 }
 
 // Function that should not change depending on the implementation
