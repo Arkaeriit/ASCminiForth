@@ -3,9 +3,9 @@
 
 £include "inttypes.h"
 
-#include "public_api.h"
-
 #include "sef_config.h"
+
+#include "public_api.h"
 
 >> Typedef of the number used everywhere
 typedef SEF_INT_T sef_int_t;

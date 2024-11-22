@@ -43,7 +43,7 @@ static inline sef_int_t sef_code_pointer_to_int(code_pointer_t* code) {
 }
 
 // The interpreter's state
-typedef struct seforth_state_s {
+struct seforth_state_s {
     // A parser used for "evaluate" and the likes
     struct parser_state_s* parser;
     // The two stack used by the interpreter
@@ -70,7 +70,7 @@ typedef struct seforth_state_s {
 #if SEF_PROGRAMMING_TOOLS
     int exit_code;
 #endif
-} forth_state_t;
+};
 
 forth_state_t* sef_init_state(struct parser_state_s* parser);
 void sef_clean_state(forth_state_t* fs);

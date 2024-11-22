@@ -2,9 +2,9 @@
 CFLAGS ?= -Wall -Wextra -g -Wno-error=cpp
 
 # Files lists
-C_SRC := hash.c dictionary.c forth_state.c C_func.c user_words.c parser.c utils.c sef_stack.c
+C_SRC := hash.c dictionary.c forth_state.c C_func.c user_words.c parser.c utils.c sef_stack.c public_api.c
 FRT_SRC := base_forth_func.frt file_forth_func.frt string_forth_func.frt programming_forth_func.frt
-C_HEADER := sef_config.h sef_io.h SEForth.h C_func.h dictionary.h errors.h forth_state.h hash.h parser.h user_words.h utils.h sef_debug.h private_api.h
+C_HEADER := sef_io.h SEForth.h C_func.h dictionary.h errors.h forth_state.h hash.h parser.h user_words.h utils.h sef_debug.h private_api.h
 TARGET := seforth
 C_AUTO_SRC := $(FRT_SRC:%.frt=%.c)
 C_SRC += $(C_AUTO_SRC)
@@ -48,7 +48,7 @@ all : $(TARGET).bin
 	cat $< | sed 's:( [^)]*): :g; s:\s\+\([^"]\): \1:g; s:\\ .*::;  s:":\\":g; s:^:":; s:$$:\\n":;' | grep -v '" \?\\n"'  >> $@
 	echo ';' >> $@
 
-SEForth_template.h.o: SEForth_template.h
+SEForth_template.h.o: SEForth_template.h public_api.h sef_config.h
 	gcc -o $@ -E $< $(CFLAGS)
 
 SEForth.h: SEForth_template.h.o
