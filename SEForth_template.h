@@ -5,8 +5,6 @@
 
 #include "sef_config.h"
 
-#include "public_api.h"
-
 >> Typedef of the number used everywhere
 typedef SEF_INT_T sef_int_t;
 typedef SEF_UNSIGNED_T sef_unsigned_t;
@@ -75,6 +73,8 @@ typedef SEF_UNSIGNED_T sef_unsigned_t;
 
 >> Print a stack strace when an error is encountered during execution.
 £define __SEF_STACK_TRACE SEF_STACK_TRACE 
+
+#include "public_api.h"
 
 £endif
 

@@ -75,13 +75,9 @@ struct seforth_state_s {
 forth_state_t* sef_init_state(struct parser_state_s* parser);
 void sef_clean_state(forth_state_t* fs);
 
-sef_int_t sef_pop_data(forth_state_t* fs);
-void sef_push_data(forth_state_t* fs, sef_int_t w);
 void sef_push_code(forth_state_t* fs, sef_int_t p);
 sef_int_t sef_pop_code(forth_state_t* fs);
 sef_int_t sef_peek_loop(forth_state_t* fs, int loop_depth);
-void sef_quit(forth_state_t* fs);
-void sef_abort(forth_state_t* fs);
 
 bool sef_run_step(forth_state_t* fs);
 sef_error sef_executes_node(forth_state_t* fs, struct word_node_s* node);
