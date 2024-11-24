@@ -17,11 +17,9 @@ forth_state_t* sef_init_state(struct parser_state_s* parser) {
     ret->pos.pos_in_word = SEF_IDLE_POS_IN_WORD;
     ret->base = 10;
     ret->running = true;
-#if SEF_CLI_ARGS
+#if SEF_PROGRAMMING_TOOLS
     ret->argc = 0;
     ret->argv = NULL;
-#endif
-#if SEF_PROGRAMMING_TOOLS
     ret->exit_code = 0;
 #endif
     return ret;

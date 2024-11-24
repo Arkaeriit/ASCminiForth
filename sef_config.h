@@ -21,12 +21,6 @@
 #define SEF_USE_SOURCE_FILE 1
 #endif
 
-// Enable the words argc, argv, (arg), and arg to use when giving command
-// line arguments to the interpreter
-#ifndef SEF_CLI_ARGS
-#define SEF_CLI_ARGS 1
-#endif
-
 // Enable words related to file manipulation
 #ifndef SEF_FILE
 #define SEF_FILE 1

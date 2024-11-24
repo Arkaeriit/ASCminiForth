@@ -33,11 +33,8 @@ void sef_abort(forth_state_t* fs);
 sef_error sef_parse_file(forth_state_t* state, const char* filename);
 #endif
 
-#ifdef SEF_CLI_ARGS
-void sef_feed_arguments(forth_state_t* state, int argc, char** argv);
-#endif
-
 #ifdef SEF_PROGRAMMING_TOOLS
+void sef_feed_arguments(forth_state_t* state, int argc, char** argv);
 int sef_exit_code(const forth_state_t* state);
 #endif
 

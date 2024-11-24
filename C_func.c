@@ -535,22 +535,6 @@ static void str_len(forth_state_t* fs) {
     sef_push_data(fs, (sef_int_t) strlen(str));
 }
 
-#if SEF_CLI_ARGS
-// Arguments
-
-// argc
-static void argc(forth_state_t* fs) {
-    sef_push_data(fs, (sef_int_t) &fs->argc);
-}
-
-// arg
-static void arg(forth_state_t* fs) {
-    sef_int_t index = sef_pop_data(fs);
-    sef_push_data(fs, (sef_int_t) fs->argv[index]);
-    sef_push_data(fs, (sef_int_t) strlen(fs->argv[index]));
-}
-#endif
-
 #if SEF_FILE
 // File manipulation
 
@@ -726,6 +710,19 @@ static void bye(forth_state_t* fs) {
 // words
 static void words(forth_state_t* fs) {
     sef_display_dictionary(fs->dic);
+}
+// Arguments
+
+// argc
+static void argc(forth_state_t* fs) {
+    sef_push_data(fs, (sef_int_t) &fs->argc);
+}
+
+// arg
+static void arg(forth_state_t* fs) {
+    sef_int_t index = sef_pop_data(fs);
+    sef_push_data(fs, (sef_int_t) fs->argv[index]);
+    sef_push_data(fs, (sef_int_t) strlen(fs->argv[index]));
 }
 #endif
 
@@ -938,11 +935,6 @@ struct c_func_s all_default_c_func[] = {
     // C strings
     {"print", put_str},
     {"strlen", str_len},
-#if SEF_CLI_ARGS
-    // Arguments
-    {"argc", argc},
-    {"arg", arg},
-#endif    
 #if SEF_FILE
     // File manipulation
 #warning TODO: test and document
@@ -965,6 +957,9 @@ struct c_func_s all_default_c_func[] = {
     {"exit-code", exit_code},
     {"bye", bye},
     {"words", words},
+    // Arguments
+    {"argc", argc},
+    {"arg", arg},
 #endif
     // Misc
     {"emit", emit},

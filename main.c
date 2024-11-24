@@ -8,7 +8,7 @@ int main(int argc, char** argv) {
     forth_state_t* fs = sef_init();
 #if SEF_USE_SOURCE_FILE
     if (argc > 1) {
-#if SEF_CLI_ARGS
+#if SEF_PROGRAMMING_TOOLS
         sef_feed_arguments(fs, argc - 1, argv + 1);
 #endif
         if (sef_parse_file(fs, argv[1])) {

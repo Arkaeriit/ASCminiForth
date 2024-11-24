@@ -18,10 +18,6 @@ typedef SEF_UNSIGNED_T sef_unsigned_t;
 >> Enable reading source files
 £define __SEF_USE_SOURCE_FILE SEF_USE_SOURCE_FILE 
 
->> Enable the words argc, argv, (arg), and arg to use when giving command
->> line arguments to the interpreter
-£define __SEF_CLI_ARGS SEF_CLI_ARGS 
-
 >> Enable words related to file manipulation
 £define __SEF_FILE SEF_FILE 
 

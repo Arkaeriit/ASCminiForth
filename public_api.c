@@ -37,14 +37,12 @@ sef_error sef_parse_file(forth_state_t* state, const char* filename) {
 }
 #endif
 
-#if SEF_CLI_ARGS
+#if SEF_PROGRAMMING_TOOLS
 void sef_feed_arguments(forth_state_t* state, int argc, char** argv) {
     state->argc = argc;
     state->argv = argv;
 }
-#endif
 
-#if SEF_PROGRAMMING_TOOLS
 int sef_exit_code(const forth_state_t* state) {
     return state->exit_code;
 }

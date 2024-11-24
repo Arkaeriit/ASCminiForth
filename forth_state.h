@@ -63,11 +63,9 @@ struct seforth_state_s {
     sef_int_t base;
     // True by default, set to false when running exit when the code stack is empty
     bool running;
-#if SEF_CLI_ARGS
+#if SEF_PROGRAMMING_TOOLS
     sef_int_t argc;
     char** argv;
-#endif
-#if SEF_PROGRAMMING_TOOLS
     int exit_code;
 #endif
 };
