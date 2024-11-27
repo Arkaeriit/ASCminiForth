@@ -105,7 +105,7 @@ sef_error sef_register_file(parser_state_t* p, const char* filemane) {
     }
     while (ch != EOF) {
         sef_parser_parse_char(p, ch);
-        if (!p->fs->running) {
+        if (!sef_can_execute(p->fs)) {
             break;
         }
         ch = fgetc(f);

@@ -4,5 +4,4 @@
     + 1- c@ 4 = if 1
     else evaluate 0 then ;
 : (repl) begin (rep) until ;
-(repl)
 

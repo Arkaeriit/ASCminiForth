@@ -766,7 +766,7 @@ static void execute(forth_state_t* fs) {
 // Parse a word and ensure that the execution will stop right after it.
 // This is needed to ensure correct behavior when using evaluate recursively.
 static void extra_safe_parse(forth_state_t* fs, char c) {
-    if (!fs->running) {
+    if (!sef_can_execute(fs)) {
         return;
     }
 
@@ -780,7 +780,7 @@ static void extra_safe_parse(forth_state_t* fs, char c) {
     fs->pos = pos_copy;
     fs->current_word_copy = current_word_copy;
 
-    if (!fs->running) {
+    if (!sef_can_execute(fs)) {
         fs->pos.pos_in_word = SEF_IDLE_POS_IN_WORD;
         fs->pos.current_word = SEF_IDLE_CURRENT_WORD;
     }

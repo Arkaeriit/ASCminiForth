@@ -19,6 +19,7 @@ void sef_free(forth_state_t* state);
 
 void sef_restart(forth_state_t* state);
 bool sef_is_running(forth_state_t* state);
+bool sef_asked_bye(forth_state_t* state);
 bool sef_is_compiling(forth_state_t* state);
 
 void sef_parse_string(forth_state_t* state, const char* s);

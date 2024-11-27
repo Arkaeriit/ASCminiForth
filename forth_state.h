@@ -63,6 +63,8 @@ struct seforth_state_s {
     sef_int_t base;
     // True by default, set to false when running exit when the code stack is empty
     bool running;
+    // False by default, set to true when running into exit or quit
+    bool quit;
 #if SEF_PROGRAMMING_TOOLS
     sef_int_t argc;
     char** argv;
@@ -81,6 +83,8 @@ bool sef_run_step(forth_state_t* fs);
 sef_error sef_executes_node(forth_state_t* fs, struct word_node_s* node);
 void sef_run(forth_state_t* fs);
 void sef_exit(forth_state_t* fs);
+bool sef_can_execute(forth_state_t* fs);
+void sef_reset(forth_state_t* fs);
 
 void sef_allot(forth_state_t* fs, size_t byte_requested);
 

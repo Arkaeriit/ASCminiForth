@@ -17,6 +17,7 @@ forth_state_t* sef_init_state(struct parser_state_s* parser) {
     ret->pos.pos_in_word = SEF_IDLE_POS_IN_WORD;
     ret->base = 10;
     ret->running = true;
+    ret->quit = false;
 #if SEF_PROGRAMMING_TOOLS
     ret->argc = 0;
     ret->argv = NULL;
@@ -35,12 +36,26 @@ void sef_clean_state(forth_state_t* fs) {
     free(fs);
 }
 
+// Check that neither bye and (abort or quit) have been called, which means
+// that the execution should continue.
+bool sef_can_execute(forth_state_t* fs) {
+    return !fs->quit && fs->running;
+}
+
 // Puts the state back in an idle state, with all stacks but the data stack
 // empty and no word being executed.
 void sef_quit(forth_state_t* fs) {
     fs->pos.current_word = SEF_IDLE_CURRENT_WORD;
     fs->pos.pos_in_word = SEF_IDLE_POS_IN_WORD;
-    fs->code->stack_pointer = 0;
+    sef_stack_reset(fs->code);
+    fs->quit = true;
+}
+
+// Reset the code and data stack
+void sef_reset(forth_state_t* fs) {
+#warning "TODO: finish reset and reset parser as well."
+    sef_quit(fs);
+    sef_stack_reset(fs->data);
 }
 
 // Like quit but also reset the data stack. Display the stack trace if needed.
@@ -48,8 +63,7 @@ void sef_abort(forth_state_t* fs) {
 #if SEF_STACK_TRACE
     sef_stack_trace(fs);
 #endif
-    sef_quit(fs);
-    fs->data->stack_pointer = 0;
+    sef_reset(fs);
 }
 
 #if SEF_STACK_BOUND_CHECKS
@@ -129,14 +143,14 @@ bool sef_run_step(forth_state_t* fs) {
     }
     if (fs->pos.pos_in_word >= fs->current_word_copy->size) {  // We return from the function as we reached the end of the word
         sef_exit(fs);
-        return true;
+        return sef_can_execute(fs);;
     }
     // Otherwize, we run the part of the curent word we are pointing to
     debug_msg("Executing data at pos %li / %li.\n", fs->pos.pos_in_word, fs->current_word_copy->size);
     word_node_t current_node = fs->current_word_copy->content[fs->pos.pos_in_word];
     fs->pos.pos_in_word++;
     sef_executes_node(fs, &current_node);
-    return true;
+    return sef_can_execute(fs);
 }
 
 // Executes the content of a word_node
@@ -206,6 +220,7 @@ sef_error sef_executes_node(forth_state_t* fs, struct word_node_s* node) {
 // Run the interpreter until it finishes all calls
 void sef_run(forth_state_t* fs) {
     while (sef_run_step(fs));
+    /*sef_reset(fs);*/
 }
 
 // Request some bytes from the forth memory and align the index

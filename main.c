@@ -26,6 +26,10 @@ int main(int argc, char** argv) {
 #if SEF_PROGRAMMING_TOOLS
     rc = sef_exit_code(fs);
 #endif
+    while (!sef_asked_bye(fs)) {
+        sef_restart(fs);
+        sef_parse_string(fs, "(repl) ");
+    }
     sef_restart(fs);
     sef_parse_string(fs, "(repl-buffer) 1- free ");
     sef_free(fs);

@@ -14,6 +14,7 @@ typedef struct {
 } sef_stack_t;
 
 sef_stack_t* sef_stack_init(size_t size);
+void sef_stack_reset(sef_stack_t* stack);
 void sef_stack_free(sef_stack_t* stack);
 sef_int_t sef_stack_peek(sef_stack_t* stack, int depth);
 sef_int_t sef_stack_pop(sef_stack_t* stack);

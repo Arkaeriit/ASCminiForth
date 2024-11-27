@@ -10,11 +10,17 @@ void sef_free(forth_state_t* state) {
 }
 
 void sef_restart(forth_state_t* state) {
+    sef_reset(state);
     state->running = true;
+    state->quit = false;
 }
 
 bool sef_is_running(forth_state_t* state) {
-    return state->running;
+    return sef_can_execute(state);
+}
+
+bool sef_asked_bye(forth_state_t* state) {
+    return !state->running;
 }
 
 bool sef_is_compiling(forth_state_t* state) {

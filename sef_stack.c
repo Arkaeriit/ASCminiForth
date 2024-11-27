@@ -4,12 +4,18 @@
 sef_stack_t* sef_stack_init(size_t size) {
     sef_stack_t* ret = malloc(sizeof(sef_stack_t));
     ret->stack = malloc(sizeof(sef_int_t) * size);
-    ret->stack_pointer = 0;
 #if SEF_STACK_BOUND_CHECKS
     ret->size = size;
-    ret->overflowed = false;
 #endif
+    sef_stack_reset(ret);
     return ret;
+}
+
+void sef_stack_reset(sef_stack_t* stack) {
+    stack->stack_pointer = 0;
+#if SEF_STACK_BOUND_CHECKS
+    stack->overflowed = false;
+#endif
 }
 
 void sef_stack_free(sef_stack_t* stack) {
